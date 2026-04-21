@@ -5,10 +5,10 @@ import { PILASTRI } from '../data/formati.js'
 <template>
   <section id="pilastri">
     <div class="wrap">
-      <div v-reveal class="sec-head">
+      <div v-reveal class="sec-head sec-head-compact">
         <span class="sec-kicker">COSA FACCIO</span>
-        <h2>Tre anime, un solo obiettivo: farti arrivare preparato.</h2>
-        <p>Formazione, consulenza e sviluppo di strumenti su misura. Scegli da dove vuoi partire.</p>
+        <h2>Tre anime, un obiettivo: farti arrivare preparato.</h2>
+        <p>Formazione, consulenza e sviluppo di strumenti su misura. Scegli da dove partire.</p>
       </div>
       <div class="pilastri">
         <a v-for="p in PILASTRI" :key="p.k" :href="p.anchor" v-reveal class="pilastro" :class="`bundle-${p.accent}`">

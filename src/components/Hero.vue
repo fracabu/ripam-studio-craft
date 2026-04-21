@@ -7,7 +7,7 @@ import Counter from './Counter.vue'
     <div class="wrap">
       <div class="hero-grid">
         <div>
-          <h1>Formazione, consulenza e tool di studio fatti con l'AI. <span class="hl">Per chi si prepara davvero.</span></h1>
+          <h1>Formazione, consulenza e tool di studio fatti con l'AI. <span class="hl">Su misura per te.</span></h1>
           <p class="hero-sub">Aiuto chi si prepara ai concorsi pubblici a studiare meglio: con materiali su misura, coaching 1:1 su NotebookLM e strumenti di studio pensati insieme.</p>
           <div class="hero-ctas">
             <a href="#pilastri" class="btn btn-primary">Come lavoriamo insieme →</a>

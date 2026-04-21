@@ -7,10 +7,10 @@ const ask = (t) => emit('select', { prodotto: `Tool custom: ${t.t}` })
 <template>
   <section id="tools">
     <div class="wrap">
-      <div v-reveal class="sec-head">
+      <div v-reveal class="sec-head sec-head-compact">
         <span class="sec-kicker">SVILUPPO</span>
-        <h2>Dalla tua idea allo strumento che ti aiuta a studiare.</h2>
-        <p>Web app, simulatori, strumenti di conversione. Ogni progetto parte da una chiacchierata: capiamo insieme se serve davvero, cosa deve fare, come farlo.</p>
+        <h2>Dalla tua idea allo strumento adatto.</h2>
+        <p>Web app, simulatori, strumenti di conversione. Ogni progetto parte da una chiacchierata.</p>
       </div>
 
       <div v-reveal class="tools stagger">

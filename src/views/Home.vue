@@ -44,7 +44,7 @@ const onPrefillSelect = (data) => {
 </script>
 
 <template>
-  <main>
+  <main class="home-page">
     <Hero />
     <Ticker />
     <Pilastri />

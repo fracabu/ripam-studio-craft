@@ -94,7 +94,7 @@ watch(materia, (m) => {
     <!-- HERO MATERIA -->
     <section class="detail-hero">
       <div class="wrap">
-        <RouterLink to="/#catalogo" class="detail-back">← Torna al catalogo</RouterLink>
+        <RouterLink to="/#materie" class="detail-back">← Torna alle materie</RouterLink>
         <div class="badges" style="margin-bottom:20px">
           <span v-for="c in materia.c" :key="c" class="badge" :data-c="c">{{ c }}</span>
         </div>

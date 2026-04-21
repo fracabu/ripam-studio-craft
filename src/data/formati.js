@@ -59,7 +59,7 @@ export const PILASTRI = [
     t:'Formazione',
     lead:'Materiali didattici multicanale',
     desc:'Podcast, video, report e simulatori costruiti con AI su normativa ufficiale. Per ogni materia, ogni concorso, ogni esigenza.',
-    anchor:'#catalogo',
+    anchor:'#materie',
     cta:'Vedi le materie →',
     accent:'acid'
   },
@@ -115,28 +115,17 @@ export const BUNDLES = [
   {
     slug:'materia-completa',
     tag:'MATERIA COMPLETA',
-    title:'Tutti i 4 formati',
-    desc:'Podcast + Video + Report + Simulatore della stessa materia. Il set di studio totale.',
-    price:49,
-    note:'invece di 76€ · risparmi il 35%',
+    title:'I 4 formati di una materia',
+    desc:'Podcast + Video + Report + Simulatore, integrati sulla stessa materia. Il percorso di studio totale su un argomento.',
+    note:'modulabile sul taglio che preferisci',
     accent:'acid'
   },
   {
-    slug:'ripam',
+    slug:'concorso',
     tag:'CONCORSO INTERO',
-    title:'Bundle RIPAM',
-    desc:'Tutte le materie del concorso RIPAM in tutti i formati. Preparazione completa.',
-    price:99,
-    note:'oltre 50 ore di materiale',
+    title:'Concorso intero',
+    desc:'Tutte le materie di un singolo concorso (RIPAM, MIC, FUNZ, MIMIT, ISAC, CPI), nei formati che scegli. Preparazione completa da zero.',
+    note:'scegli formati e priorità insieme a me',
     accent:'pink'
-  },
-  {
-    slug:'omnia',
-    tag:'TUTTO',
-    title:'Bundle Omnia',
-    desc:'Tutte le 20 materie, tutti i formati, aggiornamenti inclusi per un anno.',
-    price:179,
-    note:'arsenale completo · massimo risparmio',
-    accent:'blue'
   }
 ]

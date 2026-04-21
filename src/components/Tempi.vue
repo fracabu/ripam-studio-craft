@@ -4,7 +4,7 @@ const fasce = [
     k:'48h',
     tempo:'48 ore',
     t:'Materiali nel mio archivio',
-    desc:'Se la materia che ti serve è già nel catalogo e l\'ho già prodotta, te la invio in 48 ore dalla conferma. Esempio: Diritto Amministrativo.',
+    desc:'Se la materia che ti serve è già nel mio archivio e l\'ho già prodotta, te la invio in 48 ore dalla conferma. Esempio: Diritto Amministrativo.',
     accent:'acid'
   },
   {

@@ -16,7 +16,7 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
 </script>
 
 <template>
-  <section id="catalogo">
+  <section id="materie">
     <div class="wrap">
       <div v-reveal class="sec-head">
         <span class="sec-kicker">MATERIE</span>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import { MATERIE } from '../data/materie.js'
 import { CONCORSI } from '../data/formati.js'
 
@@ -9,6 +10,7 @@ const concorso = ref('')
 const prodotto = ref('')
 const materia = ref('')
 const note = ref('')
+const privacy = ref(false) // consenso GDPR
 const hp = ref('') // honeypot: se compilato, bot
 
 const status = ref('idle') // idle | sending | sent | error
@@ -48,6 +50,7 @@ const submit = async (e) => {
     status.value = 'sent'
     nome.value = ''; email.value = ''; concorso.value = ''
     prodotto.value = ''; materia.value = ''; note.value = ''
+    privacy.value = false
   } catch (err) {
     status.value = 'error'
     errorMsg.value = err.message || 'Qualcosa è andato storto. Scrivimi direttamente a ripamstudiocraft@gmail.com'
@@ -72,7 +75,7 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
         </div>
 
         <!-- FORM -->
-        <form v-if="status !== 'sent'" v-reveal="'right'" class="contact" @submit="submit">
+        <form v-reveal="'right'" class="contact" @submit="submit">
           <div>
             <label for="f-nome">Il tuo nome</label>
             <input id="f-nome" v-model="nome" type="text" required placeholder="Mario Rossi" :disabled="status==='sending'" />
@@ -131,10 +134,15 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
             <textarea id="f-note" v-model="note" placeholder="Qualsiasi cosa utile per rispondere meglio..." :disabled="status==='sending'"></textarea>
           </div>
 
+          <label class="privacy-check">
+            <input v-model="privacy" type="checkbox" required :disabled="status==='sending'" />
+            <span>Ho letto la <RouterLink to="/privacy" target="_blank">Privacy Policy</RouterLink> e acconsento al trattamento dei miei dati per rispondere a questa richiesta.</span>
+          </label>
+
           <!-- honeypot nascosto: bot lo compilano, umani no -->
           <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
 
-          <button type="submit" :disabled="status==='sending'">
+          <button type="submit" :disabled="status==='sending' || !privacy">
             <span v-if="status==='sending'">Invio in corso...</span>
             <span v-else>Scrivimi →</span>
           </button>
@@ -142,15 +150,20 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
           <p v-if="status==='error'" class="form-err">{{ errorMsg }}</p>
           <p v-else class="form-note">Nessun pagamento anticipato. Risposta entro poche ore.</p>
         </form>
-
-        <!-- SUCCESS STATE -->
-        <div v-else class="contact contact-sent">
-          <div class="sent-ico">✓</div>
-          <h3>Richiesta inviata!</h3>
-          <p>Grazie, ti rispondo entro poche ore con domande, idee o una proposta. Se preferisci, nel frattempo puoi scrivermi anche su Telegram.</p>
-          <button type="button" @click="reset" class="btn-reset">Invia un'altra richiesta</button>
-        </div>
       </div>
     </div>
+
+    <!-- MODAL SUCCESS -->
+    <transition name="modal">
+      <div v-if="status==='sent'" class="modal-backdrop" @click.self="reset" role="dialog" aria-modal="true">
+        <div class="modal-card">
+          <div class="modal-ico">✓</div>
+          <h3 class="modal-title">Richiesta inviata!</h3>
+          <p class="modal-text">Grazie, <strong>ho ricevuto la tua richiesta</strong>. Ti rispondo entro poche ore con domande, idee o una proposta concreta — direttamente all'email che mi hai dato.</p>
+          <p class="modal-text" style="opacity:0.8;font-size:14px">Nel frattempo, se vuoi, puoi anche scrivermi su Telegram.</p>
+          <button type="button" class="btn btn-primary modal-btn" @click="reset">Perfetto, chiudi →</button>
+        </div>
+      </div>
+    </transition>
   </section>
 </template>
