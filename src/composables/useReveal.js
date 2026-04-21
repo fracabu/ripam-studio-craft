@@ -15,7 +15,9 @@ const ensureObserver = () => {
         }
       })
     },
-    { threshold: 0.14, rootMargin: '0px 0px -40px 0px' }
+    // threshold 0 + rootMargin anticipato: funziona anche con elementi altissimi
+    // (tipo grid di 20 card in mobile) che non raggiungerebbero mai una soglia %
+    { threshold: 0, rootMargin: '0px 0px -10% 0px' }
   )
   return io
 }
