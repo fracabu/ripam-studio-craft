@@ -19,7 +19,7 @@
         <div class="foot-col">
           <h4>CONTATTI</h4>
           <a href="https://t.me/[USERNAME]" target="_blank" rel="noopener">Telegram</a>
-          <a href="mailto:hello@ripamstudio.it">Email</a>
+          <a href="mailto:ripamstudiocraft@gmail.com">ripamstudiocraft@gmail.com</a>
           <a href="#contatti">Form contatto</a>
         </div>
       </div>

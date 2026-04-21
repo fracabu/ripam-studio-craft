@@ -3,14 +3,16 @@ import { ref } from 'vue'
 import { MATERIE } from '../data/materie.js'
 import { CONCORSI } from '../data/formati.js'
 
-const EMAIL = 'hello@ripamstudio.it' // TODO: sostituire con email reale
-
 const nome = ref('')
 const email = ref('')
 const concorso = ref('')
 const prodotto = ref('')
 const materia = ref('')
 const note = ref('')
+const hp = ref('') // honeypot: se compilato, bot
+
+const status = ref('idle') // idle | sending | sent | error
+const errorMsg = ref('')
 
 const prefill = (data = {}) => {
   if (data.concorso) concorso.value = data.concorso
@@ -20,25 +22,39 @@ const prefill = (data = {}) => {
 }
 defineExpose({ prefill })
 
-const submit = (e) => {
+const submit = async (e) => {
   e.preventDefault()
-  const subject = `Richiesta materiali — ${prodotto.value} (${concorso.value})`
-  const body =
-`Ciao,
-sono interessato al seguente materiale:
+  if (status.value === 'sending') return
+  status.value = 'sending'
+  errorMsg.value = ''
 
-• Nome: ${nome.value}
-• Email: ${email.value}
-• Concorso: ${concorso.value}
-• Materia: ${materia.value || '—'}
-• Prodotto: ${prodotto.value}
+  try {
+    const r = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome: nome.value,
+        email: email.value,
+        concorso: concorso.value,
+        prodotto: prodotto.value,
+        materia: materia.value,
+        note: note.value,
+        hp: hp.value
+      })
+    })
+    const data = await r.json().catch(() => ({}))
+    if (!r.ok || !data.ok) throw new Error(data.error || 'Errore invio')
 
-Note:
-${note.value || '—'}
-
-Grazie!`
-  window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    status.value = 'sent'
+    nome.value = ''; email.value = ''; concorso.value = ''
+    prodotto.value = ''; materia.value = ''; note.value = ''
+  } catch (err) {
+    status.value = 'error'
+    errorMsg.value = err.message || 'Qualcosa è andato storto. Scrivimi direttamente a ripamstudiocraft@gmail.com'
+  }
 }
+
+const reset = () => { status.value = 'idle'; errorMsg.value = '' }
 </script>
 
 <template>
@@ -54,27 +70,29 @@ Grazie!`
             <span>📱</span> Scrivimi su Telegram
           </a>
         </div>
-        <form v-reveal="'right'" class="contact" @submit="submit">
+
+        <!-- FORM -->
+        <form v-if="status !== 'sent'" v-reveal="'right'" class="contact" @submit="submit">
           <div>
             <label for="f-nome">Il tuo nome</label>
-            <input id="f-nome" v-model="nome" type="text" required placeholder="Mario Rossi" />
+            <input id="f-nome" v-model="nome" type="text" required placeholder="Mario Rossi" :disabled="status==='sending'" />
           </div>
           <div>
             <label for="f-email">Email</label>
-            <input id="f-email" v-model="email" type="email" required placeholder="mario.rossi@email.it" />
+            <input id="f-email" v-model="email" type="email" required placeholder="mario.rossi@email.it" :disabled="status==='sending'" />
           </div>
           <div class="form-row">
             <div>
               <label for="f-concorso">Concorso</label>
-              <select id="f-concorso" v-model="concorso" required>
+              <select id="f-concorso" v-model="concorso" required :disabled="status==='sending'">
                 <option value="">Seleziona...</option>
                 <option v-for="c in CONCORSI" :key="c">{{ c }}</option>
                 <option>Altro</option>
               </select>
             </div>
             <div>
-              <label for="f-prodotto">Prodotto</label>
-              <select id="f-prodotto" v-model="prodotto" required>
+              <label for="f-prodotto">Cosa ti interessa</label>
+              <select id="f-prodotto" v-model="prodotto" required :disabled="status==='sending'">
                 <option value="">Seleziona...</option>
                 <optgroup label="Formazione">
                   <option>Podcast</option>
@@ -103,18 +121,35 @@ Grazie!`
           </div>
           <div>
             <label for="f-materia">Materia di interesse</label>
-            <select id="f-materia" v-model="materia">
+            <select id="f-materia" v-model="materia" :disabled="status==='sending'">
               <option value="">Seleziona (opzionale)...</option>
               <option v-for="m in MATERIE" :key="m.slug" :value="m.t">{{ m.t }}</option>
             </select>
           </div>
           <div>
             <label for="f-note">Note</label>
-            <textarea id="f-note" v-model="note" placeholder="Qualsiasi cosa utile per rispondere meglio..."></textarea>
+            <textarea id="f-note" v-model="note" placeholder="Qualsiasi cosa utile per rispondere meglio..." :disabled="status==='sending'"></textarea>
           </div>
-          <button type="submit">Scrivimi →</button>
-          <p class="form-note">Nessun pagamento anticipato. Risposta entro poche ore.</p>
+
+          <!-- honeypot nascosto: bot lo compilano, umani no -->
+          <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
+
+          <button type="submit" :disabled="status==='sending'">
+            <span v-if="status==='sending'">Invio in corso...</span>
+            <span v-else>Scrivimi →</span>
+          </button>
+
+          <p v-if="status==='error'" class="form-err">{{ errorMsg }}</p>
+          <p v-else class="form-note">Nessun pagamento anticipato. Risposta entro poche ore.</p>
         </form>
+
+        <!-- SUCCESS STATE -->
+        <div v-else class="contact contact-sent">
+          <div class="sent-ico">✓</div>
+          <h3>Richiesta inviata!</h3>
+          <p>Grazie, ti rispondo entro poche ore con domande, idee o una proposta. Se preferisci, nel frattempo puoi scrivermi anche su Telegram.</p>
+          <button type="button" @click="reset" class="btn-reset">Invia un'altra richiesta</button>
+        </div>
       </div>
     </div>
   </section>
