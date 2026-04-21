@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ripam Studio Craft — Materiali didattici per concorsi pubblici</title>
+<meta name="description" content="Podcast, video, report e simulatori per concorsi pubblici italiani. Costruiti su normativa ufficiale verificata. Dalla piattaforma con 625.000 visite in 3 mesi." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#f5f0e8;
+    --bg-alt:#ede6d8;
+    --ink:#0a0a0a;
+    --ink-soft:#2a2a2a;
+    --muted:#6b6458;
+    --line:#0a0a0a;
+    --acid:#c6f432;
+    --blue:#3d5aff;
+    --pink:#ff7ac6;
+    --orange:#ff6b1a;
+    --ripam:#3d5aff;
+    --mic:#1aa06b;
+    --funz:#9b4dff;
+    --mimit:#ff6b1a;
+    --isac:#ff3d52;
+    --cpi:#14b8b8;
+    --shadow:6px 6px 0 var(--ink);
+    --shadow-sm:3px 3px 0 var(--ink);
+    --shadow-lg:10px 10px 0 var(--ink);
+    --radius:0px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Space Grotesk",system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    font-size:17px;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* pattern background */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(10,10,10,0.08) 1px, transparent 0);
+    background-size:24px 24px;
+    pointer-events:none;
+    z-index:0;
+  }
+  main,nav,footer{position:relative;z-index:1}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  img,svg{display:block;max-width:100%}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky;top:0;z-index:100;
+    background:var(--bg);
+    border-bottom:2px solid var(--ink);
+  }
+  .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 24px;max-width:1240px;margin:0 auto;
+  }
+  .logo{
+    font-weight:700;font-size:20px;letter-spacing:-0.02em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .logo-mark{
+    width:32px;height:32px;background:var(--acid);
+    border:2px solid var(--ink);
+    display:grid;place-items:center;
+    font-weight:700;font-size:15px;
+    box-shadow:var(--shadow-sm);
+  }
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-weight:500;font-size:15px;transition:color .15s}
+  .nav-links a:hover{color:var(--blue)}
+  .nav-cta{
+    padding:10px 18px;background:var(--ink);color:var(--bg);
+    border:2px solid var(--ink);font-weight:600;font-size:14px;
+    transition:transform .1s;
+  }
+  .nav-cta:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm)}
+  @media(max-width:720px){
+    .nav-links a:not(.nav-cta){display:none}
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    min-height:calc(100vh - 73px);
+    display:flex;align-items:center;
+    padding:40px 0;
+    border-bottom:2px solid var(--ink);
+  }
+  .hero .wrap{width:100%}
+  .hero-grid{
+    display:grid;grid-template-columns:1.2fr 1fr;gap:50px;align-items:center;
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:8px 14px;background:var(--acid);
+    border:2px solid var(--ink);box-shadow:var(--shadow-sm);
+    font-weight:600;font-size:13px;letter-spacing:-0.01em;
+    margin-bottom:28px;
+    font-family:"JetBrains Mono",monospace;
+  }
+  .hero-badge .dot{width:8px;height:8px;background:var(--ink);border-radius:50%}
+  h1{
+    font-size:clamp(34px,4.8vw,62px);
+    line-height:0.98;letter-spacing:-0.035em;
+    font-weight:700;margin-bottom:24px;
+  }
+  h1 .hl{
+    background:var(--blue);color:var(--bg);
+    padding:0 12px;
+    display:inline-block;
+    transform:rotate(-1deg);
+    box-shadow:var(--shadow-sm);
+  }
+  .hero-sub{
+    font-size:17px;color:var(--ink-soft);max-width:520px;
+    margin-bottom:28px;line-height:1.45;
+  }
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:16px 26px;font-weight:600;font-size:16px;
+    border:2px solid var(--ink);transition:all .15s;
+  }
+  .btn-primary{background:var(--ink);color:var(--bg);box-shadow:var(--shadow)}
+  .btn-primary:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow-lg)}
+  .btn-secondary{background:var(--bg);color:var(--ink);box-shadow:var(--shadow)}
+  .btn-secondary:hover{background:var(--acid);transform:translate(-3px,-3px);box-shadow:var(--shadow-lg)}
+
+  .hero-visual{
+    position:relative;
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  }
+  .stat{
+    border:2px solid var(--ink);padding:22px 18px;
+    box-shadow:var(--shadow-sm);background:var(--bg);
+    transition:transform .2s;
+  }
+  .stat:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
+  .stat:nth-child(1){background:var(--acid)}
+  .stat:nth-child(2){background:var(--pink);transform:rotate(1deg)}
+  .stat:nth-child(3){background:var(--bg);transform:rotate(-1deg)}
+  .stat:nth-child(4){background:var(--blue);color:var(--bg)}
+  .stat-num{font-size:36px;font-weight:700;letter-spacing:-0.04em;line-height:1}
+  .stat-lbl{font-size:13px;font-weight:500;margin-top:6px;opacity:0.8}
+
+  @media(max-width:900px){
+    .hero{min-height:auto;padding:40px 0 60px}
+    .hero-grid{grid-template-columns:1fr;gap:30px}
+    .hero-visual{max-width:440px}
+  }
+
+  /* ===== TICKER ===== */
+  .ticker{
+    background:var(--ink);color:var(--bg);
+    border-bottom:2px solid var(--ink);
+    overflow:hidden;
+    padding:18px 0;
+  }
+  .ticker-track{
+    display:flex;gap:48px;white-space:nowrap;
+    animation:ticker 28s linear infinite;
+    width:max-content;
+  }
+  .ticker-item{
+    font-family:"JetBrains Mono",monospace;
+    font-size:14px;font-weight:600;letter-spacing:0.08em;
+    display:inline-flex;align-items:center;gap:48px;
+  }
+  .ticker-item::after{
+    content:"✦";color:var(--acid);font-size:18px;
+  }
+  @keyframes ticker{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+  .ticker:hover .ticker-track{animation-play-state:paused}
+
+  /* ===== SECTION BASE ===== */
+  section{padding:90px 0;border-bottom:2px solid var(--ink)}
+  .sec-head{margin-bottom:50px;max-width:780px}
+  .sec-kicker{
+    display:inline-block;padding:5px 12px;background:var(--ink);color:var(--bg);
+    font-size:12px;font-weight:600;letter-spacing:0.08em;
+    font-family:"JetBrains Mono",monospace;margin-bottom:16px;
+  }
+  .sec-head h2{
+    font-size:clamp(32px,4.5vw,56px);
+    line-height:1;letter-spacing:-0.035em;font-weight:700;
+    margin-bottom:16px;
+  }
+  .sec-head p{font-size:18px;color:var(--ink-soft);max-width:640px}
+
+  /* ===== FILTRI ===== */
+  .filters{
+    display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px;
+    padding:6px;border:2px solid var(--ink);background:var(--bg);
+    box-shadow:var(--shadow-sm);width:fit-content;max-width:100%;
+  }
+  .filter{
+    padding:10px 18px;font-weight:600;font-size:14px;
+    letter-spacing:0.02em;border:2px solid transparent;
+    transition:all .15s;
+  }
+  .filter:hover{background:var(--bg-alt)}
+  .filter.active{background:var(--ink);color:var(--bg)}
+
+  /* ===== CATALOGO ===== */
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:20px;
+  }
+  .card{
+    border:2px solid var(--ink);background:var(--bg);
+    padding:26px;position:relative;
+    transition:transform .15s,box-shadow .15s;
+    cursor:pointer;
+  }
+  .card:hover{
+    transform:translate(-4px,-4px);
+    box-shadow:var(--shadow);
+  }
+  .card.active{
+    grid-column:1/-1;
+    transform:none;
+    background:var(--bg-alt);
+    box-shadow:var(--shadow-lg);
+    cursor:default;
+  }
+  .card-num{
+    font-family:"JetBrains Mono",monospace;
+    font-size:12px;color:var(--muted);font-weight:600;
+    margin-bottom:10px;
+  }
+  .card-title{
+    font-size:24px;font-weight:700;letter-spacing:-0.02em;
+    line-height:1.1;margin-bottom:8px;
+  }
+  .card-norm{
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    color:var(--muted);margin-bottom:18px;
+  }
+  .badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+  .badge{
+    padding:3px 9px;font-size:11px;font-weight:700;
+    letter-spacing:0.06em;color:#fff;
+    border:2px solid var(--ink);
+    font-family:"JetBrains Mono",monospace;
+  }
+  .badge[data-c="RIPAM"]{background:var(--ripam)}
+  .badge[data-c="MIC"]{background:var(--mic)}
+  .badge[data-c="FUNZ"]{background:var(--funz)}
+  .badge[data-c="MIMIT"]{background:var(--mimit)}
+  .badge[data-c="ISAC"]{background:var(--isac)}
+  .badge[data-c="CPI"]{background:var(--cpi)}
+  .formats{
+    display:flex;gap:12px;margin-bottom:20px;
+    padding-top:18px;border-top:2px solid var(--ink);
+  }
+  .fmt{
+    font-size:20px;opacity:0.85;
+  }
+  .card-foot{
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .price{
+    font-weight:700;font-size:18px;letter-spacing:-0.02em;
+  }
+  .price span{font-size:13px;color:var(--muted);font-weight:500}
+  .card-cta{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 14px;background:var(--acid);border:2px solid var(--ink);
+    font-weight:700;font-size:13px;
+    transition:transform .15s;
+  }
+  .card.active .card-cta{background:var(--ink);color:var(--bg)}
+  .card-cta:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm)}
+
+  /* expanded panel */
+  .expand{display:none;margin-top:30px;padding-top:30px;border-top:2px dashed var(--ink)}
+  .card.active .expand{display:block;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .subgrid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:16px;
+  }
+  .subcard{
+    border:2px solid var(--ink);padding:22px;background:var(--bg);
+    display:flex;flex-direction:column;gap:10px;
+    transition:transform .15s;
+  }
+  .subcard:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow-sm)}
+  .subcard[data-k="pod"]{background:var(--pink)}
+  .subcard[data-k="vid"]{background:var(--blue);color:var(--bg)}
+  .subcard[data-k="rep"]{background:var(--acid)}
+  .subcard[data-k="sim"]{background:var(--orange);color:var(--bg)}
+  .subcard-ico{font-size:28px;line-height:1}
+  .subcard-title{font-weight:700;font-size:18px;letter-spacing:-0.02em}
+  .subcard-desc{font-size:14px;line-height:1.45;opacity:0.9;flex:1}
+  .subcard-meta{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    padding-top:8px;border-top:2px solid var(--ink);
+    display:flex;justify-content:space-between;align-items:center;
+    font-weight:600;
+  }
+  .subcard-cta{
+    display:block;text-align:center;padding:10px 14px;
+    background:var(--ink);color:var(--bg);font-weight:700;font-size:13px;
+    border:2px solid var(--ink);margin-top:8px;
+    transition:transform .15s;
+  }
+  .subcard-cta:hover{transform:translate(-2px,-2px);box-shadow:var(--shadow-sm)}
+  .subcard[data-k="vid"] .subcard-cta,
+  .subcard[data-k="sim"] .subcard-cta{background:var(--bg);color:var(--ink)}
+
+  /* ===== BUNDLE ===== */
+  .bundles{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+  }
+  .bundle{
+    border:2px solid var(--ink);padding:32px;
+    box-shadow:var(--shadow);background:var(--bg);
+    display:flex;flex-direction:column;
+    transition:transform .15s;
+  }
+  .bundle:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-lg)}
+  .bundle:nth-child(1){background:var(--acid)}
+  .bundle:nth-child(2){background:var(--pink)}
+  .bundle:nth-child(3){background:var(--blue);color:var(--bg)}
+  .bundle-tag{
+    font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;
+    margin-bottom:10px;letter-spacing:0.05em;opacity:0.7;
+  }
+  .bundle-title{font-size:28px;font-weight:700;line-height:1;letter-spacing:-0.02em;margin-bottom:10px}
+  .bundle-desc{font-size:15px;margin-bottom:24px;flex:1;line-height:1.5;opacity:0.9}
+  .bundle-price{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin-bottom:20px}
+  .bundle-price small{font-size:13px;font-weight:500;display:block;opacity:0.7;margin-top:4px}
+  .bundle .btn{justify-content:center}
+  .bundle:nth-child(3) .btn-primary{background:var(--bg);color:var(--ink)}
+
+  /* ===== STEPS ===== */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .step{
+    border:2px solid var(--ink);padding:30px;background:var(--bg);
+    box-shadow:var(--shadow-sm);position:relative;
+  }
+  .step-num{
+    position:absolute;top:-18px;left:20px;
+    width:44px;height:44px;background:var(--ink);color:var(--acid);
+    display:grid;place-items:center;font-weight:700;font-size:20px;
+    border:2px solid var(--ink);
+    font-family:"JetBrains Mono",monospace;
+  }
+  .step h3{font-size:22px;font-weight:700;margin:16px 0 10px;letter-spacing:-0.02em}
+  .step p{color:var(--ink-soft);font-size:15px;line-height:1.5}
+
+  /* ===== FEATURES ===== */
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .feat{
+    display:flex;gap:14px;padding:20px;
+    border:2px solid var(--ink);background:var(--bg);
+    transition:transform .15s;
+  }
+  .feat:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow-sm);background:var(--acid)}
+  .feat-ico{
+    flex:0 0 36px;height:36px;background:var(--ink);color:var(--acid);
+    display:grid;place-items:center;font-weight:700;font-size:18px;
+    border:2px solid var(--ink);
+  }
+  .feat-txt strong{display:block;font-weight:700;margin-bottom:4px;font-size:16px}
+  .feat-txt span{font-size:14px;color:var(--ink-soft);line-height:1.45}
+
+  /* ===== SERVICE ===== */
+  .service{
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  }
+  .service-card{
+    border:2px solid var(--ink);padding:32px;
+    box-shadow:var(--shadow);
+    transition:transform .15s;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .service-card:hover{transform:translate(-4px,-4px);box-shadow:var(--shadow-lg)}
+  .service-card:nth-child(1){background:var(--pink)}
+  .service-card:nth-child(2){background:var(--acid)}
+  .service-ico{
+    width:54px;height:54px;background:var(--ink);color:var(--bg);
+    display:grid;place-items:center;font-size:24px;
+    border:2px solid var(--ink);
+  }
+  .service-card h3{font-size:24px;font-weight:700;line-height:1.05;letter-spacing:-0.02em}
+  .service-card p{font-size:15px;line-height:1.5;opacity:0.9;flex:1}
+  .service-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:14px;border-top:2px solid var(--ink);
+    font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;
+  }
+  .service-card .btn{background:var(--ink);color:var(--bg);justify-content:center}
+  @media(max-width:720px){ .service{grid-template-columns:1fr} }
+
+  /* ===== FORM ===== */
+  .form-wrap{
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;
+  }
+  .form-side h3{
+    font-size:28px;font-weight:700;letter-spacing:-0.02em;margin-bottom:16px;line-height:1.1;
+  }
+  .form-side p{color:var(--ink-soft);margin-bottom:20px;font-size:16px;line-height:1.5}
+  .form-side .tg{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 20px;background:var(--blue);color:var(--bg);
+    border:2px solid var(--ink);font-weight:700;
+    box-shadow:var(--shadow-sm);transition:transform .15s;
+  }
+  .form-side .tg:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
+  form{
+    border:2px solid var(--ink);padding:30px;background:var(--bg);
+    box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;
+  }
+  label{font-size:13px;font-weight:600;letter-spacing:0.02em;display:block;margin-bottom:6px}
+  input,select,textarea{
+    width:100%;padding:12px 14px;
+    border:2px solid var(--ink);background:var(--bg);
+    font-family:inherit;font-size:15px;color:var(--ink);
+    transition:background .15s;
+  }
+  input:focus,select:focus,textarea:focus{outline:none;background:var(--acid)}
+  textarea{resize:vertical;min-height:90px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  form button[type=submit]{
+    padding:16px;background:var(--ink);color:var(--bg);
+    border:2px solid var(--ink);font-weight:700;font-size:15px;
+    letter-spacing:0.02em;transition:all .15s;margin-top:6px;
+  }
+  form button[type=submit]:hover{background:var(--acid);color:var(--ink)}
+  .form-note{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+
+  @media(max-width:820px){
+    .form-wrap{grid-template-columns:1fr}
+    .form-row{grid-template-columns:1fr}
+  }
+
+  /* ===== FAQ ===== */
+  .faq-list{display:flex;flex-direction:column;gap:12px;max-width:860px}
+  .faq-item{
+    border:2px solid var(--ink);background:var(--bg);
+    transition:background .15s;
+  }
+  .faq-item[open]{background:var(--acid)}
+  .faq-item summary{
+    padding:20px 24px;font-weight:700;font-size:17px;
+    cursor:pointer;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:20px;
+    letter-spacing:-0.01em;
+  }
+  .faq-item summary::-webkit-details-marker{display:none}
+  .faq-item summary::after{
+    content:"+";font-size:28px;font-weight:400;transition:transform .2s;
+    font-family:"JetBrains Mono",monospace;
+  }
+  .faq-item[open] summary::after{transform:rotate(45deg)}
+  .faq-item p{
+    padding:0 24px 22px;color:var(--ink-soft);font-size:15px;line-height:1.6;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    background:var(--ink);color:var(--bg);
+    padding:60px 0 30px;
+  }
+  .foot-grid{
+    display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:40px;
+  }
+  .foot-about p{font-size:15px;opacity:0.7;margin-top:12px;max-width:360px;line-height:1.5}
+  .foot-col h4{font-size:13px;font-weight:600;letter-spacing:0.1em;margin-bottom:16px;color:var(--acid);font-family:"JetBrains Mono",monospace}
+  .foot-col a{display:block;padding:4px 0;opacity:0.8;font-size:15px;transition:opacity .15s}
+  .foot-col a:hover{opacity:1;color:var(--acid)}
+  .foot-bot{
+    padding-top:24px;border-top:1px solid rgba(245,240,232,0.15);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+    font-size:13px;opacity:0.6;font-family:"JetBrains Mono",monospace;
+  }
+  @media(max-width:720px){
+    .foot-grid{grid-template-columns:1fr;gap:30px}
+  }
+
+  /* hidden state for filter */
+  .card[hidden]{display:none!important}
+
+  /* scroll reveal */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">R</span>
+      <span>Ripam Studio <em style="font-style:normal;color:var(--blue)">Craft</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="#catalogo">Catalogo</a>
+      <a href="#come-funziona">Come funziona</a>
+      <a href="#contatti" class="nav-cta">Contattaci →</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <h1>Materiali didattici generati con AI. Addestrata sulla <span class="hl">normativa ufficiale.</span></h1>
+        <p class="hero-sub">Podcast, video, report e simulatori costruiti con RAG su fonti primarie. Aggiornati al 2026, rivisti a mano, consegnati in 24 ore.</p>
+        <div class="hero-ctas">
+          <a href="#catalogo" class="btn btn-primary">Sfoglia il catalogo →</a>
+          <a href="#come-funziona" class="btn btn-secondary">Come funziona</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="stat"><div class="stat-num">20</div><div class="stat-lbl">materie disponibili</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-lbl">formati per materia</div></div>
+        <div class="stat"><div class="stat-num">3.000</div><div class="stat-lbl">domande per simulatore</div></div>
+        <div class="stat"><div class="stat-num">24h</div><div class="stat-lbl">consegna su Telegram</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<section class="ticker" aria-label="valori Craft">
+  <div class="ticker-track">
+    <span class="ticker-item">AI + NORMATIVA UFFICIALE</span>
+    <span class="ticker-item">CUCITI SU MISURA</span>
+    <span class="ticker-item">REVISIONE UMANA</span>
+    <span class="ticker-item">CONSEGNA IN 24H</span>
+    <span class="ticker-item">AI + NORMATIVA UFFICIALE</span>
+    <span class="ticker-item">CUCITI SU MISURA</span>
+    <span class="ticker-item">REVISIONE UMANA</span>
+    <span class="ticker-item">CONSEGNA IN 24H</span>
+  </div>
+</section>
+
+<!-- CATALOGO -->
+<section id="catalogo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">01 · CATALOGO</span>
+      <h2>20 materie. 4 formati. Un solo standard di qualità.</h2>
+      <p>Filtra per concorso e trova subito quello che ti serve. Ogni materia include podcast, video, report e simulatore offline.</p>
+    </div>
+
+    <div class="filters reveal" role="tablist">
+      <button class="filter active" data-f="ALL">Tutti</button>
+      <button class="filter" data-f="RIPAM">Ripam</button>
+      <button class="filter" data-f="MIC">Mic</button>
+      <button class="filter" data-f="FUNZ">Funz</button>
+      <button class="filter" data-f="MIMIT">Mimit</button>
+      <button class="filter" data-f="ISAC">Isac</button>
+      <button class="filter" data-f="CPI">Cpi</button>
+    </div>
+
+    <div class="grid" id="catalogo-grid"></div>
+  </div>
+</section>
+
+<!-- BUNDLE -->
+<section id="bundle">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">02 · BUNDLE</span>
+      <h2>Risparmia con i pacchetti completi.</h2>
+      <p>Scegli tutto il necessario per una materia o per un intero concorso.</p>
+    </div>
+
+    <div class="bundles">
+      <div class="bundle reveal">
+        <div class="bundle-tag">MATERIA COMPLETA</div>
+        <div class="bundle-title">Tutti i 4 formati</div>
+        <p class="bundle-desc">Podcast + Video + Report + Simulatore della stessa materia. Il set di studio totale.</p>
+        <div class="bundle-price">49€<small>invece di 76€ · risparmi il 35%</small></div>
+        <a href="#contatti" class="btn btn-primary" data-bundle="materia">Richiedi bundle →</a>
+      </div>
+      <div class="bundle reveal">
+        <div class="bundle-tag">CONCORSO INTERO</div>
+        <div class="bundle-title">Bundle RIPAM</div>
+        <p class="bundle-desc">Tutte le materie del concorso RIPAM in tutti i formati. Preparazione completa.</p>
+        <div class="bundle-price">99€<small>oltre 50 ore di materiale</small></div>
+        <a href="#contatti" class="btn btn-primary" data-bundle="ripam">Richiedi bundle →</a>
+      </div>
+      <div class="bundle reveal">
+        <div class="bundle-tag">TUTTO</div>
+        <div class="bundle-title">Bundle Omnia</div>
+        <p class="bundle-desc">Tutte le 20 materie, tutti i formati, ogni aggiornamento incluso per un anno.</p>
+        <div class="bundle-price">179€<small>arsenale completo · massimo risparmio</small></div>
+        <a href="#contatti" class="btn btn-primary" data-bundle="omnia">Richiedi bundle →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COME FUNZIONA -->
+<section id="come-funziona">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">03 · COME FUNZIONA</span>
+      <h2>Tre passi. Zero complicazioni.</h2>
+      <p>Niente carrelli, niente account, niente abbonamenti mensili. Solo materiale, quando ti serve.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3>Sfoglia il catalogo</h3>
+        <p>Trova la materia e il formato che ti serve. Filtra per concorso, confronta prezzi e contenuti.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h3>Scrivici</h3>
+        <p>Via email o Telegram. Ti confermiamo disponibilità, invio delle istruzioni per il pagamento entro poche ore.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h3>Ricevi tutto</h3>
+        <p>Entro 24-48 ore su Telegram: file pronti da usare, nessun account, nessuna installazione.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COSA RICEVI -->
+<section id="cosa-ricevi">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">04 · COSA RICEVI</span>
+      <h2>Quello che fa la differenza.</h2>
+      <p>Non materiali generici: contenuti costruiti su normativa ufficiale, aggiornati al 2026, revisionati manualmente.</p>
+    </div>
+    <div class="features">
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Normativa ufficiale</strong><span>Non manuali datati. Fonti originali e aggiornate.</span></div></div>
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Distrattori calibrati</strong><span>Come nelle prove reali, non domande banali.</span></div></div>
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Simulatore offline</strong><span>File HTML, nessun account, funziona ovunque.</span></div></div>
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Aggiornato 2026</strong><span>Autonomia differenziata, D.Lgs. 36/2023 inclusi.</span></div></div>
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Revisione umana</strong><span>Ogni contenuto controllato da chi ha studiato.</span></div></div>
+      <div class="feat reveal"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Correzione gratuita</strong><span>Trovi un errore? Te lo correggiamo subito, gratis.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIZIO AUDIO CUSTOM -->
+<section id="servizio">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">05 · SERVIZIO CUSTOM</span>
+      <h2>Hai già il tuo materiale? Te lo trasformiamo noi.</h2>
+      <p>Mandaci i tuoi appunti, capitoli, PDF o audio — te li restituiamo nel formato che ti serve. Rifiniti, ascoltabili, studiabili.</p>
+    </div>
+    <div class="service">
+      <div class="service-card reveal">
+        <div class="service-ico">🎧</div>
+        <h3>Testo → Podcast</h3>
+        <p>Mandaci un PDF, un file Markdown o un testo. Te lo restituiamo come audio podcast: voce singola professionale, oppure dialogo a due voci (Marco + Laura) per un'esperienza più dinamica.</p>
+        <div class="service-meta">
+          <span>MP3 · 128kbps</span>
+          <span>da [PREZZO]€ / ora audio</span>
+        </div>
+        <a href="#contatti" class="btn" data-service="text-to-audio">Richiedi servizio →</a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-ico">📝</div>
+        <h3>Audio → Testo</h3>
+        <p>Mandaci una registrazione (lezione, aula, audio-lezione, nota vocale). Te la restituiamo trascritta in testo pulito e formattato, pronta per lo studio o per generare nuovi materiali.</p>
+        <div class="service-meta">
+          <span>TXT · Markdown · PDF</span>
+          <span>da [PREZZO]€ / ora audio</span>
+        </div>
+        <a href="#contatti" class="btn" data-service="audio-to-text">Richiedi servizio →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section id="contatti">
+  <div class="wrap">
+    <div class="form-wrap">
+      <div class="form-side reveal">
+        <span class="sec-kicker">06 · CONTATTI</span>
+        <h3 style="margin-top:16px">Scrivici. Ti rispondiamo entro poche ore.</h3>
+        <p>Nessun pagamento anticipato, nessun carrello. Compila il form e riceverai una risposta con disponibilità e istruzioni di pagamento.</p>
+        <p>Preferisci Telegram? È anche più veloce.</p>
+        <a href="https://t.me/ripam3997studio" target="_blank" rel="noopener" class="tg">
+          <span>📱</span> Scrivici su Telegram
+        </a>
+      </div>
+      <form id="contact-form">
+        <div>
+          <label for="f-nome">Il tuo nome</label>
+          <input type="text" id="f-nome" name="nome" required placeholder="Mario Rossi" />
+        </div>
+        <div>
+          <label for="f-email">Email</label>
+          <input type="email" id="f-email" name="email" required placeholder="mario.rossi@email.it" />
+        </div>
+        <div class="form-row">
+          <div>
+            <label for="f-concorso">Concorso</label>
+            <select id="f-concorso" name="concorso" required>
+              <option value="">Seleziona...</option>
+              <option>RIPAM</option><option>MIC</option><option>FUNZ</option>
+              <option>MIMIT</option><option>ISAC</option><option>CPI</option>
+              <option>Altro</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-prodotto">Prodotto</label>
+            <select id="f-prodotto" name="prodotto" required>
+              <option value="">Seleziona...</option>
+              <option>Podcast</option><option>Video</option><option>Report</option>
+              <option>Simulatore Custom</option><option>Bundle materia</option>
+              <option>Bundle concorso</option><option>Bundle Omnia</option>
+              <option>Servizio: Testo → Podcast</option>
+              <option>Servizio: Audio → Testo</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="f-materia">Materia di interesse</label>
+          <select id="f-materia" name="materia">
+            <option value="">Seleziona (opzionale)...</option>
+          </select>
+        </div>
+        <div>
+          <label for="f-note">Note</label>
+          <textarea id="f-note" name="note" placeholder="Qualsiasi cosa utile per rispondere meglio..."></textarea>
+        </div>
+        <button type="submit">Invia richiesta →</button>
+        <p class="form-note">Nessun pagamento anticipato. Risposta entro poche ore.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="sec-kicker">07 · FAQ</span>
+      <h2>Risposte rapide.</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item reveal"><summary>Perché non posso comprare direttamente dal sito?</summary><p>Gestiamo ogni ordine personalmente per garantire la qualità e il giusto materiale per il tuo concorso. Ti rispondiamo entro poche ore con istruzioni di pagamento.</p></details>
+      <details class="faq-item reveal"><summary>Come ricevo i materiali?</summary><p>Tutti i file vengono consegnati via Telegram entro 24-48 ore dalla conferma del pagamento. Podcast in MP3, video in MP4, report in PDF, simulatore in HTML offline.</p></details>
+      <details class="faq-item reveal"><summary>I contenuti sono aggiornati?</summary><p>Sì. Generati da normativa ufficiale aggiornata al 2026 (autonomia differenziata, D.Lgs. 36/2023, riforme più recenti).</p></details>
+      <details class="faq-item reveal"><summary>Sono generati con AI?</summary><p>Sì, con AI a partire da testi normativi ufficiali e poi revisionati manualmente. È un punto di forza: aggiornamenti rapidi, distrattori calibrati, zero copia-incolla da vecchi manuali. Se trovi imprecisioni, le correggiamo gratis.</p></details>
+      <details class="faq-item reveal"><summary>Posso comprare solo una materia?</summary><p>Certo. Ogni materia e ogni formato è acquistabile singolarmente. I bundle servono solo a risparmiare se ti serve tutto.</p></details>
+      <details class="faq-item reveal"><summary>Il simulatore funziona senza internet?</summary><p>Sì, completamente offline. È un file HTML che apri nel browser: funziona su PC, tablet, smartphone. Nessun account, nessuna installazione.</p></details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-about">
+        <div class="logo" style="color:var(--bg)">
+          <span class="logo-mark">R</span>
+          <span>Ripam Studio <em style="font-style:normal;color:var(--acid)">Craft</em></span>
+        </div>
+        <p>Materiali didattici per la preparazione ai concorsi pubblici italiani. Dalla piattaforma con 625.000 visite in 3 mesi.</p>
+      </div>
+      <div class="foot-col">
+        <h4>NAVIGA</h4>
+        <a href="#catalogo">Catalogo</a>
+        <a href="#bundle">Bundle</a>
+        <a href="#come-funziona">Come funziona</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h4>CONTATTI</h4>
+        <a href="https://t.me/ripam3997studio" target="_blank" rel="noopener">Telegram</a>
+        <a href="mailto:[EMAIL]">Email</a>
+        <a href="https://ripam-studio.vercel.app" target="_blank" rel="noopener">Piattaforma gratuita</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 Ripam Studio Craft · P.IVA [PIVA]</span>
+      <span>Contenuti per uso personale di studio</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ===== DATA =====
+const MATERIE = [
+  {n:1,t:"Diritto Amministrativo",norm:"L. 241/1990",c:["RIPAM","MIC","FUNZ","MIMIT"]},
+  {n:2,t:"Pubblico Impiego",norm:"D.Lgs. 165/2001",c:["RIPAM","MIC","FUNZ","MIMIT","ISAC"]},
+  {n:3,t:"Contratti Pubblici",norm:"D.Lgs. 36/2023",c:["RIPAM","MIC","MIMIT","ISAC"]},
+  {n:4,t:"Ordinamento PA",norm:"D.Lgs. 300/1999",c:["RIPAM","MIC","FUNZ","MIMIT"]},
+  {n:5,t:"Diritto Penale PA",norm:"Codice Penale",c:["RIPAM","MIC","FUNZ","MIMIT","ISAC"]},
+  {n:6,t:"CAD",norm:"D.Lgs. 82/2005",c:["RIPAM","MIC","FUNZ","MIMIT","ISAC"]},
+  {n:7,t:"Diritto Costituzionale",norm:"Costituzione",c:["FUNZ","MIMIT","CPI"]},
+  {n:8,t:"Diritto UE",norm:"Trattati e Istituzioni",c:["RIPAM","MIC","MIMIT"]},
+  {n:9,t:"GDPR",norm:"Reg. UE 2016/679",c:["RIPAM","FUNZ","MIMIT"]},
+  {n:10,t:"Informatica",norm:"Conoscenza informatica",c:["RIPAM","MIC","FUNZ","MIMIT","ISAC"]},
+  {n:11,t:"Inglese A2",norm:"Livello QCER A2",c:["RIPAM","MIC","ISAC"]},
+  {n:12,t:"Logica",norm:"Ragionamento logico",c:["RIPAM","MIC","FUNZ","MIMIT"]},
+  {n:13,t:"Sicurezza Lavoro",norm:"D.Lgs. 81/2008",c:["MIC","ISAC"]},
+  {n:14,t:"Patrimonio Culturale",norm:"Diritto del patrimonio",c:["MIC"]},
+  {n:15,t:"Beni Culturali",norm:"D.Lgs. 42/2004",c:["MIC"]},
+  {n:16,t:"Archeologia, Arte, Musei",norm:"Storia e gestione",c:["MIC"]},
+  {n:17,t:"Scavo e Ricerca Archeologica",norm:"Metodologia",c:["MIC"]},
+  {n:18,t:"Marketing e Comunicazione",norm:"Comunicazione PA",c:["MIC"]},
+  {n:19,t:"Organizzazione MIC",norm:"DPCM organizzativi",c:["MIC"]},
+  {n:20,t:"Diritto Civile",norm:"Codice Civile",c:["FUNZ","MIMIT"]}
+];
+
+const FORMATI = [
+  {k:"pod",ico:"🎙️",t:"Serie Podcast",desc:"8 episodi audio, ~3 ore totali. Generati con NotebookLM da testi normativi ufficiali. Ideale per studiare in mobilità, auto, palestra.",fmt:"MP3",label:"Podcast",price:19},
+  {k:"vid",ico:"🎥",t:"Serie Video",desc:"8 episodi video con la stessa struttura del podcast, in formato visivo. Perfetto per ripasso veloce e studio visivo.",fmt:"MP4",label:"Video",price:19},
+  {k:"rep",ico:"📄",t:"Report di Studio",desc:"PDF strutturato: sintesi normativa, punti chiave, trabocchetti frequenti, tavole riassuntive. Aggiornato alle modifiche 2026.",fmt:"PDF",label:"Report",price:9},
+  {k:"sim",ico:"🎯",t:"Simulatore Custom",desc:"500 domande cucite su misura per te: argomenti a scelta, difficoltà calibrata, stile personalizzato. HTML offline con spiegazioni + errore comune + riferimento normativo.",fmt:"HTML",label:"Simulatore Custom",price:29}
+];
+
+// ===== RENDER CATALOGO =====
+const grid = document.getElementById('catalogo-grid');
+MATERIE.forEach(m=>{
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.concorsi = m.c.join(',');
+  card.dataset.materia = m.t;
+  card.innerHTML = `
+    <div class="card-num">#${String(m.n).padStart(2,'0')}</div>
+    <div class="card-title">${m.t}</div>
+    <div class="card-norm">${m.norm}</div>
+    <div class="badges">${m.c.map(c=>`<span class="badge" data-c="${c}">${c}</span>`).join('')}</div>
+    <div class="formats">
+      <span class="fmt" title="Podcast">🎙️</span>
+      <span class="fmt" title="Video">🎥</span>
+      <span class="fmt" title="Report">📄</span>
+      <span class="fmt" title="Simulatore">🎯</span>
+    </div>
+    <div class="card-foot">
+      <div class="price">da 9€ <span>/ formato</span></div>
+      <button class="card-cta" type="button">Scopri →</button>
+    </div>
+    <div class="expand">
+      <div class="subgrid">
+        ${FORMATI.map(f=>`
+          <div class="subcard" data-k="${f.k}">
+            <div class="subcard-ico">${f.ico}</div>
+            <div class="subcard-title">${f.t}</div>
+            <div class="subcard-desc">${f.desc}</div>
+            <div class="subcard-meta"><span>${f.fmt}</span><span>${f.price}€</span></div>
+            <a href="#contatti" class="subcard-cta" data-req-materia="${m.t}" data-req-prodotto="${f.label}">Richiedi questo →</a>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+// popola select materie del form
+const selMateria = document.getElementById('f-materia');
+MATERIE.forEach(m=>{
+  const o = document.createElement('option');
+  o.value = m.t; o.textContent = m.t;
+  selMateria.appendChild(o);
+});
+
+// ===== FILTER =====
+const filters = document.querySelectorAll('.filter');
+filters.forEach(b=>b.addEventListener('click',()=>{
+  filters.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  const f = b.dataset.f;
+  document.querySelectorAll('.card').forEach(c=>{
+    if(c.classList.contains('active')) c.classList.remove('active');
+    const cs = c.dataset.concorsi.split(',');
+    c.hidden = (f !== 'ALL' && !cs.includes(f));
+  });
+}));
+
+// ===== EXPAND CARD =====
+document.querySelectorAll('.card').forEach(c=>{
+  c.addEventListener('click',(e)=>{
+    if(e.target.closest('.subcard-cta') || e.target.closest('.expand')) return;
+    const wasActive = c.classList.contains('active');
+    document.querySelectorAll('.card.active').forEach(x=>x.classList.remove('active'));
+    if(!wasActive){
+      c.classList.add('active');
+      setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'start'}),100);
+    }
+  });
+});
+
+// ===== REQUEST FROM SUBCARD =====
+document.querySelectorAll('[data-req-materia]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const materia = a.dataset.reqMateria;
+    const prodotto = a.dataset.reqProdotto;
+    // trova concorso predefinito: primo concorso della materia
+    const card = a.closest('.card');
+    const concorso = card.dataset.concorsi.split(',')[0];
+    document.getElementById('f-materia').value = materia;
+    document.getElementById('f-prodotto').value = prodotto;
+    document.getElementById('f-concorso').value = concorso;
+  });
+});
+
+// ===== SERVICE CTA =====
+document.querySelectorAll('[data-service]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const s = a.dataset.service;
+    const map = {'text-to-audio':'Servizio: Testo → Podcast','audio-to-text':'Servizio: Audio → Testo'};
+    document.getElementById('f-prodotto').value = map[s];
+  });
+});
+
+// ===== BUNDLE CTA =====
+document.querySelectorAll('[data-bundle]').forEach(a=>{
+  a.addEventListener('click',()=>{
+    const b = a.dataset.bundle;
+    const map = {materia:'Bundle materia',ripam:'Bundle concorso',omnia:'Bundle Omnia'};
+    document.getElementById('f-prodotto').value = map[b];
+    if(b==='ripam') document.getElementById('f-concorso').value = 'RIPAM';
+  });
+});
+
+// ===== FORM SUBMIT (mailto) =====
+document.getElementById('contact-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const d = new FormData(e.target);
+  const subject = `Richiesta materiali — ${d.get('prodotto')} (${d.get('concorso')})`;
+  const body =
+`Ciao,
+sono interessato al seguente materiale:
+
+• Nome: ${d.get('nome')}
+• Email: ${d.get('email')}
+• Concorso: ${d.get('concorso')}
+• Materia: ${d.get('materia') || '—'}
+• Prodotto: ${d.get('prodotto')}
+
+Note:
+${d.get('note') || '—'}
+
+Grazie!`;
+  const mail = `mailto:[EMAIL]?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mail;
+});
+
+// ===== REVEAL ON SCROLL =====
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
