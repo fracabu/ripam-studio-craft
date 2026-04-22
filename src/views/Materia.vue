@@ -70,8 +70,8 @@ const requestBundle = () => {
 const ctaLabel = () => 'Richiedi informazioni →'
 const ctaHandler = (f) => requestFormat(f)
 
-const tabIcon = { pod:'🎙️', vid:'🎥', rep:'📄', sim:'🎯' }
-const tabLabel = { pod:'Podcast', vid:'Video', rep:'Report', sim:'Simulatore' }
+const tabIcon = { pod:'🎙️', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
+const tabLabel = { pod:'Podcast', vid:'Video', rep:'Report', man:'Manuale', sim:'Simulatore' }
 
 const freeEpisode = computed(() => {
   const c = contenuti.value
@@ -118,9 +118,9 @@ watch(materia, (m) => {
     <section class="mat-section">
       <div class="wrap">
         <div class="sec-head">
-          <span class="sec-kicker">I 4 FORMATI</span>
+          <span class="sec-kicker">I FORMATI</span>
           <h2>Scegli come studiare.</h2>
-          <p>Stesso contenuto, 4 formati diversi. Oppure prendi tutto con il bundle materia.</p>
+          <p>Stesso contenuto, cinque formati diversi. Prendili singolarmente o combinati nel percorso completo.</p>
         </div>
         <div class="detail-formats-grid">
           <div v-for="f in FORMATI" :key="f.k" class="detail-fmt" :data-k="f.k">
@@ -147,7 +147,7 @@ watch(materia, (m) => {
         </div>
 
         <div class="struct-tabs">
-          <button v-for="k in ['pod','vid','rep','sim']" :key="k"
+          <button v-for="k in ['pod','vid','rep','man','sim']" :key="k"
             class="struct-tab" :class="{active: activeTab===k}" @click="activeTab=k"
             :disabled="!contenuti[k]">
             <span class="struct-tab-ico">{{ tabIcon[k] }}</span>
@@ -190,19 +190,19 @@ watch(materia, (m) => {
           </div>
         </div>
 
-        <!-- REPORT -->
-        <div v-else-if="activeTab==='rep' && contenuti.rep" class="struct-panel">
+        <!-- REPORT / MANUALE -->
+        <div v-else-if="(activeTab==='rep' || activeTab==='man') && contenuti[activeTab]" class="struct-panel">
           <div class="struct-summary">
             <div class="struct-stat">
-              <div class="struct-stat-num">{{ contenuti.rep.chapters.length }}</div>
-              <div class="struct-stat-lbl">CAPITOLI</div>
+              <div class="struct-stat-num">{{ contenuti[activeTab].chapters.length }}</div>
+              <div class="struct-stat-lbl">{{ activeTab==='man' ? 'CAPITOLI' : 'SEZIONI' }}</div>
             </div>
             <div class="struct-stat">
-              <div class="struct-stat-num">{{ contenuti.rep.total }}</div>
+              <div class="struct-stat-num">{{ contenuti[activeTab].total }}</div>
               <div class="struct-stat-lbl">PAGINE</div>
             </div>
             <div class="struct-stat">
-              <div class="struct-stat-num">PDF</div>
+              <div class="struct-stat-num">{{ activeTab==='man' ? 'PDF+HTML' : 'PDF' }}</div>
               <div class="struct-stat-lbl">FORMATO</div>
             </div>
             <div class="struct-stat">
@@ -211,10 +211,13 @@ watch(materia, (m) => {
             </div>
           </div>
           <div class="chapters">
-            <div v-for="(c, i) in contenuti.rep.chapters" :key="i" class="chap">
+            <div v-for="(c, i) in contenuti[activeTab].chapters" :key="i" class="chap">
               <span class="chap-num">{{ String(i+1).padStart(2,'0') }}</span>
               <span>{{ c }}</span>
             </div>
+          </div>
+          <div v-if="activeTab==='man'" class="struct-note">
+            <strong>Livello editoriale:</strong> generato con pipeline AI multi-agente (TopicArchitect, LegalScholar, VeritasBot, EditorChief, DidacticPro) a partire dal testo normativo ufficiale, con revisione manuale. Ogni capitolo include tabelle, callout sulle domande ricorrenti, FAQ e quiz di autovalutazione.
           </div>
         </div>
 

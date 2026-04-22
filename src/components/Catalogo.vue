@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { MATERIE } from '../data/materie.js'
-import { CONCORSI } from '../data/formati.js'
+import { CONCORSI, FORMATI } from '../data/formati.js'
 
 const router = useRouter()
 const filtro = ref('ALL')
@@ -42,10 +42,7 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
             <span v-for="c in m.c" :key="c" class="badge" :data-c="c">{{ c }}</span>
           </div>
           <div class="formats">
-            <span class="fmt" title="Podcast">🎙️</span>
-            <span class="fmt" title="Video">🎥</span>
-            <span class="fmt" title="Report">📄</span>
-            <span class="fmt" title="Simulatore">🎯</span>
+            <span v-for="f in FORMATI" :key="f.k" class="fmt" :title="f.label">{{ f.ico }}</span>
           </div>
           <div class="card-foot">
             <div class="card-hint">{{ m.topics.length }} argomenti</div>

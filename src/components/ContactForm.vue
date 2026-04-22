@@ -101,10 +101,10 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
                   <option>Podcast</option>
                   <option>Video</option>
                   <option>Report</option>
+                  <option>Manuale Completo</option>
                   <option>Simulatore Custom</option>
                   <option>Bundle materia</option>
                   <option>Bundle concorso</option>
-                  <option>Bundle Omnia</option>
                 </optgroup>
                 <optgroup label="Consulenza">
                   <option>Coaching NotebookLM 1:1</option>

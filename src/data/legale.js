@@ -5,7 +5,7 @@ export const LEGAL_HOLDER = {
   nome: 'Francesco Capurso',
   brand: 'Ripam Studio Craft',
   citta: 'Roma',
-  piva: '[P.IVA — in attivazione]',
+  piva: '18528431002',
   email: 'ripamstudiocraft@gmail.com',
   ultimoAggiornamento: '2026-04-21'
 }

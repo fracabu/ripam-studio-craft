@@ -38,19 +38,35 @@ export const CONTENUTI = {
       ]
     },
     rep: {
-      total: '~80 pagine',
+      total: '~25 pagine',
       chapters: [
-        'Introduzione: struttura e finalità della L. 241/1990',
-        'Fasi del procedimento amministrativo',
-        'Responsabile del procedimento: compiti e responsabilità',
-        'Partecipazione al procedimento',
-        'Silenzio-assenso, silenzio-diniego, silenzio-inadempimento',
-        'SCIA e conferenza di servizi',
-        'Invalidità: nullità e annullabilità dell\'atto',
-        'Autotutela: annullamento d\'ufficio, revoca, convalida',
-        'Accesso documentale, civico e civico generalizzato (FOIA)',
-        'I 30 trabocchetti ricorrenti nei quiz concorsi',
+        'Sintesi del procedimento amministrativo',
+        'Silenzio, SCIA, conferenza di servizi — cheat sheet',
+        'Autotutela e invalidità — mappa concettuale',
+        'Accesso documentale / civico / FOIA',
+        'I 30 trabocchetti ricorrenti nei quiz',
         'Tavole riassuntive: termini, competenze, rimedi'
+      ]
+    },
+    man: {
+      total: '~220 pagine · 16 capitoli',
+      chapters: [
+        'Principi generali del procedimento (art. 1 L. 241/1990)',
+        'Fasi del procedimento: iniziativa, istruttoria, decisione',
+        'Il responsabile del procedimento: compiti e responsabilità',
+        'Partecipazione al procedimento: avviso, preavviso, motivazione',
+        'Silenzio-assenso (art. 20): ambito e tempi',
+        'Silenzio-diniego e silenzio-inadempimento',
+        'SCIA: presupposti, controlli successivi, regolarizzazione',
+        'Conferenza di servizi: semplificata e simultanea',
+        'Invalidità dell\'atto: nullità vs annullabilità',
+        'Autotutela decisoria: annullamento d\'ufficio (art. 21-nonies)',
+        'Autotutela: revoca, convalida, sanatoria, ratifica',
+        'Accesso documentale (L. 241/1990, art. 22 ss.)',
+        'Accesso civico e civico generalizzato (FOIA)',
+        'Termini del procedimento: ordinatori e perentori',
+        'FAQ + quiz di autovalutazione per capitolo',
+        'Tavole riassuntive e cheat sheet finale'
       ]
     },
     sim: {

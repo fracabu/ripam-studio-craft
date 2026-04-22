@@ -3,28 +3,35 @@ export const FORMATI = [
     k:'pod', ico:'🎙️',
     t:'Serie Podcast',
     short:'Audio podcast, 8 episodi',
-    desc:'8 episodi audio, ~3 ore totali. Generati con TTS professionale da testi normativi ufficiali. Trascrizioni testuali incluse. Ideale per studiare in mobilità.',
+    desc:'~3 ore di audio sul testo normativo, con trascrizioni. Studiabile ovunque, senza schermo.',
     fmt:'MP3 + TXT', label:'Podcast', price:19
   },
   {
     k:'vid', ico:'🎥',
     t:'Serie Video',
     short:'Video lezioni, 8 episodi',
-    desc:'8 episodi video con stessa struttura del podcast in formato visivo. Sottotitoli SRT inclusi. Perfetto per ripasso e studio visivo.',
+    desc:'Le stesse lezioni in formato visivo, con sottotitoli SRT. Per un ripasso rapido.',
     fmt:'MP4 + SRT', label:'Video', price:19
   },
   {
     k:'rep', ico:'📄',
     t:'Report di Studio',
-    short:'Dispensa PDF studio-ready',
-    desc:'PDF strutturato: sintesi normativa, punti chiave, trabocchetti frequenti, tavole riassuntive. Aggiornato 2026.',
+    short:'Dispensa PDF sintetica',
+    desc:'La sintesi essenziale in PDF: punti chiave, trabocchetti, tavole riassuntive. Ripasso veloce.',
     fmt:'PDF', label:'Report', price:9
+  },
+  {
+    k:'man', ico:'📚',
+    t:'Manuale Completo',
+    short:'Manuale editoriale premium',
+    desc:'Un manuale editoriale 200-300 pagine. Tabelle, FAQ, quiz per capitolo. Livello libreria.',
+    fmt:'PDF + HTML', label:'Manuale Completo', price:19
   },
   {
     k:'sim', ico:'🎯',
     t:'Simulatore Custom',
     short:'500 domande su misura',
-    desc:'500 domande in stile concorso — mix bilanciato di quesiti concettuali e specifici, cuciti su misura per te. HTML offline con spiegazioni, errore comune e riferimento normativo per ogni domanda.',
+    desc:'500 domande stile concorso, cucite su misura. HTML offline, funziona ovunque.',
     fmt:'HTML', label:'Simulatore Custom', price:29
   }
 ]
