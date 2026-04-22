@@ -38,3 +38,7 @@ Thumbs.db
 
 # claude-specific local state
 .claude
+
+# template messaggi privati per i clienti (contengono IBAN, prezzi, dati personali)
+# devono restare solo in locale, MAI su GitHub o Vercel
+messaggi-clienti/
