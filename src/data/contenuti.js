@@ -8,6 +8,36 @@
 //   sim: { total, breakdown:[{topic,count}] }
 
 export const CONTENUTI = {
+  'pubblico-impiego': {
+    aul: {
+      total: '8 episodi · ~4 ore',
+      episodes: [
+        { n:1, title:'Dal suddito al contratto',              duration:'~30 min', free:true },
+        { n:2, title:'Il potere dei dirigenti',               duration:'~30 min' },
+        { n:3, title:'Entrare nello Stato',                   duration:'~30 min' },
+        { n:4, title:'Il contratto che governa',              duration:'~30 min' },
+        { n:5, title:'Il codice del dipendente',              duration:'~30 min' },
+        { n:6, title:'I confini del dipendente',              duration:'~30 min' },
+        { n:7, title:'Il quadro completo',                    duration:'~30 min' },
+        { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'~30 min' }
+      ]
+    }
+  },
+  'contratti-pubblici': {
+    aul: {
+      total: '8 episodi · ~4 ore',
+      episodes: [
+        { n:1, title:'Un nuovo codice per gli appalti',       duration:'~30 min', free:true },
+        { n:2, title:'Dall\'idea al bando',                   duration:'~30 min' },
+        { n:3, title:'Le regole del gioco',                   duration:'~30 min' },
+        { n:4, title:'Chi vince e perché',                    duration:'~30 min' },
+        { n:5, title:'La porta d\'ingresso',                  duration:'~30 min' },
+        { n:6, title:'Dopo l\'aggiudicazione',                duration:'~30 min' },
+        { n:7, title:'Soglie, numeri e collegamenti',         duration:'~30 min' },
+        { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'~30 min' }
+      ]
+    }
+  },
   'diritto-amministrativo': {
     pod: {
       total: '8 episodi · 3h 22min',
@@ -20,6 +50,19 @@ export const CONTENUTI = {
         { n:6, title:'I tuoi diritti con la Legge 241',             duration:'29:47' },
         { n:7, title:'Quanto costa il silenzio della burocrazia',   duration:'31:04' },
         { n:8, title:'Quando il silenzio dello Stato diventa legge', duration:'32:29' }
+      ]
+    },
+    aul: {
+      total: '8 episodi · ~4 ore',
+      episodes: [
+        { n:1, title:'Dallo Stato opaco alla casa di vetro',       duration:'~32 min', free:true },
+        { n:2, title:'Il cronometro della PA',                     duration:'~32 min' },
+        { n:3, title:'Il regista invisibile',                      duration:'~31 min' },
+        { n:4, title:'Quando il silenzio parla',                   duration:'~29 min' },
+        { n:5, title:'Tutti al tavolo',                            duration:'~29 min' },
+        { n:6, title:'Vita e morte degli atti',                    duration:'~29 min' },
+        { n:7, title:'Tre porte per la trasparenza',               duration:'~29 min' },
+        { n:8, title:'Simulazione d\'esame — 30 domande',          duration:'~29 min' }
       ]
     },
     vid: {

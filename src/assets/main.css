@@ -373,6 +373,17 @@ section{padding:90px 0;border-bottom:2px solid var(--ink)}
   box-shadow:var(--shadow-sm);transition:transform .15s;
 }
 .form-side .tg:hover{transform:translate(-3px,-3px);box-shadow:var(--shadow)}
+.form-side .pay-inline{
+  margin-top:28px;padding-top:20px;border-top:1px solid var(--ink-soft);
+  display:flex;flex-direction:column;gap:8px;
+}
+.form-side .pay-inline-label{
+  font-size:11px;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--ink-soft);
+}
+.form-side .pay-inline-items{
+  font-size:15px;font-weight:600;color:var(--ink);line-height:1.4;
+}
 form.contact{
   border:2px solid var(--ink);padding:24px;background:var(--bg);
   box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;

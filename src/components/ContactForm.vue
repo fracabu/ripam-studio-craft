@@ -72,6 +72,11 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
           <a href="https://t.me/[USERNAME]" target="_blank" rel="noopener" class="tg">
             <span>📱</span> Scrivimi su Telegram
           </a>
+
+          <div class="pay-inline">
+            <span class="pay-inline-label">Pagamenti accettati</span>
+            <span class="pay-inline-items">💳 Satispay · 🅿️ PayPal · 🏦 Bonifico</span>
+          </div>
         </div>
 
         <!-- FORM -->

@@ -2,9 +2,16 @@ export const FORMATI = [
   {
     k:'pod', ico:'🎙️',
     t:'Serie Podcast',
-    short:'Audio podcast, 8 episodi',
-    desc:'~3 ore di audio sul testo normativo, con trascrizioni. Studiabile ovunque, senza schermo.',
+    short:'Podcast dialogato, 8 episodi',
+    desc:'Serie podcast in stile NotebookLM: due voci che discutono la materia in modo accessibile. ~3 ore totali, con trascrizioni. Per ascolto rilassato in auto, palestra, passeggiata.',
     fmt:'MP3 + TXT', label:'Podcast', price:19
+  },
+  {
+    k:'aul', ico:'🎧',
+    t:'Audio Lezioni',
+    short:'Lezioni audio, 8 episodi',
+    desc:'Lettura integrale degli episodi testuali (~30.000 parole a episodio). Monovoce didattica, ~4 ore totali, con trascrizioni. Per studio strutturato e ripasso.',
+    fmt:'MP3 + TXT', label:'Audio Lezioni', price:19
   },
   {
     k:'vid', ico:'🎥',
@@ -86,8 +93,8 @@ export const PILASTRI = [
     t:'Sviluppo tool',
     lead:'Web app e strumenti su misura',
     desc:'Web app dedicate a una singola materia, simulatori custom, dashboard di studio, strumenti di conversione: dalla tua idea al prodotto finito.',
-    anchor:'#tools',
-    cta:'Scopri gli strumenti →',
+    anchor:'#contatti',
+    cta:'Parliamone →',
     accent:'blue'
   }
 ]
@@ -122,8 +129,8 @@ export const BUNDLES = [
   {
     slug:'materia-completa',
     tag:'MATERIA COMPLETA',
-    title:'I 4 formati di una materia',
-    desc:'Podcast + Video + Report + Simulatore, integrati sulla stessa materia. Il percorso di studio totale su un argomento.',
+    title:'I 5 formati di una materia',
+    desc:'Podcast + Audio Lezioni + Video + Report + Simulatore, integrati sulla stessa materia. Il percorso di studio totale su un argomento.',
     note:'modulabile sul taglio che preferisci',
     accent:'acid'
   },

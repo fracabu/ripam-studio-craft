@@ -7,7 +7,7 @@ export const LEGAL_HOLDER = {
   citta: 'Roma',
   piva: '18528431002',
   email: 'ripamstudiocraft@gmail.com',
-  ultimoAggiornamento: '2026-04-21'
+  ultimoAggiornamento: '2026-04-23'
 }
 
 export const PAGES = {
@@ -113,23 +113,27 @@ export const PAGES = {
         p: 'I materiali ricevuti sono destinati all\'uso personale di studio del cliente. È vietata la riproduzione, la distribuzione, la condivisione con terzi, la rivendita o la pubblicazione su piattaforme online dei contenuti ricevuti, ai sensi della L. 633/1941 sul diritto d\'autore. In caso di violazioni, il Titolare si riserva di tutelarsi nelle sedi competenti.'
       },
       {
-        t: '7. Generazione con intelligenza artificiale',
-        p: 'I contenuti prodotti sono generati con tecniche di AI e RAG (Retrieval-Augmented Generation) a partire da testi normativi ufficiali, con successiva revisione manuale. La generazione AI è dichiarata come parte del processo produttivo ed è considerata un punto di forza del servizio (aggiornamento rapido, distrattori calibrati). Eventuali imprecisioni segnalate dal cliente vengono corrette gratuitamente.'
+        t: '7. Generazione con intelligenza artificiale e gestione imprecisioni',
+        p: 'I contenuti prodotti sono generati con tecniche di AI e RAG (Retrieval-Augmented Generation) a partire da testi normativi ufficiali, con successiva revisione manuale. La generazione AI è dichiarata come parte del processo produttivo ed è considerata un punto di forza del servizio (aggiornamento rapido, distrattori calibrati, costi accessibili). Pur con la revisione umana, i materiali possono contenere imprecisioni, refusi o non riflettere aggiornamenti normativi successivi alla data di consegna indicata sul file. Per questo motivo il cliente è tenuto, prima di utilizzare i contenuti per scelte critiche, a verificarli sulle fonti normative primarie citate nel materiale stesso. I materiali sono un supporto allo studio, non un sostituto della consultazione diretta delle fonti normative ufficiali.'
       },
       {
-        t: '8. Limitazione di responsabilità',
-        p: 'Il Titolare non risponde di eventuali danni, mancate opportunità o esito negativo di prove concorsuali derivanti dall\'utilizzo dei materiali forniti, fermi restando gli obblighi imposti dalla legge e la garanzia di qualità sui contenuti prodotti.'
+        t: '8. Politica di correzione errori',
+        p: 'Il cliente ha 60 giorni dalla data di consegna per segnalare errori fattuali, imprecisioni normative, refusi gravi o link non funzionanti scrivendo a ' + LEGAL_HOLDER.email + '. Le correzioni verificate vengono pubblicate in una nuova versione del materiale entro 72 ore lavorative dalla segnalazione e rinviate al cliente senza costi aggiuntivi. Trascorsi i 60 giorni, aggiornamenti e correzioni restano possibili ma vengono concordati caso per caso. La garanzia di correzione non copre: preferenze stilistiche del cliente (scelta dei caratteri, sintesi di un paragrafo, ecc.), richieste di nuovi contenuti rispetto allo scope concordato, modifiche dovute ad aggiornamenti normativi intervenuti dopo la consegna (gestibili come nuovo preventivo).'
       },
       {
-        t: '9. Recesso',
+        t: '9. Limitazione di responsabilità',
+        p: 'Il Titolare non risponde di eventuali danni, mancate opportunità o esito negativo di prove concorsuali derivanti dall\'utilizzo dei materiali forniti. In caso di inadempimento o vizio del servizio, ferme restando le garanzie di legge a favore del consumatore (in particolare artt. 128 e seguenti D.Lgs. 206/2005), la responsabilità economica del Titolare è in ogni caso limitata al prezzo effettivamente pagato dal cliente per il singolo materiale oggetto della contestazione, con esclusione di ogni responsabilità per danni indiretti o consequenziali.'
+      },
+      {
+        t: '10. Recesso',
         p: 'Ai sensi del D.Lgs. 206/2005 (Codice del Consumo), il cliente consumatore ha diritto di recedere entro 14 giorni dall\'acquisto. Tuttavia, per contenuti digitali personalizzati consegnati prima della scadenza del termine di recesso, il diritto decade se il cliente ha espressamente acconsentito all\'esecuzione anticipata (e sarà richiesto esplicitamente prima della consegna).'
       },
       {
-        t: '10. Foro competente',
+        t: '11. Foro competente',
         p: 'Per qualsiasi controversia relativa all\'interpretazione o esecuzione dei presenti Termini è competente il Foro di Roma, fatte salve le competenze inderogabili di legge in caso di controversia con cliente consumatore.'
       },
       {
-        t: '11. Aggiornamenti',
+        t: '12. Aggiornamenti',
         p: `I presenti Termini possono essere aggiornati. La versione vigente è quella pubblicata in questa pagina. Ultimo aggiornamento: ${LEGAL_HOLDER.ultimoAggiornamento}.`
       }
     ]

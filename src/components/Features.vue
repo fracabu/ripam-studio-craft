@@ -14,7 +14,7 @@
         <div class="feat"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Aggiornato 2026</strong><span>Autonomia differenziata, D.Lgs. 36/2023 inclusi.</span></div></div>
         <div class="feat"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Revisione umana</strong><span>Ogni contenuto controllato da chi ha studiato.</span></div></div>
         <div class="feat"><div class="feat-ico">✓</div><div class="feat-txt"><strong>Correzione gratuita</strong><span>Trovi un errore? Te lo correggiamo subito, gratis.</span></div></div>
-        <div class="feat"><div class="feat-ico">♿</div><div class="feat-txt"><strong>Sottotitoli e trascrizioni</strong><span>Sottotitoli SRT sui video e trascrizioni testuali sui podcast, incluse.</span></div></div>
+        <div class="feat"><div class="feat-ico">♿</div><div class="feat-txt"><strong>Sottotitoli e trascrizioni</strong><span>Sottotitoli SRT sui video e trascrizioni testuali sui materiali audio, incluse.</span></div></div>
       </div>
     </div>
   </section>
