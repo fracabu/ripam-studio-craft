@@ -123,7 +123,7 @@ export const TOOLS = [
   }
 ]
 
-export const CONCORSI = ['RIPAM','MIC','FUNZ','MIMIT','ISAC','CPI']
+export const CONCORSI = ['RIPAM','MIC','FUNZ','MIMIT','ISAC','CPI','REG']
 
 export const BUNDLES = [
   {
