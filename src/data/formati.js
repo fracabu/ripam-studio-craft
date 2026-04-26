@@ -10,8 +10,8 @@ export const FORMATI = [
     k:'aul', ico:'🎧',
     t:'Audio Lezioni',
     short:'Lezioni audio, 8 episodi',
-    desc:'Lettura integrale degli episodi testuali (~30.000 parole a episodio). Monovoce didattica, ~4 ore totali, con trascrizioni. Per studio strutturato e ripasso.',
-    fmt:'MP3 + TXT', label:'Audio Lezioni', price:19
+    desc:'Lettura integrale degli episodi testuali (~30.000 parole a episodio). Monovoce didattica, ~4-5 ore totali, con trascrizioni. Per studio strutturato e ripasso.',
+    fmt:'MP3 + TXT', label:'Audio Lezioni', price:22
   },
   {
     k:'vid', ico:'🎥',
@@ -32,14 +32,14 @@ export const FORMATI = [
     t:'Manuale Completo',
     short:'Manuale editoriale premium',
     desc:'Un manuale editoriale 200-300 pagine. Tabelle, FAQ, quiz per capitolo. Livello libreria.',
-    fmt:'PDF + HTML', label:'Manuale Completo', price:19
+    fmt:'PDF + HTML', label:'Manuale Completo', price:22
   },
   {
     k:'sim', ico:'🎯',
     t:'Simulatore Custom',
-    short:'500 domande su misura',
-    desc:'500 domande stile concorso, cucite su misura. HTML offline, funziona ovunque.',
-    fmt:'HTML', label:'Simulatore Custom', price:29
+    short:'1.000 domande su misura',
+    desc:'1.000 domande HTML offline cucite sul tuo concorso. Scegli tu da quali materie pescare e in che proporzione (es. 300 Diritto Amm + 200 Penale + 500 trasversali) e se le vuoi concettuali, specifiche o miste.',
+    fmt:'HTML', label:'Simulatore Custom', price:39
   }
 ]
 
@@ -110,9 +110,9 @@ export const TOOLS = [
   {
     k:'simulator',
     ico:'🎯',
-    t:'Simulatore Custom',
-    desc:'500 domande in stile concorso, cucite sui tuoi argomenti. HTML offline personalizzato con il tuo brand, logo, stile grafico. Funziona ovunque, senza installazione.',
-    examples:['Per singoli candidati','Per corsi di formazione','Per aziende e PA','Per ordini professionali']
+    t:'Simulatore White-Label',
+    desc:'Versione professionale del simulatore: 1.000+ domande personalizzate sui tuoi argomenti, con brand, logo e stile grafico tuoi. Per corsi di formazione, associazioni, ordini professionali, scuole di preparazione. Funziona ovunque, senza installazione.',
+    examples:['Per corsi di formazione','Per aziende e PA','Per ordini professionali','Per scuole di preparazione']
   },
   {
     k:'conversion',

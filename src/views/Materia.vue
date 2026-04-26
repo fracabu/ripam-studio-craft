@@ -174,7 +174,7 @@ watch(materia, (m) => {
         <div v-else-if="activeTab==='sim' && contenuti.sim" class="struct-panel">
           <div class="struct-summary">
             <div class="struct-stat">
-              <div class="struct-stat-num">500</div>
+              <div class="struct-stat-num">1.000</div>
               <div class="struct-stat-lbl">DOMANDE</div>
             </div>
             <div class="struct-stat">

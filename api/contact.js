@@ -133,13 +133,13 @@ Questa è una conferma automatica. Ti rispondo a mano io appena posso.
   <p style="margin:0;color:#6b6458;font-size:12px">Questa è una conferma automatica. Ti rispondo a mano io appena posso.</p>
 </div>`
 
-  try {
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user, pass }
-    })
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user, pass }
+  })
 
-    // 1) email a Francesco (notifica nuova richiesta)
+  // 1) email a Francesco (notifica nuova richiesta) — critica, se fallisce ritorniamo 500
+  try {
     await transporter.sendMail({
       from: `"Ripam Studio Craft" <${user}>`,
       to: user,
@@ -148,20 +148,27 @@ Questa è una conferma automatica. Ti rispondo a mano io appena posso.
       text,
       html
     })
+  } catch (err) {
+    console.error('Notify mail failed:', err)
+    return res.status(500).json({ error: 'Errore invio email' })
+  }
 
-    // 2) conferma automatica al cliente (best effort: se fallisce non blocca la submit)
-    transporter.sendMail({
+  // 2) conferma automatica al cliente — awaitata ma in try/catch separato:
+  // se fallisce non blocca la submit (la richiesta è già arrivata al titolare).
+  // IMPORTANTE: in Vercel serverless le promise non-awaited vengono troncate
+  // alla return della response, quindi serve await anche per il "best effort".
+  try {
+    await transporter.sendMail({
       from: `"Francesco — Ripam Studio Craft" <${user}>`,
       to: clean(email),
       replyTo: user,
       subject: ackSubject,
       text: ackText,
       html: ackHtml
-    }).catch(err => console.error('Ack mail failed (non blocking):', err))
-
-    return res.status(200).json({ ok: true })
+    })
   } catch (err) {
-    console.error('Mail send failed:', err)
-    return res.status(500).json({ error: 'Errore invio email' })
+    console.error('Ack mail failed (non blocking):', err)
   }
+
+  return res.status(200).json({ ok: true })
 }

@@ -250,7 +250,7 @@ export const CONTENUTI = {
       ]
     },
     sim: {
-      total: '500 domande · mix concettuali + specifiche',
+      total: '1.000 domande · mix concettuali + specifiche',
       breakdown: [
         { topic:'Procedimento e fasi',             count:80 },
         { topic:'Silenzio della PA',               count:70 },

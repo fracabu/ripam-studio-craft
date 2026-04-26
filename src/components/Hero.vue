@@ -15,9 +15,9 @@ import Counter from './Counter.vue'
           </div>
         </div>
         <div class="hero-visual">
-          <div class="stat"><div class="stat-num"><Counter :to="20" /></div><div class="stat-lbl">materie disponibili</div></div>
-          <div class="stat"><div class="stat-num"><Counter :to="4" /></div><div class="stat-lbl">formati per materia</div></div>
-          <div class="stat"><div class="stat-num"><Counter :to="500" /></div><div class="stat-lbl">domande per simulatore</div></div>
+          <div class="stat"><div class="stat-num"><Counter :to="21" /></div><div class="stat-lbl">materie disponibili</div></div>
+          <div class="stat"><div class="stat-num"><Counter :to="5" /></div><div class="stat-lbl">formati per materia</div></div>
+          <div class="stat"><div class="stat-num"><Counter :to="1000" /></div><div class="stat-lbl">domande per simulatore</div></div>
           <div class="stat"><div class="stat-num"><Counter to="48h" /></div><div class="stat-lbl">consegna su misura</div></div>
         </div>
       </div>

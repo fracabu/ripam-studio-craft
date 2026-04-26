@@ -7,9 +7,7 @@ const bullets = [
   'Come iterare e raffinare fino al risultato che ti serve'
 ]
 const include = [
-  { ico:'📋', t:'Template prompt pronti' },
-  { ico:'📝', t:'Checklist setup materia' },
-  { ico:'🎥', t:'Registrazione della call' },
+  { ico:'📋', t:'50 prompt pronti per ogni studio (flashcard, report, tabelle, infografiche)' },
   { ico:'📬', t:'Follow-up scritto entro 48h' }
 ]
 </script>
