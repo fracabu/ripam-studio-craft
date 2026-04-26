@@ -23,7 +23,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
         </div>
         <div class="foot-col">
           <h4>CONTATTI</h4>
-          <a href="https://t.me/[USERNAME]" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://t.me/fcapurso" target="_blank" rel="noopener">Telegram</a>
           <a :href="`mailto:${LEGAL_HOLDER.email}`">{{ LEGAL_HOLDER.email }}</a>
         </div>
         <div class="foot-col">

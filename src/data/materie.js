@@ -84,7 +84,11 @@ export const MATERIE = [
   { n:20, slug:'diritto-civile',                 t:'Diritto Civile',                  norm:'Codice Civile',            c:['FUNZ','MIMIT'],
     intro:'Parte generale del Codice Civile: persone, famiglia, obbligazioni, contratti.',
     avail:{pod:'soon',vid:'soon',rep:'ready',sim:'custom'},
-    topics:['Soggetti del diritto','Diritti reali','Obbligazioni','Contratti in generale','Responsabilità civile','Famiglia','Successioni','Prescrizione'] }
+    topics:['Soggetti del diritto','Diritti reali','Obbligazioni','Contratti in generale','Responsabilità civile','Famiglia','Successioni','Prescrizione'] },
+  { n:21, slug:'contabilita-pubblica',           t:'Contabilità Pubblica',           norm:'L. 196/2009 · D.Lgs. 118/2011', c:['RIPAM','FUNZ','MIMIT'],
+    intro:'Ciclo di bilancio dello Stato, principi contabili, copertura finanziaria, armonizzazione e controlli della Corte dei Conti. Aggiornato al nuovo ciclo DFP/DPFP 2025 e al PSB 2025-2029.',
+    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    topics:['Art. 81 Cost. ed equilibrio','Ciclo di bilancio (DFP, DPFP, Legge di Bilancio)','Struttura del bilancio (missioni, programmi)','Principi contabili','Fasi entrata e spesa','Copertura finanziaria ex art. 17','Controlli Corte dei Conti','Armonizzazione contabile (D.Lgs. 118/2011)'] }
 ]
 
 export const STATUS_LABELS = {

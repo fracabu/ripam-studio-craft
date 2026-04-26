@@ -1,14 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { MATERIE } from '../data/materie.js'
 import { CONCORSI } from '../data/formati.js'
 
 const nome = ref('')
 const email = ref('')
 const concorso = ref('')
-const prodotto = ref('')
-const materia = ref('')
 const note = ref('')
 const privacy = ref(false) // consenso GDPR
 const hp = ref('') // honeypot: se compilato, bot
@@ -16,11 +13,20 @@ const hp = ref('') // honeypot: se compilato, bot
 const status = ref('idle') // idle | sending | sent | error
 const errorMsg = ref('')
 
+// prefill: chi ci passa prodotto/materia li compone in una nota leggibile,
+// così i bottoni "Richiedi informazioni" precompilano la textarea senza dropdown.
 const prefill = (data = {}) => {
   if (data.concorso) concorso.value = data.concorso
-  if (data.prodotto) prodotto.value = data.prodotto
-  if (data.materia) materia.value = data.materia
-  if (data.note) note.value = data.note
+  const parts = []
+  if (data.prodotto) {
+    let line = `Sono interessato a: ${data.prodotto}`
+    if (data.materia) line += ` (${data.materia})`
+    parts.push(line)
+  } else if (data.materia) {
+    parts.push(`Materia: ${data.materia}`)
+  }
+  if (data.note) parts.push(data.note)
+  if (parts.length) note.value = parts.join('\n\n')
 }
 defineExpose({ prefill })
 
@@ -38,8 +44,6 @@ const submit = async (e) => {
         nome: nome.value,
         email: email.value,
         concorso: concorso.value,
-        prodotto: prodotto.value,
-        materia: materia.value,
         note: note.value,
         hp: hp.value
       })
@@ -49,7 +53,7 @@ const submit = async (e) => {
 
     status.value = 'sent'
     nome.value = ''; email.value = ''; concorso.value = ''
-    prodotto.value = ''; materia.value = ''; note.value = ''
+    note.value = ''
     privacy.value = false
   } catch (err) {
     status.value = 'error'
@@ -67,9 +71,9 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
         <div v-reveal="'left'" class="form-side">
           <span class="sec-kicker">PARLIAMOCI</span>
           <h3 style="margin-top:16px">Raccontami cosa ti serve.</h3>
-          <p>Nessun pagamento anticipato, nessun carrello. Scrivimi cosa stai preparando o cosa non ti è chiaro: ti rispondo entro poche ore con domande, idee, proposte.</p>
+          <p>Nessun pagamento anticipato, nessun carrello. Scrivimi a tono libero cosa stai preparando o cosa non ti è chiaro: ti rispondo entro poche ore con domande, idee, proposte.</p>
           <p>Preferisci Telegram? È anche più veloce.</p>
-          <a href="https://t.me/[USERNAME]" target="_blank" rel="noopener" class="tg">
+          <a href="https://t.me/fcapurso" target="_blank" rel="noopener" class="tg">
             <span>📱</span> Scrivimi su Telegram
           </a>
 
@@ -89,54 +93,19 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
             <label for="f-email">Email</label>
             <input id="f-email" v-model="email" type="email" required placeholder="mario.rossi@email.it" :disabled="status==='sending'" />
           </div>
-          <div class="form-row">
-            <div>
-              <label for="f-concorso">Concorso</label>
-              <select id="f-concorso" v-model="concorso" required :disabled="status==='sending'">
-                <option value="">Seleziona...</option>
-                <option v-for="c in CONCORSI" :key="c">{{ c }}</option>
-                <option>Altro</option>
-              </select>
-            </div>
-            <div>
-              <label for="f-prodotto">Cosa ti interessa</label>
-              <select id="f-prodotto" v-model="prodotto" required :disabled="status==='sending'">
-                <option value="">Seleziona...</option>
-                <optgroup label="Formazione">
-                  <option>Podcast</option>
-                  <option>Video</option>
-                  <option>Report</option>
-                  <option>Manuale Completo</option>
-                  <option>Simulatore Custom</option>
-                  <option>Bundle materia</option>
-                  <option>Bundle concorso</option>
-                </optgroup>
-                <optgroup label="Consulenza">
-                  <option>Coaching NotebookLM 1:1</option>
-                </optgroup>
-                <optgroup label="Sviluppo tool">
-                  <option>Web App Mono-Materia</option>
-                  <option>Simulatore Custom (white-label)</option>
-                  <option>Tool di studio personalizzato</option>
-                </optgroup>
-                <optgroup label="Servizi di produzione">
-                  <option>Servizio: Testo → Podcast</option>
-                  <option>Servizio: Audio → Testo</option>
-                </optgroup>
-                <option>Altro / da valutare insieme</option>
-              </select>
-            </div>
-          </div>
           <div>
-            <label for="f-materia">Materia di interesse</label>
-            <select id="f-materia" v-model="materia" :disabled="status==='sending'">
-              <option value="">Seleziona (opzionale)...</option>
-              <option v-for="m in MATERIE" :key="m.slug" :value="m.t">{{ m.t }}</option>
+            <label for="f-concorso">Concorso</label>
+            <select id="f-concorso" v-model="concorso" required :disabled="status==='sending'">
+              <option value="">Seleziona...</option>
+              <option v-for="c in CONCORSI" :key="c">{{ c }}</option>
+              <option>Altro / non so ancora</option>
             </select>
           </div>
           <div>
-            <label for="f-note">Note</label>
-            <textarea id="f-note" v-model="note" placeholder="Qualsiasi cosa utile per rispondere meglio..." :disabled="status==='sending'"></textarea>
+            <label for="f-note">Cosa ti serve</label>
+            <textarea id="f-note" v-model="note" required rows="5"
+              placeholder="Es. Mi preparo per RIPAM Funzionario, mi interessa Diritto Amministrativo. Ho ascoltato il primo episodio gratis delle audio lezioni e mi piace, ma non so se partire da lì o dal manuale completo. Cosa mi consigli?"
+              :disabled="status==='sending'"></textarea>
           </div>
 
           <label class="privacy-check">
