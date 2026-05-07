@@ -154,7 +154,7 @@ watch(materia, (m) => {
               <div class="struct-stat-lbl">PAGINE</div>
             </div>
             <div class="struct-stat">
-              <div class="struct-stat-num">{{ activeTab==='man' ? 'PDF+HTML' : 'PDF' }}</div>
+              <div class="struct-stat-num">PDF</div>
               <div class="struct-stat-lbl">FORMATO</div>
             </div>
             <div class="struct-stat">
