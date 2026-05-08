@@ -11,6 +11,19 @@
 
 export const CONTENUTI = {
   'pubblico-impiego': {
+    pod: {
+      total: '8 episodi · 3h 24min',
+      episodes: [
+        { n:1, title:'Panoramica privatizzazione', duration:'31:42', free:true },
+        { n:2, title:'Chi comanda gestione', duration:'22:20' },
+        { n:3, title:'Dirigenza', duration:'18:00' },
+        { n:4, title:'Accesso concorsi', duration:'24:51' },
+        { n:5, title:'Contrattazione ARAN', duration:'33:32' },
+        { n:6, title:'Doveri sanzioni', duration:'17:04' },
+        { n:7, title:'Incompatibilità pantouflage', duration:'29:55' },
+        { n:8, title:'Trabocchetti', duration:'27:31' }
+      ]
+    },
     aul: {
       total: '8 episodi · 3h 55min',
       episodes: [
@@ -22,6 +35,21 @@ export const CONTENUTI = {
         { n:6, title:'I confini del dipendente',              duration:'28 min' },
         { n:7, title:'Il quadro completo',                    duration:'29 min' },
         { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'33 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~95 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Organizzazione uffici',
+        'Dirigenza',
+        'Accesso reclutamento',
+        'Contrattazione',
+        'Doveri disciplina',
+        'Incompatibilità',
+        'Trabocchetti',
+        'Collegamenti',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -53,6 +81,19 @@ export const CONTENUTI = {
     }
   },
   'contabilita-pubblica': {
+    pod: {
+      total: '8 episodi · 3h 17min',
+      episodes: [
+        { n:1, title:'Come funziona davvero il bilancio statale', duration:'23:50', free:true },
+        { n:2, title:'Come funziona il bilancio dello Stato', duration:'22:07' },
+        { n:3, title:'Come lo Stato evita la bancarotta', duration:'32:00' },
+        { n:4, title:'Come lo Stato finanzia le leggi', duration:'24:00' },
+        { n:5, title:'Il sistema operativo dello Stato italiano', duration:'21:12' },
+        { n:6, title:'L\'architettura invisibile dei conti dello Stato', duration:'29:27' },
+        { n:7, title:'La logica della legge 196 del 2009', duration:'23:41' },
+        { n:8, title:'Logica e scadenze della legge 196', duration:'21:22' }
+      ]
+    },
     aul: {
       total: '8 episodi · 4h 33min',
       episodes: [
@@ -64,6 +105,22 @@ export const CONTENUTI = {
         { n:6, title:'Il muro della copertura',               duration:'37 min' },
         { n:7, title:'I guardiani dei conti',                 duration:'39 min' },
         { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'45 min' }
+      ]
+    },
+    rep: {
+      total: '11 capitoli · ~95 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Ciclo programmazione',
+        'Bilancio struttura',
+        'Gestione bilancio',
+        'Tesoreria rendiconto',
+        'Copertura finanziaria',
+        'Controlli monitoraggio',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Collegamenti extra',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -98,6 +155,19 @@ export const CONTENUTI = {
     }
   },
   'contratti-pubblici': {
+    pod: {
+      total: '8 episodi · 2h 53min',
+      episodes: [
+        { n:1, title:'Il nuovo codice principi rivoluzionari', duration:'26:27', free:true },
+        { n:2, title:'Programmazione progettazione e digitalizzazione', duration:'27:07' },
+        { n:3, title:'Le procedure sopra soglia', duration:'17:11' },
+        { n:4, title:'Sotto soglia affidamento diretto e negoziata', duration:'16:01' },
+        { n:5, title:'Aggiudicazione OEPV e offerte anomale', duration:'15:01' },
+        { n:6, title:'Esclusione subappalto e garanzie', duration:'22:45' },
+        { n:7, title:'I 20 trabocchetti del codice appalti', duration:'24:24' },
+        { n:8, title:'Trenta trappole del nuovo codice appalti', duration:'24:15' }
+      ]
+    },
     aul: {
       total: '8 episodi · 3h 59min',
       episodes: [
@@ -109,6 +179,21 @@ export const CONTENUTI = {
         { n:6, title:'Dopo l\'aggiudicazione',                duration:'29 min' },
         { n:7, title:'Soglie, numeri e collegamenti',         duration:'31 min' },
         { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'34 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~90 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Programmazione progettazione',
+        'Procedure sopra soglia',
+        'Procedure sotto soglia',
+        'Criteri aggiudicazione',
+        'Cause esclusione',
+        'Subappalto esecuzione garanzie',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -156,6 +241,21 @@ export const CONTENUTI = {
         { n:8, title:'Simulazione d\'esame — 30 domande',     duration:'37 min' }
       ]
     },
+    rep: {
+      total: '10 capitoli · ~95 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Principi fondamentali',
+        'Diritti doveri',
+        'Parlamento',
+        'Presidente repubblica',
+        'Governo magistratura',
+        'Regioni',
+        'Trabocchetti',
+        'Corte costituzionale',
+        'Riepilogo pre-esame'
+      ]
+    },
     man: {
       total: '253 pagine · 23 capitoli',
       chapters: [
@@ -186,6 +286,18 @@ export const CONTENUTI = {
     }
   },
   'diritto-ue': {
+    pod: {
+      total: '7 episodi · 2h 24min',
+      episodes: [
+        { n:1, title:'Chi comanda davvero nell\'unione europea', duration:'15:14', free:true },
+        { n:2, title:'Come l\'Europa costringe gli stati a obbedire', duration:'17:43' },
+        { n:3, title:'I trattati europei per i concorsi pubblici', duration:'16:15' },
+        { n:4, title:'Il codice sorgente del potere europeo', duration:'22:44' },
+        { n:5, title:'Il motore giuridico dell\'unione europea', duration:'24:35' },
+        { n:6, title:'La carta dei diritti diventa legge europea', duration:'17:13' },
+        { n:7, title:'Perché la legge europea vince sempre', duration:'30:51' }
+      ]
+    },
     aul: {
       total: '8 episodi · 4h 54min',
       episodes: [
@@ -197,6 +309,21 @@ export const CONTENUTI = {
         { n:6, title:'Il guardiano dei trattati',             duration:'34 min' },
         { n:7, title:'Cinquantaquattro articoli per i tuoi diritti', duration:'39 min' },
         { n:8, title:'Trenta trabocchetti d\'esame',          duration:'36 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~85 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Istituzioni UE',
+        'Fonti diritto UE',
+        'Competenze UE',
+        'Procedure legislative',
+        'Procedura infrazione',
+        'Carta diritti',
+        'Trabocchetti',
+        'Collegamenti Italia',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -224,6 +351,19 @@ export const CONTENUTI = {
     }
   },
   'diritto-penale-pa': {
+    pod: {
+      total: '8 episodi · 2h 50min',
+      episodes: [
+        { n:1, title:'Titolo II e riforme per il RIPAM', duration:'19:33', free:true },
+        { n:2, title:'Soldi pubblici e la trappola del centesimo', duration:'21:54' },
+        { n:3, title:'Da vittima a complice nella pubblica amministrazione', duration:'24:49' },
+        { n:4, title:'Reati della PA dalla Severino alla Nordio', duration:'27:32' },
+        { n:5, title:'Addio abuso d\'ufficio e riforme PA', duration:'24:05' },
+        { n:6, title:'I nuovi reati PA dopo la Nordio', duration:'18:27' },
+        { n:7, title:'I 20 trabocchetti del diritto penale PA', duration:'14:19' },
+        { n:8, title:'Trenta quiz sui nuovi reati PA', duration:'19:43' }
+      ]
+    },
     aul: {
       total: '8 episodi · 5h 5min',
       episodes: [
@@ -235,6 +375,21 @@ export const CONTENUTI = {
         { n:6, title:'Le conseguenze invisibili',             duration:'39 min' },
         { n:7, title:'Tre riforme in dieci anni',             duration:'38 min' },
         { n:8, title:'Trenta trabocchetti d\'esame',          duration:'42 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~85 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Peculato appropriazione',
+        'Concussione induzione',
+        'Corruzione',
+        'Abuso ufficio abrogato',
+        'Traffico influenze',
+        'Pene accessorie',
+        'Trabocchetti',
+        'Riforme',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -268,6 +423,20 @@ export const CONTENUTI = {
     }
   },
   'gdpr': {
+    pod: {
+      total: '9 episodi · 3h 3min',
+      episodes: [
+        { n:1, title:'Quiz su GDPR e codice privacy', duration:'17:46', free:true },
+        { n:2, title:'I trabocchetti del GDPR nei concorsi pubblici', duration:'17:41' },
+        { n:3, title:'I veri trabocchetti del GDPR', duration:'17:12' },
+        { n:4, title:'Il conto alla rovescia del data breach', duration:'25:45' },
+        { n:5, title:'Il vero architetto dei nostri dati', duration:'18:20' },
+        { n:6, title:'La dogana digitale dei dati extra-UE', duration:'18:42' },
+        { n:7, title:'La privacy non è un interruttore', duration:'19:04' },
+        { n:8, title:'Multe milionarie e rischi penali della privacy', duration:'31:37' },
+        { n:9, title:'Sanzioni privacy tra multe milionarie e carcere', duration:'17:01' }
+      ]
+    },
     aul: {
       total: '8 episodi · 5h 6min',
       episodes: [
@@ -279,6 +448,21 @@ export const CONTENUTI = {
         { n:6, title:'La dogana digitale',                    duration:'36 min' },
         { n:7, title:'Multe milionarie e rischi penali',      duration:'35 min' },
         { n:8, title:'Trenta trabocchetti GDPR',              duration:'40 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~70 pagine',
+      chapters: [
+        'Panoramica GDPR',
+        'Principi basi giuridiche',
+        'Diritti interessato',
+        'Titolare responsabile DPO',
+        'Data breach DPIA',
+        'Trasferimenti internazionali',
+        'Sanzioni responsabilità',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -320,9 +504,38 @@ export const CONTENUTI = {
         { n:7, title:'Dal museo alla Costituzione',           duration:'30 min' },
         { n:8, title:'Trenta trabocchetti sui Beni Culturali', duration:'33 min' }
       ]
+    },
+    rep: {
+      total: '11 capitoli · ~90 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Principi generali',
+        'Individuazione dichiarazione',
+        'Tutela conservazione',
+        'Circolazione',
+        'Beni paesaggistici',
+        'Sanzioni',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame',
+        'Ripasso extra'
+      ]
     }
   },
   'cad': {
+    pod: {
+      total: '8 episodi · 2h 43min',
+      episodes: [
+        { n:1, title:'Trabocchetti CAD', duration:'21:44', free:true },
+        { n:2, title:'Articolo 1 definizioni', duration:'22:09' },
+        { n:3, title:'Documento informatico', duration:'18:08' },
+        { n:4, title:'Firme elettroniche', duration:'19:57' },
+        { n:5, title:'SPID CIE domicilio', duration:'19:25' },
+        { n:6, title:'AgID RTD governance', duration:'13:32' },
+        { n:7, title:'Conservazione open data', duration:'21:00' },
+        { n:8, title:'Simulazione esame', duration:'27:06' }
+      ]
+    },
     aul: {
       total: '8 episodi · 5h 8min',
       episodes: [
@@ -334,6 +547,21 @@ export const CONTENUTI = {
         { n:6, title:'Dal protocollo alla conservazione',     duration:'35 min' },
         { n:7, title:'Il CAD incontra le altre leggi',        duration:'37 min' },
         { n:8, title:'Trenta trabocchetti digitali',          duration:'42 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~95 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Definizioni art. 1',
+        'Documento informatico',
+        'Firme elettroniche eIDAS',
+        'Identità digitale',
+        'AgID governance',
+        'Gestione conservazione',
+        'Trabocchetti distinzioni',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -363,6 +591,20 @@ export const CONTENUTI = {
     }
   },
   'ordinamento-pa': {
+    pod: {
+      total: '9 episodi · 3h 37min',
+      episodes: [
+        { n:1, title:'Chi comanda davvero nei comuni italiani', duration:'25:17', free:true },
+        { n:2, title:'Chi comanda davvero nel tuo comune', duration:'24:30' },
+        { n:3, title:'Chi comanda tra Stato regioni e comuni', duration:'16:35' },
+        { n:4, title:'Chi decide tra Stato regioni e comuni', duration:'31:01' },
+        { n:5, title:'Come funziona davvero lo Stato italiano', duration:'18:28' },
+        { n:6, title:'I bracci operativi dello Stato', duration:'24:52' },
+        { n:7, title:'La pubblica amministrazione oltre la piramide', duration:'28:57' },
+        { n:8, title:'Province e città metropolitane esistono ancora', duration:'31:32' },
+        { n:9, title:'Quiz e trabocchetti sull\'ordinamento italiano', duration:'16:33' }
+      ]
+    },
     aul: {
       total: '8 episodi · ~4h 30min',
       episodes: [
@@ -374,6 +616,21 @@ export const CONTENUTI = {
         { n:6, title:'I guardiani del Comune',                duration:'32 min' },
         { n:7, title:'Chi comanda tra Stato e Regioni',       duration:'33 min' },
         { n:8, title:'Venticinque trabocchetti e simulazione finale', duration:'32 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~65 pagine',
+      chapters: [
+        'Panoramica ordinamento',
+        'Ministeri',
+        'Agenzie',
+        'Comune',
+        'Province CM',
+        'Servizi controlli',
+        'Titolo V',
+        'Trabocchetti',
+        'Titolo V approfondimento',
+        'Riepilogo pre-esame'
       ]
     },
     man: {
@@ -406,6 +663,21 @@ export const CONTENUTI = {
         { n:6, title:'Le persone del MIC',                    duration:'30 min' },
         { n:7, title:'Il MIC incontra le altre leggi',        duration:'30 min' },
         { n:8, title:'Venti trabocchetti sul MIC',            duration:'30 min' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~65 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Struttura centrale',
+        'Direzioni generali',
+        'Strutture periferiche',
+        'Musei istituti autonomi',
+        'Organi consultivi',
+        'Personale profili',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
       ]
     }
   },
@@ -499,6 +771,21 @@ export const CONTENUTI = {
     }
   },
   'diritto-civile': {
+    rep: {
+      total: '10 capitoli · ~60 pagine',
+      chapters: [
+        'Panoramica',
+        'Persone fisiche',
+        'Persone giuridiche',
+        'Obbligazioni',
+        'Contratto',
+        'Invalidità',
+        'Risoluzione',
+        'Responsabilità',
+        'Prescrizione',
+        'Riepilogo'
+      ]
+    },
     man: {
       total: '385 pagine · 21 capitoli',
       chapters: [
@@ -527,6 +814,33 @@ export const CONTENUTI = {
     }
   },
   'informatica': {
+    pod: {
+      total: '7 episodi · 2h 31min',
+      episodes: [
+        { n:1, title:'Hardware cpu memorie', duration:'15:20', free:true },
+        { n:2, title:'Sistemi operativi', duration:'18:46' },
+        { n:3, title:'Reti internet', duration:'19:23' },
+        { n:4, title:'Sicurezza', duration:'32:45' },
+        { n:5, title:'PA digitale', duration:'23:50' },
+        { n:6, title:'Simulazione esame', duration:'24:09' },
+        { n:7, title:'PEC protocolli e trappole della sicurezza informatica', duration:'17:17' }
+      ]
+    },
+    rep: {
+      total: '10 capitoli · ~70 pagine',
+      chapters: [
+        'Hardware architettura',
+        'Reti internet',
+        'Posta PEC',
+        'Sicurezza',
+        'Office',
+        'PA digitale',
+        'Database excel',
+        'Ripasso intensivo',
+        'Informatica generale',
+        'Database excel avanzato'
+      ]
+    },
     man: {
       total: '330 pagine · 15 capitoli',
       chapters: [
@@ -578,6 +892,22 @@ export const CONTENUTI = {
     }
   },
   'sicurezza-lavoro': {
+    rep: {
+      total: '11 capitoli · ~80 pagine',
+      chapters: [
+        'Panoramica generale',
+        'Obblighi datore deleghe',
+        'DVR valutazione rischi',
+        'Figure prevenzione',
+        'Formazione strategico',
+        'Formazione dettaglio',
+        'Emergenze primo soccorso',
+        'Luoghi attrezzature DPI',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
+      ]
+    },
     man: {
       total: '277 pagine · 19 capitoli',
       chapters: [
@@ -631,7 +961,72 @@ export const CONTENUTI = {
         'Limiti, dati personali, OIV e sanzioni per inadempimento'
       ]
     }
-  }
+  },
+  'diritto-processuale-civile': {
+    rep: {
+      total: '10 capitoli · ~60 pagine',
+      chapters: [
+        'Principi processo civile',
+        'Giurisdizione competenza',
+        'Processo cognizione ordinario',
+        'Atti processuali rito ordinario',
+        'Impugnazioni',
+        'Esecuzione forzata',
+        'Procedimenti speciali',
+        'ADR mediazione negoziazione',
+        'Trabocchetti',
+        'Ripasso strategico'
+      ]
+    }
+  },
+  'inglese-a2': {
+    pod: {
+      total: '8 episodi · 3h 9min',
+      episodes: [
+        { n:1, title:'Present simple continuous', duration:'16:24', free:true },
+        { n:2, title:'Past simple present perfect', duration:'20:19' },
+        { n:3, title:'Articles prepositions', duration:'23:56' },
+        { n:4, title:'Modals conditionals', duration:'17:01' },
+        { n:5, title:'False friends', duration:'26:41' },
+        { n:6, title:'20 errori italiani', duration:'30:21' },
+        { n:7, title:'Reading comprehension', duration:'33:21' },
+        { n:8, title:'Quick review exam traps', duration:'21:21' }
+      ]
+    },
+    rep: {
+      total: '11 capitoli · ~90 pagine',
+      chapters: [
+        'Present simple continuous',
+        'Past simple present perfect',
+        'Articles prepositions',
+        'Modals conditionals',
+        'Modals conditionals 2',
+        'Passive relative clauses',
+        'Vocabulary office PA',
+        'Reading comprehension',
+        'False friends',
+        '20 errori fatali',
+        'Ripasso strategico'
+      ]
+    }
+  },
+  'patrimonio-culturale': {
+    rep: {
+      total: '10 capitoli · ~95 pagine',
+      chapters: [
+        'Panoramica statistica',
+        'Arte pittura',
+        'Architettura monumenti',
+        'Letteratura',
+        'Unesco',
+        'Musica cinema teatro',
+        'Archeologia',
+        'Trabocchetti',
+        'Personaggi date',
+        'Riepilogo pre-esame'
+      ]
+    }
+  },
 }
 
 export const getContenuti = (slug) => CONTENUTI[slug] || null
