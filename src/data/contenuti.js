@@ -14,7 +14,7 @@ export const CONTENUTI = {
     pod: {
       total: '8 episodi · 3h 24min',
       episodes: [
-        { n:1, title:'Panoramica privatizzazione', duration:'31:42', free:true },
+        { n:1, title:'Panoramica privatizzazione', duration:'31:42', free:true, preview:'/preview/pubblico-impiego/pod-ep1.mp3' },
         { n:2, title:'Chi comanda gestione', duration:'22:20' },
         { n:3, title:'Dirigenza', duration:'18:00' },
         { n:4, title:'Accesso concorsi', duration:'24:51' },
@@ -27,7 +27,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 3h 55min',
       episodes: [
-        { n:1, title:'Dal suddito al contratto',              duration:'30 min', free:true },
+        { n:1, title:'Dal suddito al contratto',              duration:'30 min', free:true, preview:'/preview/pubblico-impiego/aul-ep1.mp3' },
         { n:2, title:'Il potere dei dirigenti',               duration:'29 min' },
         { n:3, title:'Entrare nello Stato',                   duration:'29 min' },
         { n:4, title:'Il contratto che governa',              duration:'29 min' },
@@ -97,7 +97,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 4h 33min',
       episodes: [
-        { n:1, title:'Il fondamento di tutto',                duration:'30 min', free:true },
+        { n:1, title:'Il fondamento di tutto',                duration:'30 min', free:true, preview:'/preview/contabilita-pubblica/aul-ep1.mp3' },
         { n:2, title:'Il nuovo ciclo di bilancio',            duration:'30 min' },
         { n:3, title:'La mappa del tesoro',                   duration:'29 min' },
         { n:4, title:'Le regole d\'oro',                      duration:'28 min' },
@@ -174,7 +174,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 3h 59min',
       episodes: [
-        { n:1, title:'Un nuovo codice per gli appalti',       duration:'29 min', free:true },
+        { n:1, title:'Un nuovo codice per gli appalti',       duration:'29 min', free:true, preview:'/preview/contratti-pubblici/aul-ep1.mp3' },
         { n:2, title:'Dall\'idea al bando',                   duration:'29 min' },
         { n:3, title:'Le regole del gioco',                   duration:'28 min' },
         { n:4, title:'Chi vince e perché',                    duration:'28 min' },
@@ -234,7 +234,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 3h 51min',
       episodes: [
-        { n:1, title:'La nascita della Repubblica',           duration:'29 min', free:true },
+        { n:1, title:'La nascita della Repubblica',           duration:'29 min', free:true, preview:'/preview/diritto-costituzionale/aul-ep1.mp3' },
         { n:2, title:'I diritti inviolabili',                 duration:'27 min' },
         { n:3, title:'Dal cittadino alla società',            duration:'27 min' },
         { n:4, title:'La fabbrica delle leggi',               duration:'29 min' },
@@ -304,7 +304,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 4h 54min',
       episodes: [
-        { n:1, title:'L\'Europa che non ti aspetti',          duration:'38 min', free:true },
+        { n:1, title:'L\'Europa che non ti aspetti',          duration:'38 min', free:true, preview:'/preview/diritto-ue/aul-ep1.mp3' },
         { n:2, title:'Sette giganti al tavolo',               duration:'39 min' },
         { n:3, title:'Il DNA giuridico dell\'Europa',         duration:'39 min' },
         { n:4, title:'Chi può fare cosa',                     duration:'34 min' },
@@ -357,7 +357,7 @@ export const CONTENUTI = {
     pod: {
       total: '8 episodi · 2h 50min',
       episodes: [
-        { n:1, title:'Titolo II e riforme per il RIPAM', duration:'19:33', free:true },
+        { n:1, title:'Titolo II e riforme per il RIPAM', duration:'19:33', free:true, preview:'/preview/diritto-penale-pa/pod-ep1.mp3' },
         { n:2, title:'Soldi pubblici e la trappola del centesimo', duration:'21:54' },
         { n:3, title:'Da vittima a complice nella pubblica amministrazione', duration:'24:49' },
         { n:4, title:'Reati della PA dalla Severino alla Nordio', duration:'27:32' },
@@ -370,7 +370,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 5h 5min',
       episodes: [
-        { n:1, title:'Il codice dei colletti bianchi',        duration:'35 min', free:true },
+        { n:1, title:'Il codice dei colletti bianchi',        duration:'35 min', free:true, preview:'/preview/diritto-penale-pa/aul-ep1.mp3' },
         { n:2, title:'Mani nella cassa',                      duration:'38 min' },
         { n:3, title:'Il ricatto del potere',                 duration:'40 min' },
         { n:4, title:'Il mercato del potere',                 duration:'39 min' },
@@ -443,7 +443,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 5h 6min',
       episodes: [
-        { n:1, title:'La rivoluzione silenziosa',             duration:'39 min', free:true },
+        { n:1, title:'La rivoluzione silenziosa',             duration:'39 min', free:true, preview:'/preview/gdpr/aul-ep1.mp3' },
         { n:2, title:'Sette principi e sei basi giuridiche',  duration:'39 min' },
         { n:3, title:'I tuoi dati, i tuoi diritti',           duration:'40 min' },
         { n:4, title:'Chi custodisce i tuoi dati',            duration:'39 min' },
@@ -529,7 +529,7 @@ export const CONTENUTI = {
     pod: {
       total: '8 episodi · 2h 43min',
       episodes: [
-        { n:1, title:'Trabocchetti CAD', duration:'21:44', free:true },
+        { n:1, title:'Trabocchetti CAD', duration:'21:44', free:true, preview:'/preview/cad/pod-ep1.mp3' },
         { n:2, title:'Articolo 1 definizioni', duration:'22:09' },
         { n:3, title:'Documento informatico', duration:'18:08' },
         { n:4, title:'Firme elettroniche', duration:'19:57' },
@@ -542,7 +542,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 5h 8min',
       episodes: [
-        { n:1, title:'La PA diventa digitale',                duration:'39 min', free:true },
+        { n:1, title:'La PA diventa digitale',                duration:'39 min', free:true, preview:'/preview/cad/aul-ep1.mp3' },
         { n:2, title:'Il documento informatico',              duration:'35 min' },
         { n:3, title:'Quattro firme per un documento',        duration:'40 min' },
         { n:4, title:'Chi sei nel mondo digitale',            duration:'40 min' },
@@ -611,7 +611,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · ~4h 30min',
       episodes: [
-        { n:1, title:'L\'architettura dello Stato',           duration:'35 min', free:true },
+        { n:1, title:'L\'architettura dello Stato',           duration:'35 min', free:true, preview:'/preview/ordinamento-pa/aul-ep1.mp3' },
         { n:2, title:'Quindici Ministeri e due modelli',      duration:'33 min' },
         { n:3, title:'Le agenzie che non sono agenzie',       duration:'36 min' },
         { n:4, title:'Il Comune dalla A alla Z',              duration:'39 min' },
@@ -688,7 +688,7 @@ export const CONTENUTI = {
     pod: {
       total: '8 episodi · 3h 22min',
       episodes: [
-        { n:1, title:'Sconfiggere la burocrazia con la Legge 241', duration:'17:52', free:true },
+        { n:1, title:'Sconfiggere la burocrazia con la Legge 241', duration:'17:52', free:true, preview:'/preview/diritto-amministrativo/pod-ep1.mp3' },
         { n:2, title:'Come obbligare lo Stato a risponderci',      duration:'21:38' },
         { n:3, title:'Come funzionano SCIA e Conferenza di Servizi', duration:'21:44' },
         { n:4, title:'Come lo Stato straccia i contratti legalmente', duration:'23:43' },
@@ -701,7 +701,7 @@ export const CONTENUTI = {
     aul: {
       total: '8 episodi · 4h 9min',
       episodes: [
-        { n:1, title:'Dallo Stato opaco alla casa di vetro',       duration:'32 min', free:true },
+        { n:1, title:'Dallo Stato opaco alla casa di vetro',       duration:'32 min', free:true, preview:'/preview/diritto-amministrativo/aul-ep1.mp3' },
         { n:2, title:'Il cronometro della PA',                     duration:'32 min' },
         { n:3, title:'Il regista invisibile',                      duration:'31 min' },
         { n:4, title:'Quando il silenzio parla',                   duration:'30 min' },
@@ -824,7 +824,7 @@ export const CONTENUTI = {
     pod: {
       total: '7 episodi · 2h 31min',
       episodes: [
-        { n:1, title:'Hardware cpu memorie', duration:'15:20', free:true },
+        { n:1, title:'Hardware cpu memorie', duration:'15:20', free:true, preview:'/preview/informatica/pod-ep1.mp3' },
         { n:2, title:'Sistemi operativi', duration:'18:46' },
         { n:3, title:'Reti internet', duration:'19:23' },
         { n:4, title:'Sicurezza', duration:'32:45' },
@@ -990,7 +990,7 @@ export const CONTENUTI = {
     pod: {
       total: '8 episodi · 3h 9min',
       episodes: [
-        { n:1, title:'Present simple continuous', duration:'16:24', free:true },
+        { n:1, title:'Present simple continuous', duration:'16:24', free:true, preview:'/preview/inglese-a2/pod-ep1.mp3' },
         { n:2, title:'Past simple present perfect', duration:'20:19' },
         { n:3, title:'Articles prepositions', duration:'23:56' },
         { n:4, title:'Modals conditionals', duration:'17:01' },
