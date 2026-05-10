@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <g transform="translate(32 32) rotate(-3) translate(-32 -32)">
+    <path d="M2 5 L18 4 L36 3 L54 4 L63 2 L63 16 L64 44 L64 60 L46 61 L28 62 L10 61 L2 63 L1 50 L0 32 L2 8 Z" fill="#c6f432"/>
+    <circle cx="14" cy="18" r="2" fill="#0a0a0a" opacity="0.18"/>
+    <circle cx="50" cy="48" r="1.6" fill="#0a0a0a" opacity="0.14"/>
+    <text x="50%" y="58%" text-anchor="middle" font-family="Space Grotesk, system-ui, sans-serif" font-weight="700" font-size="44" fill="#0a0a0a" letter-spacing="-2">R</text>
+  </g>
+</svg>

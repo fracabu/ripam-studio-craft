@@ -45,13 +45,15 @@ onUnmounted(() => {
     <div class="nav-inner">
       <RouterLink to="/" class="logo" @click="close">
         <span class="logo-mark">R</span>
-        <span>Ripam Studio <em style="font-style:normal;color:var(--blue)">Craft</em><sup class="tm">™</sup></span>
+        <span>Ripam Studio <em class="craft-mark">Craft</em><sup class="tm">™</sup></span>
       </RouterLink>
       <div class="nav-links">
-        <RouterLink to="/#pilastri">Cosa faccio</RouterLink>
-        <RouterLink to="/#materie">Materie</RouterLink>
-        <RouterLink to="/#come-funziona">Come lavoro</RouterLink>
-        <RouterLink to="/#contatti" class="nav-cta">Scrivimi →</RouterLink>
+        <RouterLink to="/#pilastri" active-class="" exact-active-class="">Cosa faccio</RouterLink>
+        <RouterLink to="/#materie" active-class="" exact-active-class="">Materie</RouterLink>
+        <RouterLink to="/#come-funziona" active-class="" exact-active-class="">Come lavoriamo</RouterLink>
+        <RouterLink to="/chi-sono">Chi sono</RouterLink>
+        <RouterLink to="/#faq" active-class="" exact-active-class="">FAQ</RouterLink>
+        <RouterLink to="/scrivimi" class="nav-cta">Scrivimi →</RouterLink>
       </div>
       <button
         type="button"
@@ -71,10 +73,12 @@ onUnmounted(() => {
       class="nav-drawer"
       :hidden="!open"
     >
-      <RouterLink to="/#pilastri" @click="close">Cosa faccio</RouterLink>
-      <RouterLink to="/#materie" @click="close">Materie</RouterLink>
-      <RouterLink to="/#come-funziona" @click="close">Come lavoro</RouterLink>
-      <RouterLink to="/#contatti" class="nav-cta" @click="close">Scrivimi →</RouterLink>
+      <RouterLink to="/#pilastri" active-class="" exact-active-class="" @click="close">Cosa faccio</RouterLink>
+      <RouterLink to="/#materie" active-class="" exact-active-class="" @click="close">Materie</RouterLink>
+      <RouterLink to="/#come-funziona" active-class="" exact-active-class="" @click="close">Come lavoriamo</RouterLink>
+      <RouterLink to="/chi-sono" @click="close">Chi sono</RouterLink>
+      <RouterLink to="/#faq" active-class="" exact-active-class="" @click="close">FAQ</RouterLink>
+      <RouterLink to="/scrivimi" class="nav-cta" @click="close">Scrivimi →</RouterLink>
     </div>
   </nav>
   <div v-if="open" class="nav-overlay" @click="close"></div>

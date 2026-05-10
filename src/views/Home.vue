@@ -1,43 +1,40 @@
 <script setup>
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Hero from '../components/Hero.vue'
+import TrustStrip from '../components/TrustStrip.vue'
 import Pilastri from '../components/Pilastri.vue'
 import Steps from '../components/Steps.vue'
 import Catalogo from '../components/Catalogo.vue'
 import Coaching from '../components/Coaching.vue'
-import ContactForm from '../components/ContactForm.vue'
+import ContactCTA from '../components/ContactCTA.vue'
 import Faq from '../components/Faq.vue'
-// TAGLIO A (prova): sezioni nascoste dalla Home per ridurre sovraccarico.
-// Riabilita gli import + i tag nel template se vuoi rimetterle.
-// import Tools from '../components/Tools.vue'
-// import Bundles from '../components/Bundles.vue'
-// import Features from '../components/Features.vue'
+import StickyCTA from '../components/StickyCTA.vue'
 
-const contactRef = ref(null)
+const router = useRouter()
 
-const scrollToContact = () => {
-  document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })
-}
-
-const onPrefillSelect = (data) => {
-  contactRef.value?.prefill(data || {})
-  scrollToContact()
+// Quando l'utente clicca "Richiedi uno slot" sul componente Coaching della home
+// reindirizziamo direttamente a /scrivimi pre-compilato (niente più form inline).
+const onPrefillSelect = (data = {}) => {
+  const query = {}
+  if (data.prodotto?.toLowerCase().includes('coaching')) query.tipo = 'coaching'
+  else if (data.prodotto?.toLowerCase().includes('tool')) query.tipo = 'tool'
+  else query.tipo = 'materia'
+  if (data.materia) query.note = `Materia: ${data.materia}`
+  if (data.concorso) query.concorso = data.concorso
+  router.push({ name: 'scrivimi', query })
 }
 </script>
 
 <template>
   <main class="home-page">
     <Hero />
+    <TrustStrip />
     <Pilastri />
     <Coaching @select="onPrefillSelect" />
     <Steps />
     <Catalogo />
-    <ContactForm ref="contactRef" />
+    <ContactCTA />
     <Faq />
-    <!-- TAGLIO A (prova): sezioni nascoste
-    <Tools @select="onPrefillSelect" />
-    <Bundles @select="onBundleSelect" />
-    <Features />
-    -->
+    <StickyCTA />
   </main>
 </template>

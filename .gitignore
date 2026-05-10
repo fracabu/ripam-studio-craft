@@ -42,3 +42,7 @@ Thumbs.db
 # template messaggi privati per i clienti (contengono IBAN, prezzi, dati personali)
 # devono restare solo in locale, MAI su GitHub o Vercel
 messaggi-clienti/
+
+# bundle prototipi Claude Design (asset di riferimento, restano in locale)
+.design-bundle/
+.design-bundle-v3/

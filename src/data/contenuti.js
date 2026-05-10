@@ -157,14 +157,17 @@ export const CONTENUTI = {
   'contratti-pubblici': {
     pod: {
       total: '8 episodi · 2h 53min',
+      // Le anteprime audio (campo opzionale `preview`) puntano a file in
+      // public/preview/<slug>/<formato>-ep<n>.mp3 — Vercel li serve come asset statici.
+      // Se il file non esiste, il player mostra "Anteprima in arrivo".
       episodes: [
-        { n:1, title:'Il nuovo codice principi rivoluzionari', duration:'26:27', free:true },
+        { n:1, title:'Il nuovo codice principi rivoluzionari', duration:'26:27', free:true, preview:'/preview/contratti-pubblici/pod-ep1.mp3' },
         { n:2, title:'Programmazione progettazione e digitalizzazione', duration:'27:07' },
         { n:3, title:'Le procedure sopra soglia', duration:'17:11' },
         { n:4, title:'Sotto soglia affidamento diretto e negoziata', duration:'16:01' },
         { n:5, title:'Aggiudicazione OEPV e offerte anomale', duration:'15:01' },
         { n:6, title:'Esclusione subappalto e garanzie', duration:'22:45' },
-        { n:7, title:'I 20 trabocchetti del codice appalti', duration:'24:24' },
+        { n:7, title:'I 20 trabocchetti del codice appalti', duration:'24:24', preview:'/preview/contratti-pubblici/pod-ep7.mp3' },
         { n:8, title:'Trenta trappole del nuovo codice appalti', duration:'24:15' }
       ]
     },
@@ -724,14 +727,18 @@ export const CONTENUTI = {
       ]
     },
     rep: {
-      total: '~25 pagine',
+      total: '10 capitoli · ~65 pagine',
       chapters: [
-        'Sintesi del procedimento amministrativo',
-        'Silenzio, SCIA, conferenza di servizi — cheat sheet',
-        'Autotutela e invalidità — mappa concettuale',
-        'Accesso documentale / civico / FOIA',
-        'I 30 trabocchetti ricorrenti nei quiz',
-        'Tavole riassuntive: termini, competenze, rimedi'
+        'Panoramica generale',
+        'Procedimento e termini',
+        'Responsabile del procedimento',
+        'Silenzio amministrativo',
+        'SCIA e conferenza di servizi',
+        'Provvedimento e autotutela',
+        'Accesso documenti',
+        'Trabocchetti',
+        'Collegamenti normativi',
+        'Riepilogo pre-esame'
       ]
     },
     man: {

@@ -6,7 +6,11 @@ import CookieBanner from './components/CookieBanner.vue'
 
 <template>
   <Navbar />
-  <router-view />
+  <router-view v-slot="{ Component }">
+    <transition name="page" mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </router-view>
   <FooterCraft />
   <CookieBanner />
 </template>

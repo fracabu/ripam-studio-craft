@@ -185,11 +185,7 @@ export const MATERIE = [
     intro:'Statistica applicata alla Pubblica Amministrazione: indicatori, indagini, valutazione politiche pubbliche.',
     avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
     topics:['Indicatori di performance PA','Indagini campionarie','Statistiche ufficiali (ISTAT)','Open data PA','Valutazione impatto','Indici socio-economici','Demografia applicata','Reporting istituzionale'] },
-  { n:46, slug:'topologia-analisi-uno',           t:'Topologia e Analisi 1',           norm:'Analisi matematica',       c:['FUNZ','MIMIT'],
-    intro:'Fondamenti di analisi matematica: limiti, derivate, integrali, successioni, serie, topologia di base.',
-    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
-    topics:['Successioni e limiti','Funzioni continue','Calcolo differenziale','Calcolo integrale','Serie numeriche','Topologia di R^n','Spazi metrici','Convergenza'] },
-  { n:47, slug:'valutazione-politiche-pubbliche', t:'Valutazione Politiche Pubbliche', norm:'VPP · AIR · VIR',          c:['RIPAM','FUNZ','MIMIT'],
+  { n:46, slug:'valutazione-politiche-pubbliche', t:'Valutazione Politiche Pubbliche', norm:'VPP · AIR · VIR',          c:['RIPAM','FUNZ','MIMIT'],
     intro:'Valutazione ex ante, in itinere ed ex post delle politiche pubbliche: AIR, VIR, controfattuali, impatto sociale.',
     avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
     topics:['Logica della valutazione','AIR (Analisi Impatto Regolazione)','VIR (Verifica Impatto)','Metodi controfattuali','Indicatori di impatto','Cost-benefit analysis','Valutazione partecipata','Reporting per stakeholder'] }
