@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
 import { CONCORSI } from '../data/formati.js'
 
@@ -7,8 +7,11 @@ const TIPI = [
   { v: 'materia', l: 'Materia di studio' },
   { v: 'coaching', l: 'Coaching NotebookLM' },
   { v: 'tool', l: 'Tool su misura' },
+  { v: 'quiz-pro', l: 'Credenziali RIPAM Studio Quiz Pro' },
   { v: 'non-so', l: 'Non lo so ancora' }
 ]
+
+const QUIZ_PRO_NOTE = 'Vorrei ricevere le credenziali per accedere a RIPAM Studio Quiz Pro.'
 
 // Stato form
 const nome = ref('')
@@ -22,6 +25,11 @@ const hp = ref('') // honeypot
 const status = ref('idle') // idle | sending | sent | error
 const errorMsg = ref('')
 
+// Modalità semplificata per richieste credenziali Quiz Pro: nasconde
+// i selettori "Cosa ti serve" e "Concorso", mostra banner contestuale,
+// pre-compila il testo della richiesta. L'utente deve solo nome + email.
+const isQuizProMode = computed(() => tipo.value === 'quiz-pro')
+
 // Permetti pre-compilazione via query string: /scrivimi?tipo=coaching&concorso=RIPAM&note=...
 const route = useRoute()
 watch(() => route.query, (q) => {
@@ -29,7 +37,11 @@ watch(() => route.query, (q) => {
   if (q.concorso && (CONCORSI.includes(q.concorso) || q.concorso === 'Altro')) {
     concorso.value = q.concorso === 'Altro' ? 'Altro / non so ancora' : q.concorso
   }
-  if (q.note) note.value = String(q.note)
+  if (q.note) {
+    note.value = String(q.note)
+  } else if (tipo.value === 'quiz-pro' && !note.value) {
+    note.value = QUIZ_PRO_NOTE
+  }
 }, { immediate: true })
 
 const submit = async (e) => {
@@ -75,20 +87,42 @@ const submit = async (e) => {
 <template>
   <main class="sv-page">
     <div class="wrap sv-wrap">
-      <div class="sv-kicker">SCRIVIMI</div>
-      <h1 class="sv-h1">
+      <div class="sv-kicker">{{ isQuizProMode ? 'RICHIESTA CREDENZIALI' : 'SCRIVIMI' }}</div>
+      <h1 v-if="isQuizProMode" class="sv-h1">
+        Richiedi le credenziali di <span class="hl-blue">Quiz Pro.</span>
+      </h1>
+      <h1 v-else class="sv-h1">
         Raccontami <span class="hl-blue">cosa ti serve.</span>
       </h1>
-      <p class="sv-lead">
+      <p v-if="isQuizProMode" class="sv-lead">
+        Bastano <strong>nome ed email</strong>. Ti invio le credenziali entro 24h via mail.
+        L'app è in beta ed è <strong>100% gratuita</strong>: nessun pagamento, nessun carrello.
+      </p>
+      <p v-else class="sv-lead">
         Bastano 4 campi. Ti rispondo entro 24h via email — o via Telegram se preferisci.
         Nessun pagamento anticipato, nessun carrello.
       </p>
 
+      <!-- Banner contestuale: richiesta credenziali Quiz Pro -->
+      <div v-if="isQuizProMode && status !== 'sent'" class="sv-quiz-banner" role="status">
+        <div class="sv-quiz-banner-k">🔐 RIPAM STUDIO QUIZ PRO</div>
+        <p>
+          Stai richiedendo l'accesso a <strong>Quiz Pro</strong>: 5.500+ articoli di legge,
+          26 leggi d'esame, quiz generati con AI. Compila <strong>nome ed email</strong> qui
+          sotto — alle credenziali pensiamo noi.
+        </p>
+      </div>
+
       <!-- SUCCESS STATE in pagina (no modal) -->
       <div v-if="status === 'sent'" id="sv-success" class="sv-success">
         <div class="sv-success-k">RICEVUTO &check;</div>
-        <h2 class="sv-success-h">Grazie. Ti rispondo a mano entro 24h.</h2>
-        <p>Se hai urgenza, scrivimi su Telegram <strong>@fcapurso</strong> — leggo lì prima.</p>
+        <h2 v-if="isQuizProMode" class="sv-success-h">Richiesta ricevuta. Credenziali in arrivo entro 24h.</h2>
+        <h2 v-else class="sv-success-h">Grazie. Ti rispondo a mano entro 24h.</h2>
+        <p v-if="isQuizProMode">
+          Ti invio username e password via email. Controlla anche la cartella <strong>spam/promozioni</strong>.
+          Se hai urgenza, scrivimi su Telegram <strong>@fcapurso</strong>.
+        </p>
+        <p v-else>Se hai urgenza, scrivimi su Telegram <strong>@fcapurso</strong> — leggo lì prima.</p>
         <div class="sv-success-ctas">
           <a href="https://t.me/fcapurso" target="_blank" rel="noopener" class="btn btn-primary">Telegram &nearr;</a>
           <RouterLink to="/" class="btn btn-secondary">Torna alla home &rarr;</RouterLink>
@@ -107,7 +141,7 @@ const submit = async (e) => {
           </div>
         </div>
 
-        <div class="sv-field">
+        <div v-if="!isQuizProMode" class="sv-field">
           <label>Cosa ti serve</label>
           <div class="sv-seg" role="radiogroup" aria-label="Cosa ti serve">
             <label v-for="t in TIPI" :key="t.v" class="sv-seg-opt" :class="{active: tipo === t.v}">
@@ -117,7 +151,7 @@ const submit = async (e) => {
           </div>
         </div>
 
-        <div class="sv-field">
+        <div v-if="!isQuizProMode" class="sv-field">
           <label>Concorso che stai preparando</label>
           <div class="sv-seg" role="radiogroup" aria-label="Concorso">
             <label v-for="c in CONCORSI" :key="c" class="sv-seg-opt" :class="{active: concorso === c}">
@@ -132,13 +166,13 @@ const submit = async (e) => {
         </div>
 
         <div class="sv-field">
-          <label for="sv-note">Dimmi di più</label>
+          <label for="sv-note">{{ isQuizProMode ? 'Note (facoltative)' : 'Dimmi di più' }}</label>
           <textarea
             id="sv-note"
             v-model="note"
-            rows="5"
-            required
-            placeholder="Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…"
+            :rows="isQuizProMode ? 3 : 5"
+            :required="!isQuizProMode"
+            :placeholder="isQuizProMode ? 'Aggiungi qualcosa se vuoi — oppure lascia così com\'è.' : 'Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…'"
             :disabled="status==='sending'"
           ></textarea>
         </div>
@@ -153,9 +187,10 @@ const submit = async (e) => {
         <div class="sv-actions">
           <button type="submit" class="btn btn-primary" :disabled="status==='sending' || !privacy">
             <span v-if="status==='sending'">Invio in corso…</span>
+            <span v-else-if="isQuizProMode">Richiedi credenziali &rarr;</span>
             <span v-else>Invia &rarr;</span>
           </button>
-          <span class="sv-hint">Risposta entro 24h &middot; nessun pagamento anticipato</span>
+          <span class="sv-hint">{{ isQuizProMode ? 'Credenziali via email entro 24h · 100% gratis' : 'Risposta entro 24h · nessun pagamento anticipato' }}</span>
         </div>
 
         <p v-if="status==='error'" class="sv-err">{{ errorMsg }}</p>
@@ -191,6 +226,23 @@ const submit = async (e) => {
   box-shadow:var(--shadow-sm);
 }
 .sv-lead{font-size:16px;line-height:1.55;color:var(--ink-soft,#2a2a2a);max-width:62ch;margin:0}
+
+/* Banner contestuale: richiesta credenziali Quiz Pro */
+.sv-quiz-banner{
+  margin-top:28px;
+  padding:18px 22px;
+  border:2px solid var(--ink);
+  background:var(--acid);
+  box-shadow:6px 6px 0 var(--ink);
+}
+.sv-quiz-banner-k{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  margin-bottom:8px;
+}
+.sv-quiz-banner p{
+  font-size:14.5px;line-height:1.55;margin:0;color:var(--ink);
+}
 
 /* FORM */
 .sv-form{
