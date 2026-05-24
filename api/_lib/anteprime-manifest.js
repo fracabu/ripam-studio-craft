@@ -40,10 +40,22 @@ export const ANTEPRIME_MANIFEST = {
 // Lista degli slug ammessi (usata da subscribe.js per validare il body).
 export const ANTEPRIME_SLUGS = new Set(Object.keys(ANTEPRIME_MANIFEST))
 
-// Restituisce il link Drive viewer per uno slug, o null se l'anteprima
+// Restituisce { viewUrl, downloadUrl } per uno slug, o null se l'anteprima
 // non è ancora disponibile (fileId placeholder).
-export function getAnteprimaDriveUrl(slug) {
+//   viewUrl     → apre il viewer Drive (toolbar download, anteprima inline)
+//   downloadUrl → fa partire il download diretto del PDF senza UI Drive
+// Entrambi richiedono permission "Chiunque con il link" sul file Drive.
+export function getAnteprimaDriveUrls(slug) {
   const fileId = ANTEPRIME_MANIFEST[slug]
   if (!fileId) return null
-  return `https://drive.google.com/file/d/${fileId}/view`
+  return {
+    viewUrl: `https://drive.google.com/file/d/${fileId}/view`,
+    downloadUrl: `https://drive.google.com/uc?export=download&id=${fileId}`,
+  }
+}
+
+// Compat: vecchia API single-URL, rimuovere se non più usata.
+export function getAnteprimaDriveUrl(slug) {
+  const urls = getAnteprimaDriveUrls(slug)
+  return urls ? urls.viewUrl : null
 }

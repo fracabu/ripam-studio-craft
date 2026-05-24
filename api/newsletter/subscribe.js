@@ -121,11 +121,16 @@ export default async function handler(req, res) {
 
   let isAlreadyConfirmed = false
   let subscriberId = null
+  let prevRequestedMateria = null
+  let prevUpdatedAt = null
 
   try {
     // Verifica se esiste già un subscriber con questa email (case-insensitive).
+    // Leggiamo anche requested_materia + updated_at per dedup invio anteprima
+    // (vedi branch isAlreadyConfirmed più sotto).
     const existing = await sql`
-      SELECT id, confirmed_at, unsubscribed_at
+      SELECT id, confirmed_at, unsubscribed_at,
+             requested_materia, updated_at
       FROM newsletter_subscribers
       WHERE LOWER(email) = ${emailLower}
       LIMIT 1
@@ -134,6 +139,8 @@ export default async function handler(req, res) {
     if (existing.length > 0) {
       const row = existing[0]
       subscriberId = row.id
+      prevRequestedMateria = row.requested_materia || null
+      prevUpdatedAt = row.updated_at ? new Date(row.updated_at) : null
 
       if (row.confirmed_at && !row.unsubscribed_at) {
         // Già confermato e attivo: non rifare confirm flow, ma rispondi ok.
@@ -186,23 +193,36 @@ export default async function handler(req, res) {
   // diamo il valore promesso senza obbligarlo a riconfermare.
   if (isAlreadyConfirmed) {
     if (finalRequestedMateria) {
-      try {
-        await sql`
-          UPDATE newsletter_subscribers
-          SET requested_materia = ${finalRequestedMateria}
-          WHERE id = ${subscriberId}
-        `
-        await sendAnteprimaMail({
-          email: emailLower,
-          nome: cleanNome,
-          slug: finalRequestedMateria,
-        })
-      } catch (mailErr) {
-        console.error('Anteprima immediate-send failed for subscriber',
-                      subscriberId, finalRequestedMateria, mailErr)
-        // Non rivelare al frontend che era già confermato.
-        // L'utente vedrà comunque "controlla la mail" — gestiremo il follow-up
-        // dal log se necessario.
+      // Dedup: se la stessa email aveva già richiesto la stessa anteprima
+      // negli ultimi 5 minuti, no-op silenzioso. Evita 4 mail identiche per
+      // tap multipli / doppio click su mobile / retry app webview.
+      const FIVE_MIN_MS = 5 * 60 * 1000
+      const isDuplicateRecent =
+        prevRequestedMateria === finalRequestedMateria &&
+        prevUpdatedAt instanceof Date &&
+        (Date.now() - prevUpdatedAt.getTime()) < FIVE_MIN_MS
+
+      if (!isDuplicateRecent) {
+        try {
+          await sql`
+            UPDATE newsletter_subscribers
+            SET requested_materia = ${finalRequestedMateria}
+            WHERE id = ${subscriberId}
+          `
+          await sendAnteprimaMail({
+            email: emailLower,
+            nome: cleanNome,
+            slug: finalRequestedMateria,
+          })
+        } catch (mailErr) {
+          console.error('Anteprima immediate-send failed for subscriber',
+                        subscriberId, finalRequestedMateria, mailErr)
+          // Non rivelare al frontend che era già confermato.
+        }
+      } else {
+        console.log('Anteprima dedup skip for subscriber',
+                    subscriberId, finalRequestedMateria,
+                    'last update', prevUpdatedAt.toISOString())
       }
     }
     return res.status(200).json({ ok: true, status: 'pending' })

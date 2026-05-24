@@ -9,7 +9,7 @@
 //   - throw          → errore SMTP, lascia gestire al chiamante
 
 import nodemailer from 'nodemailer'
-import { getAnteprimaDriveUrl } from './anteprime-manifest.js'
+import { getAnteprimaDriveUrls } from './anteprime-manifest.js'
 
 // Titolo umano per slug — speculare ai t: di src/data/materie.js.
 // Tenuto in sync a mano (basso churn, evita dipendenza cross-bundle).
@@ -39,16 +39,20 @@ function brandFooterHtml() {
   ripamstudiocraft@gmail.com &middot; <a href="https://ripam-studio-craft.vercel.app" style="color:#6b6458">ripam-studio-craft.vercel.app</a></p>`
 }
 
-function buildDeliveredEmail({ firstName, materiaLabel, driveUrl }) {
+function buildDeliveredEmail({ firstName, materiaLabel, viewUrl, downloadUrl }) {
   const subject = `L'anteprima di ${materiaLabel} è qui — Ripam Studio Craft`
 
   const text = `Ciao ${firstName},
 
-ecco l'anteprima del manuale di ${materiaLabel} (15 pp, PDF) come promesso:
+ecco l'anteprima del manuale di ${materiaLabel} (15 pp, PDF) come promesso.
 
-${driveUrl}
+📥 Scarica subito il PDF:
+${downloadUrl}
 
-Il link apre la visualizzazione su Google Drive — da lì puoi scaricarlo o leggerlo direttamente nel browser. Nessuna registrazione richiesta.
+👁  Oppure aprilo nel browser:
+${viewUrl}
+
+Il link di download fa partire il file direttamente. Quello "apri nel browser" mostra il PDF su Google Drive (utile se vuoi leggerlo senza scaricare).
 
 Cosa trovi dentro: l'indice completo del manuale, l'introduzione e i primi due capitoli per intero, in modo che tu possa valutare lo stile e la profondità prima di chiedere il manuale completo.
 
@@ -68,11 +72,14 @@ ripamstudiocraft@gmail.com · P.IVA 18528431002
     RIPAM STUDIO CRAFT &middot; ANTEPRIMA MANUALE
   </div>
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
-  <p style="margin:0 0 18px;font-size:15px">ecco l'anteprima del manuale di <strong>${materiaLabel}</strong> (15 pp, PDF) come promesso:</p>
+  <p style="margin:0 0 18px;font-size:15px">ecco l'anteprima del manuale di <strong>${materiaLabel}</strong> (15 pp, PDF) come promesso.</p>
   <p style="margin:24px 0;text-align:center">
-    <a href="${driveUrl}" style="display:inline-block;background:#c6f432;color:#0a0a0a;padding:14px 28px;text-decoration:none;font-weight:700;font-size:15px;border:2px solid #0a0a0a;box-shadow:4px 4px 0 #0a0a0a">APRI L'ANTEPRIMA &rarr;</a>
+    <a href="${downloadUrl}" style="display:inline-block;background:#c6f432;color:#0a0a0a;padding:14px 28px;text-decoration:none;font-weight:700;font-size:15px;border:2px solid #0a0a0a;box-shadow:4px 4px 0 #0a0a0a">&darr; SCARICA IL PDF</a>
   </p>
-  <p style="margin:18px 0;font-size:14px;color:#2a2a2a">Il link apre la visualizzazione su Google Drive — da lì puoi <strong>scaricarlo</strong> o leggerlo direttamente nel browser. Nessuna registrazione richiesta.</p>
+  <p style="margin:14px 0;text-align:center;font-size:13px;color:#6b6458">
+    oppure <a href="${viewUrl}" style="color:#0a0a0a;font-weight:700;text-decoration:underline">apri nel browser</a> (Google Drive)
+  </p>
+  <p style="margin:18px 0;font-size:14px;color:#2a2a2a">Il pulsante avvia il download diretto del PDF — non serve account Google né autorizzazioni. Il link "apri nel browser" mostra il PDF su Drive, utile se preferisci leggerlo online.</p>
   <p style="margin:18px 0;font-size:14px;color:#2a2a2a"><strong>Cosa trovi dentro:</strong> indice completo del manuale, introduzione e primi due capitoli per intero. Così puoi valutare stile e profondità prima di chiedere il manuale completo.</p>
   <p style="margin:18px 0;font-size:13px;color:#6b6458">Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email. Per qualunque cosa, rispondi pure a questa mail.</p>
   ${brandFooterHtml()}
@@ -141,10 +148,10 @@ export async function sendAnteprimaMail({ email, nome, slug }) {
 
   const materiaLabel = MATERIA_LABEL[slug] || slug
   const firstName = (nome || '').split(/\s+/)[0] || 'ciao'
-  const driveUrl = getAnteprimaDriveUrl(slug)
+  const urls = getAnteprimaDriveUrls(slug)
 
-  const { subject, text, html } = driveUrl
-    ? buildDeliveredEmail({ firstName, materiaLabel, driveUrl })
+  const { subject, text, html } = urls
+    ? buildDeliveredEmail({ firstName, materiaLabel, ...urls })
     : buildPendingEmail({ firstName, materiaLabel })
 
   const transporter = buildTransporter({ user, pass })
@@ -158,5 +165,5 @@ export async function sendAnteprimaMail({ email, nome, slug }) {
     html,
   })
 
-  return { ok: true, delivered: !!driveUrl }
+  return { ok: true, delivered: !!urls }
 }
