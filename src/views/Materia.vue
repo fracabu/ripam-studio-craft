@@ -594,11 +594,23 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .mat-anteprima-info{
   font-size:14px;line-height:1.5;color:var(--ink,#0a0a0a);font-weight:500;
 }
-.mat-anteprima-cta{align-self:center;text-decoration:none;white-space:nowrap}
+.mat-anteprima-cta{
+  align-self:center;text-decoration:none;
+  white-space:nowrap;min-width:0;box-sizing:border-box;
+}
 
 @media(max-width:680px){
-  .mat-anteprima-box{grid-template-columns:1fr;align-items:flex-start}
-  .mat-anteprima-cta{align-self:stretch;text-align:center}
+  .mat-anteprima-box{
+    grid-template-columns:1fr;align-items:stretch;gap:14px;
+    padding:16px;
+    box-shadow:4px 4px 0 var(--ink,#0a0a0a);
+  }
+  .mat-anteprima-cta{
+    align-self:stretch;text-align:center;
+    width:100%;max-width:100%;
+    white-space:normal;
+    padding:12px 14px;font-size:14px;
+  }
 }
 
 /* SEZIONE ALTRE MATERIE */
