@@ -1,0 +1,155 @@
+#!/usr/bin/env node
+// ============================================================================
+// Applica lo schema newsletter al database Neon dedicato a Ripam Studio Craft.
+//
+// Setup:
+//   1. Crea database Neon dal dashboard Vercel del progetto ripam-studio-craft:
+//      Storage tab -> Create -> Postgres (Neon) -> region Frankfurt -> Create
+//      Vercel inietta automaticamente DATABASE_URL nelle env vars del progetto.
+//   2. Sincronizza le env in locale:
+//      npx vercel link        (collega questa cartella al progetto Vercel)
+//      npx vercel env pull .env.local
+//   3. Lancia: node db/apply_schema.mjs
+//
+// Lo script è idempotente: usa CREATE TABLE IF NOT EXISTS, lo puoi rilanciare
+// in sicurezza dopo modifiche allo schema.
+// ============================================================================
+
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+import { Client, neon } from '@neondatabase/serverless'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Carica .env.local manualmente (no dotenv, niente dipendenze extra)
+function loadEnv() {
+  try {
+    const envPath = join(__dirname, '..', '.env.local')
+    const raw = readFileSync(envPath, 'utf8')
+    for (const line of raw.split('\n')) {
+      const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+?)\s*$/)
+      if (m) {
+        const [, key, val] = m
+        const v = val.replace(/^["']|["']$/g, '')
+        if (!process.env[key]) process.env[key] = v
+      }
+    }
+  } catch {
+    // .env.local non esiste, usa solo process.env
+  }
+}
+
+loadEnv()
+
+// Vercel-Neon injection: DATABASE_URL (pooled, ideale per serverless),
+// alias possibili: POSTGRES_URL, NEON_DATABASE_URL, CRAFT_DATABASE_URL (legacy).
+const url =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.NEON_DATABASE_URL ||
+  process.env.CRAFT_DATABASE_URL
+
+if (!url) {
+  console.error('[FAIL] Nessuna connection string trovata.')
+  console.error('       Cercata: DATABASE_URL, POSTGRES_URL, NEON_DATABASE_URL, CRAFT_DATABASE_URL')
+  console.error('       Sincronizza con: npx vercel env pull .env.local')
+  process.exit(1)
+}
+
+// Maschera la password nel log: postgres://user:***@host/db
+const masked = url.replace(/:[^:@/]+@/, ':***@')
+console.log(`[..] DB target: ${masked}`)
+
+// Per DDL serve Client (TCP/WebSocket): l'API HTTP neon() accetta solo template tag.
+const client = new Client(url)
+await client.connect()
+
+// Per le query di verifica finali manteniamo anche l'API HTTP comoda.
+const sql = neon(url)
+
+const schemaPath = join(__dirname, 'schema_newsletter.sql')
+let schemaSql = readFileSync(schemaPath, 'utf8')
+
+// 1) Rimuovi commenti single-line '-- ...' prima dello split, altrimenti
+//    statement preceduti da commenti header vengono erroneamente scartati.
+//    Non rimuovere se siamo dentro un blocco $$...$$ (raro qui ma safe).
+function stripLineComments(s) {
+  // approccio semplice: rimuovi tutto da '--' a fine riga, riga per riga.
+  // Lo schema non contiene stringhe con '--' annidate.
+  return s.split('\n').map(line => {
+    const idx = line.indexOf('--')
+    return idx >= 0 ? line.slice(0, idx) : line
+  }).join('\n')
+}
+
+// 2) Split sugli ';' di livello base, ignorando ';' dentro $$...$$ (plpgsql body).
+function splitStatements(s) {
+  const statements = []
+  let buf = ''
+  let inDollar = false
+  for (let i = 0; i < s.length; i++) {
+    const next2 = s.slice(i, i + 2)
+    if (next2 === '$$') {
+      inDollar = !inDollar
+      buf += next2
+      i++
+      continue
+    }
+    const c = s[i]
+    if (c === ';' && !inDollar) {
+      const trimmed = buf.trim()
+      if (trimmed) statements.push(trimmed)
+      buf = ''
+      continue
+    }
+    buf += c
+  }
+  const tail = buf.trim()
+  if (tail) statements.push(tail)
+  return statements
+}
+
+const statements = splitStatements(stripLineComments(schemaSql))
+console.log(`[..] Applico ${statements.length} statement allo schema newsletter`)
+
+let applied = 0
+let failed = 0
+for (const [i, stmt] of statements.entries()) {
+  const preview = stmt.slice(0, 70).replace(/\s+/g, ' ')
+  try {
+    await client.query(stmt)
+    applied++
+    console.log(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] OK  ${preview}...`)
+  } catch (err) {
+    failed++
+    console.error(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] FAIL  ${preview}...`)
+    console.error(`       ${err.message}`)
+  }
+}
+
+await client.end()
+
+console.log(`\n=== Done ===`)
+console.log(`Applied: ${applied}/${statements.length}`)
+if (failed > 0) {
+  console.error(`Failed:  ${failed}`)
+  process.exit(2)
+}
+
+// Smoke check: leggi struttura tabella e count
+try {
+  const cols = await sql`
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_name = 'newsletter_subscribers'
+    ORDER BY ordinal_position
+  `
+  console.log(`\nnewsletter_subscribers ha ${cols.length} colonne:`)
+  for (const c of cols) console.log(`  · ${c.column_name} (${c.data_type})`)
+
+  const count = await sql`SELECT COUNT(*)::int AS n FROM newsletter_subscribers`
+  console.log(`\nIscritti attuali: ${count[0].n}`)
+} catch (err) {
+  console.error(`[WARN] smoke check fallita: ${err.message}`)
+}

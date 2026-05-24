@@ -13,6 +13,10 @@ const TIPI = [
 
 const QUIZ_PRO_NOTE = 'Vorrei ricevere le credenziali per accedere a RIPAM Studio Quiz Pro.'
 
+// Testo esatto della checkbox newsletter, registrato come consent_text
+// nel registro consensi GDPR (art. 7.1). Allineato a Newsletter.vue.
+const NEWSLETTER_CONSENT_TEXT = 'Acconsento a ricevere la newsletter di Ripam Studio Craft (max 1-2 email al mese) e ho letto la Privacy Policy. Posso disiscrivermi in qualunque momento.'
+
 // Stato form
 const nome = ref('')
 const email = ref('')
@@ -20,6 +24,7 @@ const tipo = ref('non-so')
 const concorso = ref('Altro / non so ancora')
 const note = ref('')
 const privacy = ref(false)
+const newsletter = ref(false)
 const hp = ref('') // honeypot
 
 const status = ref('idle') // idle | sending | sent | error
@@ -71,9 +76,26 @@ const submit = async (e) => {
     const data = await r.json().catch(() => ({}))
     if (!r.ok || !data.ok) throw new Error(data.error || 'Errore invio')
 
+    // Se l'utente ha spuntato anche la newsletter, fire-and-forget la
+    // chiamata al subscribe endpoint. Eventuali errori vengono loggati ma
+    // non bloccano il success state del contatto principale.
+    if (newsletter.value && email.value) {
+      fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.value,
+          nome: nome.value,
+          source: 'scrivimi',
+          consent_text: NEWSLETTER_CONSENT_TEXT
+        })
+      }).catch(err => console.warn('Newsletter subscribe failed:', err))
+    }
+
     status.value = 'sent'
     nome.value = ''; email.value = ''; note.value = ''
     privacy.value = false
+    newsletter.value = false
     setTimeout(() => {
       document.getElementById('sv-success')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 50)
@@ -180,6 +202,11 @@ const submit = async (e) => {
         <label class="sv-privacy">
           <input v-model="privacy" type="checkbox" required :disabled="status==='sending'" />
           <span>Ho letto la <RouterLink to="/privacy" target="_blank">Privacy Policy</RouterLink> e acconsento al trattamento dei dati per rispondere a questa richiesta.</span>
+        </label>
+
+        <label class="sv-privacy sv-newsletter">
+          <input v-model="newsletter" type="checkbox" :disabled="status==='sending'" />
+          <span>Voglio anche ricevere la <strong>newsletter</strong> (max 1-2 email/mese, disiscrizione one-click). Riceverai una mail di conferma separata.</span>
         </label>
 
         <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="sv-hp" />
@@ -297,6 +324,11 @@ const submit = async (e) => {
 }
 .sv-privacy input{margin-top:2px;width:16px;height:16px;accent-color:var(--ink);flex:0 0 auto}
 .sv-privacy a{color:var(--ink);font-weight:700;text-decoration:underline}
+.sv-newsletter{
+  padding:10px 12px;
+  border-left:3px solid var(--blue,#3d5aff);
+  background:rgba(61,90,255,.05);
+}
 
 .sv-hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;opacity:0}
 

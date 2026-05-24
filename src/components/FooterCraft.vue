@@ -57,6 +57,11 @@ import { LEGAL_HOLDER } from '../data/legale.js'
             <span class="piva">P. IVA {{ LEGAL_HOLDER.piva }}</span>
           </div>
           <div class="row2">&copy; {{ new Date().getFullYear() }} {{ LEGAL_HOLDER.nome }} &middot; Costruito a mano, una pagina alla volta.</div>
+          <div class="row3">
+            Ripam Studio Craft è un'attività privata di formazione e preparazione concorsi.
+            Non è affiliato né collegato alla Commissione RIPAM, al Dipartimento della Funzione Pubblica
+            o ad altri enti pubblici. I marchi e i nomi dei concorsi citati appartengono ai rispettivi enti.
+          </div>
         </div>
       </div>
     </div>
@@ -209,6 +214,15 @@ import { LEGAL_HOLDER } from '../data/legale.js'
   font-family:"JetBrains Mono",ui-monospace,monospace;
   font-size:10px;letter-spacing:.05em;
   color:var(--bg);opacity:.55;
+}
+.ed-legals .row3{
+  max-width:62ch;text-align:right;
+  font-size:10.5px;line-height:1.45;
+  color:var(--bg);opacity:.5;
+  margin-top:6px;
+}
+@media(max-width:640px){
+  .ed-legals .row3{text-align:left}
 }
 @media(max-width:640px){
   .ed-legals .row1{justify-content:flex-start}

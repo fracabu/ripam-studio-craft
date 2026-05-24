@@ -40,9 +40,19 @@ Thumbs.db
 .claude
 
 # template messaggi privati per i clienti (contengono IBAN, prezzi, dati personali)
-# devono restare solo in locale, MAI su GitHub o Vercel
-messaggi-clienti/
+# devono restare solo in locale, MAI su GitHub o Vercel.
+# NOTA: ignoro tutti i file al primo livello e poi "ri-permetto" solo la
+# sottocartella newsletter/, perche' i suoi file (no dati sensibili) devono
+# essere disponibili in produzione per /api/newsletter/send.
+messaggi-clienti/*
+!messaggi-clienti/newsletter/
+!messaggi-clienti/newsletter/**
+
+# script di test/diagnosi temporanei (vivono solo in locale)
+scripts/_tmp_*.mjs
 
 # bundle prototipi Claude Design (asset di riferimento, restano in locale)
 .design-bundle/
 .design-bundle-v3/
+
+.vercel

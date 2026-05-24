@@ -7,6 +7,7 @@ import Steps from '../components/Steps.vue'
 import Catalogo from '../components/Catalogo.vue'
 import Coaching from '../components/Coaching.vue'
 import Recensioni from '../components/Recensioni.vue'
+import Newsletter from '../components/Newsletter.vue'
 import ContactCTA from '../components/ContactCTA.vue'
 import Faq from '../components/Faq.vue'
 import StickyCTA from '../components/StickyCTA.vue'
@@ -35,6 +36,7 @@ const onPrefillSelect = (data = {}) => {
     <Steps />
     <Catalogo />
     <Recensioni />
+    <Newsletter />
     <ContactCTA />
     <Faq />
     <StickyCTA />

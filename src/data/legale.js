@@ -7,7 +7,7 @@ export const LEGAL_HOLDER = {
   citta: 'Roma',
   piva: '18528431002',
   email: 'ripamstudiocraft@gmail.com',
-  ultimoAggiornamento: '2026-04-23'
+  ultimoAggiornamento: '2026-05-23'
 }
 
 export const PAGES = {
@@ -22,15 +22,15 @@ export const PAGES = {
       },
       {
         t: '2. Dati raccolti',
-        p: 'Attraverso il form di contatto presente sul sito, raccolgo i seguenti dati che fornisci volontariamente: nome, indirizzo email, concorso di interesse, prodotto/servizio di interesse, materia (facoltativa), note libere. Non raccolgo dati tramite cookie di profilazione o strumenti di tracciamento analytics.'
+        p: 'Attraverso il form di contatto presente sul sito raccolgo i seguenti dati che fornisci volontariamente: nome, indirizzo email, concorso di interesse, prodotto/servizio di interesse, materia (facoltativa), note libere. Se decidi di iscriverti alla newsletter raccolgo inoltre: indirizzo email, nome (facoltativo), data e ora dell\'iscrizione, indirizzo IP e user agent al momento del consenso, testo della casella di consenso così come ti è stato presentato (registro consensi GDPR). Non raccolgo dati tramite cookie di profilazione o strumenti di tracciamento analytics.'
       },
       {
         t: '3. Finalità e base giuridica',
-        p: 'I dati sono trattati esclusivamente per rispondere alla tua richiesta di informazioni, fornire eventuali preventivi, gestire l\'eventuale rapporto contrattuale. La base giuridica è: (a) il tuo consenso esplicito al momento dell\'invio del form; (b) l\'esecuzione di misure precontrattuali su tua richiesta (art. 6.1 lett. b GDPR).'
+        p: 'I dati raccolti tramite form di contatto sono trattati per rispondere alla tua richiesta di informazioni, fornire eventuali preventivi, gestire l\'eventuale rapporto contrattuale. Base giuridica: (a) tuo consenso esplicito al momento dell\'invio del form; (b) esecuzione di misure precontrattuali su tua richiesta (art. 6.1 lett. b GDPR). I dati raccolti tramite iscrizione alla newsletter sono trattati per inviarti comunicazioni informative su materiali, novità e iniziative di Ripam Studio Craft. Base giuridica: (c) tuo consenso libero, specifico e revocabile in qualsiasi momento (art. 6.1 lett. a GDPR). Il consenso alla newsletter è separato dal consenso al trattamento dei dati del form e non è condizione per ricevere risposta al form di contatto.'
       },
       {
         t: '4. Modalità di trattamento e conservazione',
-        p: 'I dati vengono trasmessi tramite protocollo HTTPS cifrato e archiviati nella casella email del Titolare (Google Gmail). I dati sono conservati per il tempo necessario a rispondere alla tua richiesta e, in caso di rapporto attivato, per il tempo richiesto dalla legge (documenti fiscali: 10 anni). Richieste senza seguito vengono cancellate entro 24 mesi.'
+        p: 'I dati vengono trasmessi tramite protocollo HTTPS cifrato. I dati del form di contatto sono archiviati nella casella email del Titolare (Google Gmail) e conservati per il tempo necessario a rispondere alla richiesta e, in caso di rapporto attivato, per il tempo richiesto dalla legge (documenti fiscali: 10 anni); richieste senza seguito sono cancellate entro 24 mesi. I dati di iscrizione alla newsletter sono archiviati in un database gestito tramite Neon Inc. (PostgreSQL serverless ospitato in UE) e sono conservati fino alla revoca del consenso (disiscrizione) o all\'inattività prolungata della casella (rimozione automatica dopo 24 mesi senza aperture).'
       },
       {
         t: '5. Trasferimenti extra-UE',
@@ -38,18 +38,22 @@ export const PAGES = {
       },
       {
         t: '6. Destinatari dei dati',
-        p: 'I dati non sono ceduti, venduti o comunicati a terzi per finalità di marketing. I fornitori tecnologici che trattano i dati come Responsabili esterni sono: Vercel Inc. (hosting sito e funzioni serverless), Google LLC (casella email Gmail).'
+        p: 'I dati non sono ceduti, venduti o comunicati a terzi per finalità di marketing di terzi. I fornitori tecnologici che trattano i dati come Responsabili esterni sono: Vercel Inc. (hosting sito e funzioni serverless), Google LLC (casella email Gmail e invio email transazionali e newsletter), Neon Inc. (database PostgreSQL per gestione iscritti alla newsletter, server in UE).'
       },
       {
-        t: '7. Diritti dell\'interessato',
-        p: `Ai sensi degli artt. 15-22 GDPR hai diritto di: accedere ai tuoi dati, chiederne rettifica o cancellazione, opporti al trattamento, chiedere la limitazione, ricevere i dati in formato portabile, revocare il consenso. Per esercitare questi diritti scrivi a ${LEGAL_HOLDER.email}. Hai inoltre diritto di proporre reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it).`
+        t: '7. Newsletter / comunicazioni marketing',
+        p: 'Se hai prestato consenso specifico, potrai ricevere fino a 2 email al mese con: novità sui materiali di studio, anteprime, bandi pertinenti, occasionali offerte. Ogni email contiene un link di disiscrizione (unsubscribe) attivo con un click: puoi revocare il consenso in qualsiasi momento, gratuitamente, senza dover motivare la scelta. La revoca non pregiudica la liceità dei trattamenti basati sul consenso prestato prima della revoca. Il consenso alla newsletter è raccolto con doppio opt-in: ti iscrivi sul sito, ricevi una mail di conferma, e l\'iscrizione diventa attiva solo dopo il tuo click di conferma.'
       },
       {
-        t: '8. Cookie',
+        t: '8. Diritti dell\'interessato',
+        p: `Ai sensi degli artt. 15-22 GDPR hai diritto di: accedere ai tuoi dati, chiederne rettifica o cancellazione, opporti al trattamento, chiedere la limitazione, ricevere i dati in formato portabile, revocare in qualsiasi momento il consenso prestato. Per esercitare questi diritti scrivi a ${LEGAL_HOLDER.email}. Per la sola newsletter puoi anche disiscriverti con un click dal link presente in ogni email. Hai inoltre diritto di proporre reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it).`
+      },
+      {
+        t: '9. Cookie',
         p: 'Il sito utilizza unicamente cookie tecnici necessari al funzionamento (sessione, preferenze). Non sono utilizzati cookie di profilazione o di terze parti a fini di marketing. Per dettagli vedi Cookie Policy.'
       },
       {
-        t: '9. Aggiornamenti',
+        t: '10. Aggiornamenti',
         p: `La presente Privacy Policy può essere aggiornata. In caso di modifiche sostanziali verrà data evidenza nella home. Ultimo aggiornamento: ${LEGAL_HOLDER.ultimoAggiornamento}.`
       }
     ]
