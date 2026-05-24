@@ -20,7 +20,7 @@
 export const ANTEPRIME_MANIFEST = {
   'anticorruzione-trasparenza':  null,
   'cad':                         null,
-  'contabilita-pubblica':        null,
+  'contabilita-pubblica':        '1LVFKhnjOIvXVuH0Ra9ODFSg1JKlWxZhH',
   'contratti-pubblici':          null,
   'diritto-amministrativo':      null,
   'diritto-civile':              null,
