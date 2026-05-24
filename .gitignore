@@ -51,6 +51,12 @@ messaggi-clienti/*
 # script di test/diagnosi temporanei (vivono solo in locale)
 scripts/_tmp_*.mjs
 
+# anteprime PDF dei manuali: NON pubblicarle dal sito.
+# Vengono consegnate via link Google Drive a chi le richiede esplicitamente
+# (skill deliver-anteprima-manuale - work in progress).
+# I file restano in locale per la generazione/upload su Drive.
+public/preview/**/manuale-anteprima.pdf
+
 # bundle prototipi Claude Design (asset di riferimento, restano in locale)
 .design-bundle/
 .design-bundle-v3/
