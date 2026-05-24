@@ -3,6 +3,7 @@
 // Risponde con una pagina HTML brand-friendly (no redirect SPA).
 
 import { neon } from '@neondatabase/serverless'
+import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
 
 function htmlPage({ title, kicker, headline, body, color = '#c6f432' }) {
   return `<!DOCTYPE html>
@@ -65,16 +66,66 @@ export default async function handler(req, res) {
   try {
     // Conferma: setta confirmed_at solo se non già confermato.
     // Se l'utente clicca due volte, la seconda è un no-op ma rispondiamo "già confermato".
+    // Selezioniamo anche nome + requested_materia per la consegna automatica
+    // dell'anteprima manuale (flusso lead-magnet su /materia/<slug>).
     const rows = await sql`
       UPDATE newsletter_subscribers
       SET confirmed_at = now()
       WHERE confirm_token = ${token}
         AND confirmed_at IS NULL
-      RETURNING id, email
+      RETURNING id, email, nome, requested_materia
     `
 
     if (rows.length > 0) {
-      // Conferma riuscita
+      const row = rows[0]
+
+      // Se l'utente si era iscritto richiedendo l'anteprima di una materia,
+      // la consegniamo immediatamente in una mail separata.
+      // L'errore SMTP qui NON deve far fallire la pagina di conferma:
+      // la conferma è già committata sul DB, l'utente vede comunque "Ci sei".
+      // L'errore viene loggato per follow-up manuale.
+      let anteprimaDelivered = null
+      if (row.requested_materia) {
+        try {
+          const result = await sendAnteprimaMail({
+            email: row.email,
+            nome: row.nome,
+            slug: row.requested_materia,
+          })
+          anteprimaDelivered = result.delivered
+        } catch (mailErr) {
+          console.error('Anteprima mail send failed for subscriber',
+                        row.id, row.requested_materia, mailErr)
+          // Lasciamo anteprimaDelivered = null → messaggio fallback nella pagina
+        }
+      }
+
+      // Conferma riuscita — pagina HTML adattata se c'era una richiesta anteprima.
+      if (row.requested_materia) {
+        const bodyDelivered = `
+          <p>La tua iscrizione alla newsletter è attiva e ti ho appena inviato l'anteprima del manuale richiesta.</p>
+          <p style="font-size:13px;color:#6b6458">Controlla la posta (anche spam) — arriva da ripamstudiocraft@gmail.com con oggetto "L'anteprima di … è qui".</p>
+        `
+        const bodyPending = `
+          <p>La tua iscrizione alla newsletter è attiva. Ti ho inviato una mail con i dettagli sull'anteprima richiesta.</p>
+          <p style="font-size:13px;color:#6b6458">In questo momento sto rivedendo i manuali — l'anteprima ti arriverà non appena la nuova versione sarà pronta.</p>
+        `
+        const bodyError = `
+          <p>La tua iscrizione alla newsletter è attiva. C'è stato un problema tecnico nell'invio dell'anteprima — ti contatterò personalmente nelle prossime ore.</p>
+          <p style="font-size:13px;color:#6b6458">Se hai urgenza, scrivi a ripamstudiocraft@gmail.com.</p>
+        `
+        const body = anteprimaDelivered === true ? bodyDelivered
+                   : anteprimaDelivered === false ? bodyPending
+                   : bodyError
+
+        return res.status(200).send(htmlPage({
+          title: 'Iscrizione confermata',
+          kicker: 'ISCRIZIONE CONFERMATA',
+          headline: 'Ci <em>sei.</em>',
+          body,
+        }))
+      }
+
       return res.status(200).send(htmlPage({
         title: 'Iscrizione confermata',
         kicker: 'ISCRIZIONE CONFERMATA',

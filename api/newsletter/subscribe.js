@@ -11,13 +11,16 @@
 // Body atteso (JSON):
 //   { email: string,
 //     nome?: string,
-//     source?: 'home' | 'scrivimi' | 'telegram',
-//     consent_text: string,     // testo della checkbox al momento del consenso
-//     hp?: string }             // honeypot anti-bot
+//     source?: 'home' | 'scrivimi' | 'telegram' | 'anteprima',
+//     requested_materia?: string,  // slug materia, solo se source='anteprima'
+//     consent_text: string,        // testo della checkbox al momento del consenso
+//     hp?: string }                // honeypot anti-bot
 
 import { neon } from '@neondatabase/serverless'
 import nodemailer from 'nodemailer'
 import { randomBytes } from 'node:crypto'
+import { ANTEPRIME_SLUGS } from '../_lib/anteprime-manifest.js'
+import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
 
 const MAX_BODY = 4_000
 
@@ -63,7 +66,7 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(400).json({ error: 'Body JSON non valido' })
   }
-  const { email, nome, source, consent_text, hp } = body
+  const { email, nome, source, requested_materia, consent_text, hp } = body
 
   // honeypot: fingi successo, non fare nulla
   if (hp) return res.status(200).json({ ok: true })
@@ -78,8 +81,17 @@ export default async function handler(req, res) {
   if (String(email).length > 160 || String(nome || '').length > 120) {
     return res.status(400).json({ error: 'Dati troppo lunghi' })
   }
-  const allowedSources = new Set(['home', 'scrivimi', 'telegram', 'admin'])
+  const allowedSources = new Set(['home', 'scrivimi', 'telegram', 'admin', 'anteprima'])
   const finalSource = allowedSources.has(source) ? source : 'home'
+
+  // requested_materia accettato solo per source='anteprima' e solo se
+  // lo slug è presente nel manifest (altrimenti silenzioso null — non
+  // rompere l'iscrizione se il frontend passa uno slug sconosciuto).
+  let finalRequestedMateria = null
+  if (finalSource === 'anteprima' && typeof requested_materia === 'string') {
+    const slug = requested_materia.trim().toLowerCase()
+    if (ANTEPRIME_SLUGS.has(slug)) finalRequestedMateria = slug
+  }
 
   // rate limit
   const ip = (req.headers['x-forwarded-for'] || '').toString().split(',')[0].trim()
@@ -135,6 +147,7 @@ export default async function handler(req, res) {
           UPDATE newsletter_subscribers SET
             nome = ${cleanNome || null},
             source = ${finalSource},
+            requested_materia = ${finalRequestedMateria},
             consent_text = ${cleanConsent},
             consent_ip = ${ip || null},
             consent_user_agent = ${userAgent || null},
@@ -151,10 +164,11 @@ export default async function handler(req, res) {
       // Nuovo subscriber
       const inserted = await sql`
         INSERT INTO newsletter_subscribers
-          (email, nome, source, consent_text, consent_ip, consent_user_agent,
-           confirm_token, unsubscribe_token)
+          (email, nome, source, requested_materia, consent_text,
+           consent_ip, consent_user_agent, confirm_token, unsubscribe_token)
         VALUES
-          (${emailLower}, ${cleanNome || null}, ${finalSource}, ${cleanConsent},
+          (${emailLower}, ${cleanNome || null}, ${finalSource},
+           ${finalRequestedMateria}, ${cleanConsent},
            ${ip || null}, ${userAgent || null},
            ${confirmToken}, ${unsubscribeToken})
         RETURNING id
@@ -166,8 +180,31 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Errore database' })
   }
 
-  // Se era già confermato non rimandare la mail di conferma — risposta neutra al frontend.
+  // Se era già confermato non rimandare la mail di doppio opt-in.
+  // MA: se la richiesta corrente è 'anteprima' con uno slug valido, consegniamo
+  // subito l'anteprima — l'utente ha già consenso valido in archivio, gli
+  // diamo il valore promesso senza obbligarlo a riconfermare.
   if (isAlreadyConfirmed) {
+    if (finalRequestedMateria) {
+      try {
+        await sql`
+          UPDATE newsletter_subscribers
+          SET requested_materia = ${finalRequestedMateria}
+          WHERE id = ${subscriberId}
+        `
+        await sendAnteprimaMail({
+          email: emailLower,
+          nome: cleanNome,
+          slug: finalRequestedMateria,
+        })
+      } catch (mailErr) {
+        console.error('Anteprima immediate-send failed for subscriber',
+                      subscriberId, finalRequestedMateria, mailErr)
+        // Non rivelare al frontend che era già confermato.
+        // L'utente vedrà comunque "controlla la mail" — gestiremo il follow-up
+        // dal log se necessario.
+      }
+    }
     return res.status(200).json({ ok: true, status: 'pending' })
   }
 

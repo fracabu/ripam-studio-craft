@@ -15,8 +15,13 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
     email           TEXT NOT NULL,
     nome            TEXT,
     -- origine dell'iscrizione: 'home' (form dedicato), 'scrivimi' (checkbox
-    -- nel form di contatto), 'telegram', 'admin' (aggiunto manualmente)
+    -- nel form di contatto), 'telegram', 'admin' (aggiunto manualmente),
+    -- 'anteprima' (modale lead-magnet su /materia/<slug>)
     source          TEXT NOT NULL DEFAULT 'home',
+    -- se source='anteprima' contiene lo slug della materia richiesta
+    -- (es. 'diritto-amministrativo'); usato da confirm.js per consegnare
+    -- automaticamente il link Drive dell'anteprima al doppio opt-in.
+    requested_materia TEXT,
     -- registro consensi GDPR
     consent_text    TEXT NOT NULL,        -- snapshot del testo della checkbox
     consent_ip      TEXT,                 -- IP cliente al momento del consenso
@@ -87,6 +92,13 @@ CREATE INDEX IF NOT EXISTS newsletter_send_events_newsletter_id_idx
 
 CREATE INDEX IF NOT EXISTS newsletter_send_events_sent_at_idx
     ON newsletter_send_events (sent_at DESC);
+
+-- ============================================================================
+-- Migrazione idempotente (per DB già creati prima dell'aggiunta colonna).
+-- Si può applicare ripetutamente senza errori.
+-- ============================================================================
+ALTER TABLE newsletter_subscribers
+    ADD COLUMN IF NOT EXISTS requested_materia TEXT;
 
 -- ============================================================================
 -- View comoda: iscritti attivi (confermati, non disiscritti, non bounce-out)

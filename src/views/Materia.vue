@@ -6,6 +6,17 @@ import { FORMATI } from '../data/formati.js'
 import { getContenuti } from '../data/contenuti.js'
 import ContactForm from '../components/ContactForm.vue'
 import EpisodePlayer from '../components/EpisodePlayer.vue'
+import RichiediAnteprimaModale from '../components/RichiediAnteprimaModale.vue'
+
+// Slug delle 17 materie con anteprima manuale 15 pp disponibile (in sync
+// con api/_lib/anteprime-manifest.js). Aggiornare entrambi insieme.
+const ANTEPRIME_SLUGS = new Set([
+  'anticorruzione-trasparenza','cad','contabilita-pubblica','contratti-pubblici',
+  'diritto-amministrativo','diritto-civile','diritto-costituzionale',
+  'diritto-penale-pa','diritto-processuale-civile','diritto-ue','gdpr',
+  'informatica','logica','ordinamento-pa','patrimonio-culturale',
+  'pubblico-impiego','sicurezza-lavoro',
+])
 
 const router = useRouter()
 
@@ -125,6 +136,12 @@ const askMateria = () => {
   })
   scrollToContact()
 }
+
+// Modale anteprima manuale (lead-magnet: 15 pp via email, doppio opt-in).
+const anteprimaOpen = ref(false)
+const hasAnteprima = computed(() => materia.value && ANTEPRIME_SLUGS.has(materia.value.slug))
+const openAnteprima = () => { anteprimaOpen.value = true }
+const closeAnteprima = () => { anteprimaOpen.value = false }
 </script>
 
 <template>
@@ -299,6 +316,20 @@ const askMateria = () => {
               <div class="struct-stat-lbl">AGGIORNATO</div>
             </div>
           </div>
+
+          <!-- Lead-magnet: anteprima 15 pp via email (solo tab MAN) -->
+          <div v-if="activeTab==='man' && hasAnteprima" class="mat-anteprima-box">
+            <div class="mat-anteprima-meta">
+              <span class="mat-anteprima-pill">ANTEPRIMA · 15 PP</span>
+              <span class="mat-anteprima-info">
+                Indice completo + introduzione + primi 2 capitoli. Te li mando via email gratis.
+              </span>
+            </div>
+            <button type="button" class="btn btn-primary mat-anteprima-cta" @click="openAnteprima">
+              Ricevi l'anteprima via email &rarr;
+            </button>
+          </div>
+
           <div class="chapters">
             <div v-for="(c, i) in contenuti[activeTab].chapters" :key="i" class="chap">
               <span class="chap-num">{{ String(i+1).padStart(2,'0') }}</span>
@@ -378,6 +409,14 @@ const askMateria = () => {
 
     <!-- FORM -->
     <ContactForm ref="contactRef" />
+
+    <!-- Modale richiesta anteprima manuale (15 pp via email) -->
+    <RichiediAnteprimaModale
+      :open="anteprimaOpen"
+      :slug="materia?.slug || ''"
+      :materia-label="materia?.t || ''"
+      @close="closeAnteprima"
+    />
   </main>
 
 
@@ -534,6 +573,33 @@ const askMateria = () => {
 .ff-stato-na{background:var(--bg);color:var(--ink);opacity:.55}
 .ff-desc{font-size:14px;line-height:1.55;margin:0;color:var(--ink-soft,#2a2a2a)}
 .ff-cta{align-self:flex-start;margin-top:auto;text-decoration:none}
+
+/* LEAD-MAGNET: box anteprima manuale */
+.mat-anteprima-box{
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  margin:18px 0 22px;
+  padding:18px 20px;
+  background:var(--acid,#c6f432);
+  border:2px solid var(--ink,#0a0a0a);
+  box-shadow:6px 6px 0 var(--ink,#0a0a0a);
+}
+.mat-anteprima-meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mat-anteprima-pill{
+  align-self:flex-start;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  background:var(--ink,#0a0a0a);color:var(--acid,#c6f432);
+  padding:4px 8px;border:2px solid var(--ink,#0a0a0a);
+}
+.mat-anteprima-info{
+  font-size:14px;line-height:1.5;color:var(--ink,#0a0a0a);font-weight:500;
+}
+.mat-anteprima-cta{align-self:center;text-decoration:none;white-space:nowrap}
+
+@media(max-width:680px){
+  .mat-anteprima-box{grid-template-columns:1fr;align-items:flex-start}
+  .mat-anteprima-cta{align-self:stretch;text-align:center}
+}
 
 /* SEZIONE ALTRE MATERIE */
 .mat-related{
