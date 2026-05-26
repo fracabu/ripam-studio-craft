@@ -20,20 +20,20 @@
 export const ANTEPRIME_MANIFEST = {
   'anticorruzione-trasparenza':  null,
   'cad':                         null,
-  'contabilita-pubblica':        '1LVFKhnjOIvXVuH0Ra9ODFSg1JKlWxZhH',
+  'contabilita-pubblica':        '187s0GdhUXuBrx_en2e0Q-VYCqDi8vC4l',
   'contratti-pubblici':          null,
   'diritto-amministrativo':      null,
   'diritto-civile':              null,
   'diritto-costituzionale':      null,
   'diritto-penale-pa':           null,
   'diritto-processuale-civile':  null,
-  'diritto-ue':                  null,
+  'diritto-ue':                  '1N47ae_WQbIPcgMThFilBlfsu5mUZYjJh',
   'gdpr':                        null,
   'informatica':                 null,
   'logica':                      null,
   'ordinamento-pa':              null,
   'patrimonio-culturale':        null,
-  'pubblico-impiego':            null,
+  'pubblico-impiego':            '1uwecpQ8Rd_8bKD8Lc3C8J7ejYGiHVg_K',
   'sicurezza-lavoro':            null,
 }
 

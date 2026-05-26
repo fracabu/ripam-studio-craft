@@ -170,8 +170,18 @@ export default async function handler(req, res) {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
     const unsubUrl = `${baseUrl}/api/newsletter/unsubscribe?t=${r.unsubscribe_token}`
-    const html = htmlTpl.replaceAll('{{UNSUB_URL}}', unsubUrl)
-    const text = txtTpl.replaceAll('{{UNSUB_URL}}', unsubUrl)
+    // FIRST_NAME: primo token del campo nome se presente, altrimenti deriva
+    // dalla local-part dell'email (es. "mario.rossi+test@gmail.com" -> "Mario").
+    const firstNameRaw = (r.nome || '').trim().split(/\s+/)[0]
+      || String(r.email || '').split('@')[0].split('+')[0].split(/[._-]/)[0]
+      || 'ciao'
+    const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase()
+    const html = htmlTpl
+      .replaceAll('{{UNSUB_URL}}', unsubUrl)
+      .replaceAll('{{FIRST_NAME}}', firstName)
+    const text = txtTpl
+      .replaceAll('{{UNSUB_URL}}', unsubUrl)
+      .replaceAll('{{FIRST_NAME}}', firstName)
 
     try {
       const info = await transporter.sendMail({

@@ -22,7 +22,8 @@ function htmlPage({ title, kicker, headline, body, color = '#c6f432' }) {
   p{font-size:15px;color:#2a2a2a;margin:0 0 14px}
   .btn{display:inline-block;background:#0a0a0a;color:#f5f0e8;padding:12px 22px;text-decoration:none;font-weight:700;font-size:14px;border:2px solid #0a0a0a;box-shadow:4px 4px 0 #c6f432;margin-top:18px}
   .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #c6f432}
-  .foot{margin-top:48px;padding-top:24px;border-top:1px solid #e6dfd2;font-size:12px;color:#6b6458}
+  .foot{margin-top:48px;padding-top:24px;border-top:1px solid #e6dfd2;font-size:12px;color:#6b6458;line-height:1.55}
+  .foot-logo{display:block;width:180px;max-width:180px;height:auto;margin:0 0 14px;border:0}
 </style>
 </head>
 <body>
@@ -31,7 +32,12 @@ function htmlPage({ title, kicker, headline, body, color = '#c6f432' }) {
   <h1>${headline}</h1>
   ${body}
   <a class="btn" href="https://ripam-studio-craft.vercel.app">TORNA AL SITO &rarr;</a>
-  <div class="foot">Francesco Capurso · Ripam Studio Craft · Roma · P.IVA 18528431002 · ripamstudiocraft@gmail.com</div>
+  <div class="foot">
+    <a href="https://ripam-studio-craft.vercel.app" style="text-decoration:none;border:0;">
+      <img class="foot-logo" src="https://ripam-studio-craft.vercel.app/logo.png" alt="Ripam Studio Craft" width="180" />
+    </a>
+    Francesco Capurso · Ripam Studio Craft · Roma · P.IVA 18528431002 · ripamstudiocraft@gmail.com
+  </div>
 </div>
 </body>
 </html>`

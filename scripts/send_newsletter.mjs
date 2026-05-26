@@ -40,6 +40,12 @@ try {
 // Cambia cwd alla project root cosi' l'handler trova messaggi-clienti/newsletter
 process.chdir(ROOT)
 
+// Forza PUBLIC_BASE_URL alla URL di produzione: chi manda newsletter dalla CLI
+// vuole che i link nelle mail (conferma, disiscrizione) puntino al sito live,
+// NON al server di dev locale. .env.local in dev usa localhost:5173 per altri
+// scopi, ma qui ci serve sempre il dominio pubblico.
+process.env.PUBLIC_BASE_URL = 'https://ripam-studio-craft.vercel.app'
+
 // Parse argomenti
 const [, , file, ...rest] = process.argv
 if (!file || file.startsWith('--')) {

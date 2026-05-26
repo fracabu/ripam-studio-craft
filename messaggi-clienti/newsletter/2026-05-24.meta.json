@@ -1,38 +1,42 @@
 {
-  "subject": "Benvenuto. Anteprime audio online: 13 materie",
-  "preheader": "Un podcast e una lezione gratis per ogni materia. E 3 bandi grossi aperti adesso.",
+  "subject": "Benvenuto. Ecco le tue anteprime complete (8 materie)",
+  "preheader": "Audio EP1, Video EP1 e manuale PDF di 20 pp per ogni materia disponibile. Solo per iscritti.",
   "from_name": "Francesco — Ripam Studio Craft",
   "from_email": "ripamstudiocraft@gmail.com",
   "reply_to": "ripamstudiocraft@gmail.com",
   "issue_date": "2026-05-24",
   "issue_label": "MAGGIO 2026",
   "kicker": "EDIZIONE 01 · 2026",
-  "headline": "Benvenuto. Ecco cosa trovi ogni mese.",
+  "headline": "Benvenuto. Ecco le tue anteprime complete.",
   "sections_used": [
     "intro_benvenuto",
-    "hero_anteprime_audio_13_materie",
-    "sec1_bandi_mef_mic_inps_inail",
-    "sec2_anteprime_manuali_17_materie",
-    "sec3_tip_notebooklm_podcast",
+    "spiegazione_perche_via_mail",
+    "tabella_8_materie_drive_links",
+    "bandi_mef_mic_inps_inail",
+    "tip_notebooklm",
     "closing_scrivimi"
   ],
-  "word_count_body": 412,
-  "subject_chars": 45,
-  "preheader_chars": 81,
-  "sources_used": {
-    "bandi": [
-      "Bando_MEF_548_Funzionari.md",
-      "Bando_MIC_1800_Assistenti.md",
-      "Bando_INPS_INAIL_448_Ispettori.md"
-    ],
-    "preview_audio": [
-      "diritto-amministrativo (aul-ep1 + pod-ep1 + manuale)",
-      "13 materie con anteprima audio EP1 secondo commit 9d405c1"
-    ],
-    "contenuti_js_commits": [
-      "9d405c1 (2026-05-10) Anteprime audio EP1 per 13 materie",
-      "6769bc0 (2026-05-08) Manuali per 13 materie",
-      "2e9d090 (2026-05-08) Popola report e podcast in contenuti.js"
-    ]
+  "word_count_body": 520,
+  "subject_chars": 54,
+  "preheader_chars": 96,
+  "materie_incluse": [
+    "beni-culturali",
+    "contabilita-pubblica",
+    "contratti-pubblici",
+    "diritto-amministrativo",
+    "diritto-ue",
+    "organizzazione-mic",
+    "patrimonio-culturale",
+    "pubblico-impiego"
+  ],
+  "drive_file_ids": {
+    "beni-culturali":         { "audio": "1SrLKTPMnI8p6q9aoOjmonRmxZS_QxEVh", "video": "1UnAa1Nk2zTx9dr0FYpEhkkWAjK1jEvvI", "manuale": null },
+    "contabilita-pubblica":   { "audio": "1VqZ_WXLkg4CSjrt4TFjYu4vF5U_fy8Wl", "video": "1roo_BkJieU2ch1gF4Ws39f3V87ElTDUy", "manuale": "187s0GdhUXuBrx_en2e0Q-VYCqDi8vC4l" },
+    "contratti-pubblici":     { "audio": "1duqAhIoa-YvYuz-tko1chtJvx-eqZdWm", "video": "1mjH2l7WsgsLU3uRphaaNoGKWG2upLAIY", "manuale": null },
+    "diritto-amministrativo": { "audio": "1XBymcpPBPzHiXcSdXiqLxRxlhZQHq0u7", "video": "1KDjrhGfLA1w19Vei5gP23XLZDnXQf2JI", "manuale": null },
+    "diritto-ue":             { "audio": "1RMscCdE8iC0A1WjBUU59mNKIT1WXalmI", "video": "1jQNnUudLXJrqhSfb3jWZeejiXDuguzPX", "manuale": "1N47ae_WQbIPcgMThFilBlfsu5mUZYjJh" },
+    "organizzazione-mic":     { "audio": "1kJuxyFEuM99u2Cx_vKhbxBPya-0b1gAL", "video": "10TCw3xqODWtDDZbYlhB4BYeE3Mgx4-ho", "manuale": null },
+    "patrimonio-culturale":   { "audio": "1PMShr8AaOKnsm0Vkncs_Bso7MVeoL-Xu", "video": "1hETQVUdoChwUl6EMOBVztI90-YD7ya02", "manuale": null },
+    "pubblico-impiego":       { "audio": null,                                "video": null,                                "manuale": "1uwecpQ8Rd_8bKD8Lc3C8J7ejYGiHVg_K" }
   }
 }
