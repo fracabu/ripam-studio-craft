@@ -1,42 +1,26 @@
 {
-  "subject": "Benvenuto. Ecco le tue anteprime complete (8 materie)",
-  "preheader": "Audio EP1, Video EP1 e manuale PDF di 20 pp per ogni materia disponibile. Solo per iscritti.",
+  "subject": "Benvenuto. La tua prima anteprima: Beni Culturali (EP1)",
+  "preheader": "Audio EP1 + Video EP1 di Beni Culturali, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
   "from_name": "Francesco — Ripam Studio Craft",
   "from_email": "ripamstudiocraft@gmail.com",
   "reply_to": "ripamstudiocraft@gmail.com",
-  "issue_date": "2026-05-24",
-  "issue_label": "MAGGIO 2026",
-  "kicker": "EDIZIONE 01 · 2026",
+  "issue_label": "WELCOME",
+  "kicker": "WELCOME",
   "headline": "Benvenuto. Ecco le tue anteprime complete.",
+  "is_welcome": true,
   "sections_used": [
-    "intro_benvenuto",
-    "spiegazione_perche_via_mail",
-    "tabella_8_materie_drive_links",
+    "intro_serie_mensile",
+    "box_anteprima_oggi_beni_culturali",
+    "card_beni_culturali_drive",
+    "tease_prossima_mail",
     "bandi_mef_mic_inps_inail",
     "tip_notebooklm",
     "closing_scrivimi"
   ],
-  "word_count_body": 520,
-  "subject_chars": 54,
-  "preheader_chars": 96,
-  "materie_incluse": [
-    "beni-culturali",
-    "contabilita-pubblica",
-    "contratti-pubblici",
-    "diritto-amministrativo",
-    "diritto-ue",
-    "organizzazione-mic",
-    "patrimonio-culturale",
-    "pubblico-impiego"
-  ],
-  "drive_file_ids": {
-    "beni-culturali":         { "audio": "1SrLKTPMnI8p6q9aoOjmonRmxZS_QxEVh", "video": "1UnAa1Nk2zTx9dr0FYpEhkkWAjK1jEvvI", "manuale": null },
-    "contabilita-pubblica":   { "audio": "1VqZ_WXLkg4CSjrt4TFjYu4vF5U_fy8Wl", "video": "1roo_BkJieU2ch1gF4Ws39f3V87ElTDUy", "manuale": "187s0GdhUXuBrx_en2e0Q-VYCqDi8vC4l" },
-    "contratti-pubblici":     { "audio": "1duqAhIoa-YvYuz-tko1chtJvx-eqZdWm", "video": "1mjH2l7WsgsLU3uRphaaNoGKWG2upLAIY", "manuale": null },
-    "diritto-amministrativo": { "audio": "1XBymcpPBPzHiXcSdXiqLxRxlhZQHq0u7", "video": "1KDjrhGfLA1w19Vei5gP23XLZDnXQf2JI", "manuale": null },
-    "diritto-ue":             { "audio": "1RMscCdE8iC0A1WjBUU59mNKIT1WXalmI", "video": "1jQNnUudLXJrqhSfb3jWZeejiXDuguzPX", "manuale": "1N47ae_WQbIPcgMThFilBlfsu5mUZYjJh" },
-    "organizzazione-mic":     { "audio": "1kJuxyFEuM99u2Cx_vKhbxBPya-0b1gAL", "video": "10TCw3xqODWtDDZbYlhB4BYeE3Mgx4-ho", "manuale": null },
-    "patrimonio-culturale":   { "audio": "1PMShr8AaOKnsm0Vkncs_Bso7MVeoL-Xu", "video": "1hETQVUdoChwUl6EMOBVztI90-YD7ya02", "manuale": null },
-    "pubblico-impiego":       { "audio": null,                                "video": null,                                "manuale": "1uwecpQ8Rd_8bKD8Lc3C8J7ejYGiHVg_K" }
+  "materia_di_oggi": "beni-culturali",
+  "drive_file_ids_oggi": {
+    "audio":   "1SrLKTPMnI8p6q9aoOjmonRmxZS_QxEVh",
+    "video":   "1UnAa1Nk2zTx9dr0FYpEhkkWAjK1jEvvI",
+    "manuale": null
   }
 }

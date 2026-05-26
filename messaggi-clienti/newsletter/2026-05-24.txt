@@ -1,77 +1,46 @@
-RIPAM STUDIO CRAFT — NEWSLETTER — MAGGIO 2026
-EDIZIONE 01 · 2026
+RIPAM STUDIO CRAFT — NEWSLETTER WELCOME — {{CURRENT_MONTH_YEAR_FULL}}
 
 BENVENUTO. ECCO LE TUE ANTEPRIME COMPLETE.
 =============================================
 
-Ciao {{FIRST_NAME}}, grazie per esserti iscritto. Questa è la prima
-newsletter, e funziona così: 1-2 email al mese, sempre la stessa
-struttura.
+Ciao {{FIRST_NAME}}, grazie per esserti iscritto. Da oggi entri in una
+SERIE DI MAIL: ogni volta ti mando l'anteprima completa di una nuova
+materia, così resti sempre aggiornato sui contenuti.
 
-Una novità del materiale, i bandi aperti, un tip pratico per studiare
-con l'AI. Mai promo aggressive, mai email superflue. Si comincia.
+Oggi inizio con BENI CULTURALI. Se ti serve un'altra materia subito,
+rispondi a questa mail o usa il form del sito:
+https://ripam-studio-craft.vercel.app/scrivimi
 
 
-[LE TUE ANTEPRIME COMPLETE — 8 MATERIE]
+[ANTEPRIMA DI OGGI · SOLO PER ISCRITTI]
 ---------------------------------------------
-Sul sito trovi i player-anteprima da pochi minuti, gratis e senza
-iscrizione. A te che sei iscritto regalo l'EPISODIO 1 COMPLETO di
-ogni formato, per 8 materie:
+BENI CULTURALI — EP1 IN 3 FORMATI
 
-  • Audio Lezione EP1 (mp3, ~30 min) — lezione monovoce.
-  • Video Lezione EP1 (mp4, ~30 min) — la stessa lezione con slide.
-  • Manuale Anteprima (pdf, ~20 pp) — estratto del manuale.
+Sul sito trovi un player da pochi minuti, gratis e senza iscrizione.
+A te che sei iscritto regalo l'EP1 COMPLETO in tre formati:
 
-Tutti i file sono su Google Drive con link diretto: clicchi, scarichi.
-Sono per uso personale di studio (non condividere — i termini sono
-nel PDF stesso). Le materie con asset "in arrivo" arrivano nella
-prossima newsletter.
+  • Audio Lezione EP1 (mp3, ~30 min) — lezione monovoce, perfetta
+    per studiare in cuffia o usare in NotebookLM.
+  • Video Lezione EP1 (mp4, ~30 min) — stessa lezione con slide e
+    riferimenti normativi a schermo.
+  • Manuale Anteprima (pdf, ~20 pp) — estratto del manuale completo.
+
+File su Google Drive: clicchi, scarichi. Solo per uso personale di
+studio (termini nel PDF). Il manuale di Beni Culturali arriva nelle
+prossime settimane.
 
 
-BENI CULTURALI (D.Lgs. 42/2004)
+BENI CULTURALI (D.Lgs. 42/2004 — Codice dei Beni Culturali)
   Audio EP1 → https://drive.google.com/file/d/1SrLKTPMnI8p6q9aoOjmonRmxZS_QxEVh/view
   Video EP1 → https://drive.google.com/file/d/1UnAa1Nk2zTx9dr0FYpEhkkWAjK1jEvvI/view
   Manuale   → in arrivo
 
-CONTABILITÀ PUBBLICA (L. 196/2009 · D.Lgs. 118/2011)
-  Audio EP1 → https://drive.google.com/file/d/1VqZ_WXLkg4CSjrt4TFjYu4vF5U_fy8Wl/view
-  Video EP1 → https://drive.google.com/file/d/1roo_BkJieU2ch1gF4Ws39f3V87ElTDUy/view
-  Manuale   → https://drive.google.com/file/d/187s0GdhUXuBrx_en2e0Q-VYCqDi8vC4l/view
 
-CONTRATTI PUBBLICI (D.Lgs. 36/2023)
-  Audio EP1 → https://drive.google.com/file/d/1duqAhIoa-YvYuz-tko1chtJvx-eqZdWm/view
-  Video EP1 → https://drive.google.com/file/d/1mjH2l7WsgsLU3uRphaaNoGKWG2upLAIY/view
-  Manuale   → in arrivo
-
-DIRITTO AMMINISTRATIVO (L. 241/1990)
-  Audio EP1 → https://drive.google.com/file/d/1XBymcpPBPzHiXcSdXiqLxRxlhZQHq0u7/view
-  Video EP1 → https://drive.google.com/file/d/1KDjrhGfLA1w19Vei5gP23XLZDnXQf2JI/view
-  Manuale   → in arrivo
-
-DIRITTO DELL'UNIONE EUROPEA (Trattati UE)
-  Audio EP1 → https://drive.google.com/file/d/1RMscCdE8iC0A1WjBUU59mNKIT1WXalmI/view
-  Video EP1 → https://drive.google.com/file/d/1jQNnUudLXJrqhSfb3jWZeejiXDuguzPX/view
-  Manuale   → https://drive.google.com/file/d/1N47ae_WQbIPcgMThFilBlfsu5mUZYjJh/view
-
-ORGANIZZAZIONE MIC (Normativa MIC)
-  Audio EP1 → https://drive.google.com/file/d/1kJuxyFEuM99u2Cx_vKhbxBPya-0b1gAL/view
-  Video EP1 → https://drive.google.com/file/d/10TCw3xqODWtDDZbYlhB4BYeE3Mgx4-ho/view
-  Manuale   → in arrivo
-
-PATRIMONIO CULTURALE (Normativa MIC)
-  Audio EP1 → https://drive.google.com/file/d/1PMShr8AaOKnsm0Vkncs_Bso7MVeoL-Xu/view
-  Video EP1 → https://drive.google.com/file/d/1hETQVUdoChwUl6EMOBVztI90-YD7ya02/view
-  Manuale   → in arrivo
-
-PUBBLICO IMPIEGO (D.Lgs. 165/2001)
-  Audio EP1 → in arrivo
-  Video EP1 → in arrivo
-  Manuale   → https://drive.google.com/file/d/1uwecpQ8Rd_8bKD8Lc3C8J7ejYGiHVg_K/view
-
-
-Per le altre 38 materie del catalogo arrivano nelle prossime
-newsletter. Una materia ti serve subito? Rispondi a questa mail
-o usa il form (più sotto).
+PROSSIMA MAIL
+---------------------------------------------
+Una nuova materia in arrivo nelle prossime settimane — resta iscritto
+per non perdertela. Se ti serve un'altra anteprima subito, scrivi
+sul form del sito o rispondi a questa mail.
 
 
 BANDI APERTI
@@ -95,11 +64,11 @@ programmare lo studio.
 
 TIP STUDIO
 ---------------------------------------------
-Usa i miei audio come fonte in NotebookLM
+Usa le mie Audio Lezioni come fonte in NotebookLM
 
-NotebookLM accetta audio come fonte. Scarichi l'MP3 di una mia
-Audio Lezione (es. EP1 di Diritto Amministrativo), lo carichi in
-una nuova Notebook, e in 30 secondi hai:
+NotebookLM accetta audio come fonte. Scarichi l'MP3 di un'Audio
+Lezione (es. EP1 di Beni Culturali qui sopra), lo carichi in una
+nuova Notebook, e in 30 secondi hai:
 
   - trascrizione automatica della lezione,
   - riassunto a punti,

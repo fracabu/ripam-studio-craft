@@ -166,6 +166,16 @@ export default async function handler(req, res) {
     ...(process.env.NODE_ENV !== 'production' ? { tls: { rejectUnauthorized: false } } : {}),
   })
 
+  // Data dinamica dell'invio (uguale per tutti i destinatari di questa run).
+  // FULL = "MAGGIO 2026" (uppercase), SHORT = "05/2026". Usate nei template
+  // di newsletter "welcome perenne" che evolve nel tempo: chi si iscrive a
+  // giugno deve vedere "06/2026" nel kicker, non "05/2026" hardcoded.
+  const now = new Date()
+  const monthsIt = ['GENNAIO','FEBBRAIO','MARZO','APRILE','MAGGIO','GIUGNO',
+                    'LUGLIO','AGOSTO','SETTEMBRE','OTTOBRE','NOVEMBRE','DICEMBRE']
+  const currentMonthYearFull = `${monthsIt[now.getMonth()]} ${now.getFullYear()}`
+  const currentMonthYearShort = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`
+
   const results = { sent: [], failed: [] }
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
@@ -179,9 +189,13 @@ export default async function handler(req, res) {
     const html = htmlTpl
       .replaceAll('{{UNSUB_URL}}', unsubUrl)
       .replaceAll('{{FIRST_NAME}}', firstName)
+      .replaceAll('{{CURRENT_MONTH_YEAR_FULL}}', currentMonthYearFull)
+      .replaceAll('{{CURRENT_MONTH_YEAR_SHORT}}', currentMonthYearShort)
     const text = txtTpl
       .replaceAll('{{UNSUB_URL}}', unsubUrl)
       .replaceAll('{{FIRST_NAME}}', firstName)
+      .replaceAll('{{CURRENT_MONTH_YEAR_FULL}}', currentMonthYearFull)
+      .replaceAll('{{CURRENT_MONTH_YEAR_SHORT}}', currentMonthYearShort)
 
     try {
       const info = await transporter.sendMail({

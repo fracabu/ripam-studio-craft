@@ -4,6 +4,7 @@
 
 import { neon } from '@neondatabase/serverless'
 import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
+import { sendWelcomeNewsletter } from '../_lib/welcome-newsletter.js'
 
 function htmlPage({ title, kicker, headline, body, color = '#c6f432' }) {
   return `<!DOCTYPE html>
@@ -73,7 +74,7 @@ export default async function handler(req, res) {
       SET confirmed_at = now()
       WHERE confirm_token = ${token}
         AND confirmed_at IS NULL
-      RETURNING id, email, nome, requested_materia
+      RETURNING id, email, nome, requested_materia, unsubscribe_token
     `
 
     if (rows.length > 0) {
@@ -98,6 +99,28 @@ export default async function handler(req, res) {
                         row.id, row.requested_materia, mailErr)
           // Lasciamo anteprimaDelivered = null → messaggio fallback nella pagina
         }
+      }
+
+      // Auto-welcome: spedisce in automatico la newsletter "perenne" indicata
+      // in env WELCOME_NEWSLETTER_ID. Idempotente via ON CONFLICT su
+      // newsletter_send_events: se per qualsiasi motivo l'utente clicca di
+      // nuovo confirm o se il bot ricarica la pagina, la welcome non si duplica.
+      // Errori NON bloccano la pagina di conferma — la conferma è già committata.
+      try {
+        const welcomeResult = await sendWelcomeNewsletter({
+          sql,
+          subscriber: {
+            id: row.id,
+            email: row.email,
+            nome: row.nome,
+            unsubscribe_token: row.unsubscribe_token,
+          },
+        })
+        if (!welcomeResult.sent && welcomeResult.error) {
+          console.error('Welcome send failed for subscriber', row.id, welcomeResult.error)
+        }
+      } catch (welcomeErr) {
+        console.error('Welcome send threw for subscriber', row.id, welcomeErr)
       }
 
       // Conferma riuscita — pagina HTML adattata se c'era una richiesta anteprima.
