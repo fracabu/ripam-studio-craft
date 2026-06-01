@@ -1,6 +1,6 @@
 {
-  "subject": "Benvenuto. La tua prima anteprima: Beni Culturali (EP1)",
-  "preheader": "Audio EP1 + Video EP1 di Beni Culturali, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
+  "subject": "Benvenuto. La tua prima anteprima: Patrimonio Culturale (EP1)",
+  "preheader": "Audio EP1 + Video EP1 + Manuale di Patrimonio Culturale, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
   "from_name": "Francesco — Ripam Studio Craft",
   "from_email": "ripamstudiocraft@gmail.com",
   "reply_to": "ripamstudiocraft@gmail.com",
@@ -10,17 +10,17 @@
   "is_welcome": true,
   "sections_used": [
     "intro_serie_mensile",
-    "box_anteprima_oggi_beni_culturali",
-    "card_beni_culturali_drive",
+    "box_anteprima_oggi_patrimonio_culturale",
+    "card_patrimonio_culturale_drive",
     "tease_prossima_mail",
     "bandi_mef_mic_inps_inail",
     "tip_notebooklm",
     "closing_scrivimi"
   ],
-  "materia_di_oggi": "beni-culturali",
+  "materia_di_oggi": "patrimonio-culturale",
   "drive_file_ids_oggi": {
-    "audio":   "1fVuzc-b2C7VPSXwNi8Y_EowaeIqhK-Wb",
-    "video":   "1nvcE-THUJDlIg6STO0NSFfjBt6Y9RuC4",
-    "manuale": null
+    "audio":   "1vOU17nrXj0nuRglbEoPsly4RwwNMMDWE",
+    "video":   "1F_oNRF9WoCSoGjFQyoNwRvfYndTT8qK8",
+    "manuale": "1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy"
   }
 }

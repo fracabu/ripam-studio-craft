@@ -61,4 +61,7 @@ public/preview/**/manuale-anteprima.pdf
 .design-bundle/
 .design-bundle-v3/
 
+# materiale social (bozze post Telegram/IG/ecc.) — solo locale, MAI su Git/Vercel
+social/
+
 .vercel

@@ -1,0 +1,119 @@
+RIPAM STUDIO CRAFT — NEWSLETTER {{CURRENT_MONTH_YEAR_SHORT}}
+
+LE ANTEPRIME SONO ONLINE. SCARICA QUELLE CHE TI SERVONO.
+
+Ciao {{FIRST_NAME}},
+ho appena caricato online le anteprime EP1 delle materie. Se ne avevi già
+ricevuta qualcuna, qui sotto trovi tutte le altre: clicchi e scarichi, senza
+passare dal form. Ogni materia disponibile ha l'Audio EP1, il Video EP1 e,
+dove è pronto, l'anteprima del Manuale (PDF). Le materie mancanti le sto
+caricando in questi giorni.
+
+14 materie disponibili — solo per iscritti.
+
+
+== COMPLETE · AUDIO + VIDEO + MANUALE ==
+
+DIRITTO AMMINISTRATIVO (L. 241/1990)
+  Audio EP1   → https://drive.google.com/file/d/1WNNvtycRuX5TagnoVeAXUaZ8fKgdXGjj/view
+  Video EP1   → https://drive.google.com/file/d/1H08moAzySs8RAWr0uDL65pTsbJcCXRxJ/view
+  Manuale PDF → https://drive.google.com/file/d/1uMrup1rmjdfcDsn1fya6S487fJP_qFlx/view
+
+PUBBLICO IMPIEGO (D.Lgs. 165/2001)
+  Audio EP1   → https://drive.google.com/file/d/1thiu-C7vC9tjYhRp1tpKhBYhECPqRr_z/view
+  Video EP1   → https://drive.google.com/file/d/1bbRz9Qz0tqwMod5EJsW7Nhqd3sk7P4fS/view
+  Manuale PDF → https://drive.google.com/file/d/1p5lak1Eo0_WIR2b4BOGWqd2gBctxKFPS/view
+
+CONTRATTI PUBBLICI (D.Lgs. 36/2023)
+  Audio EP1   → https://drive.google.com/file/d/1_9hYVJ58V1vq9VzYhII9j3EwQIutlc8G/view
+  Video EP1   → https://drive.google.com/file/d/1ZoTTz-nkQrdy6XhmNXKwtmc4gJnqhMFS/view
+  Manuale PDF → https://drive.google.com/file/d/1c0ECzLDP5Xj4IOS6e6TKTTnvdlLqTroK/view
+
+CAD — AMMINISTRAZIONE DIGITALE (D.Lgs. 82/2005)
+  Audio EP1   → https://drive.google.com/file/d/1aPVF1f8ncw8ZGO-xRwbJZMy0Q7dRm1FA/view
+  Video EP1   → https://drive.google.com/file/d/1aDlqMjwYap4XPULAykOM_TqyuYbVoRsr/view
+  Manuale PDF → https://drive.google.com/file/d/1e31Ei6EOuZf2FGaMYZG-TFbEhsTIlqaH/view
+
+DIRITTO DELL'UNIONE EUROPEA (Trattati UE)
+  Audio EP1   → https://drive.google.com/file/d/1fm_yATmThS8c2SN0hzqUyUh2wLXGvlPL/view
+  Video EP1   → https://drive.google.com/file/d/1GogtxoCIns7d_N4IURu68ae8qScgzOaZ/view
+  Manuale PDF → https://drive.google.com/file/d/1qVFE38twejtMv1yZdjWJphH7GkeZuSfr/view
+
+CONTABILITÀ PUBBLICA (L. 196/2009 · D.Lgs. 118/2011)
+  Audio EP1   → https://drive.google.com/file/d/1o1x7iwknwtKc_BheGzzHCY04u5pXk-5q/view
+  Video EP1   → https://drive.google.com/file/d/1C-Z2g58c5-qZIrn8J4Yjc7viwKR_YFK4/view
+  Manuale PDF → https://drive.google.com/file/d/1EmAxlL-8-4CUbw_qmCl4FI1EQ0xtT1-K/view
+
+SICUREZZA SUL LAVORO (D.Lgs. 81/2008)
+  Audio EP1   → https://drive.google.com/file/d/14M0G7y0wC1k4FBTpqchsJgxU-NvdkS3o/view
+  Video EP1   → https://drive.google.com/file/d/1RPRoaTJNrjK2Zno37xaHg9xW2t3vUdse/view
+  Manuale PDF → https://drive.google.com/file/d/1zEh4-4cLBbZroEyO0oXyCiddkX-sMjqL/view
+
+PATRIMONIO CULTURALE (Normativa MIC)
+  Audio EP1   → https://drive.google.com/file/d/1vOU17nrXj0nuRglbEoPsly4RwwNMMDWE/view
+  Video EP1   → https://drive.google.com/file/d/1F_oNRF9WoCSoGjFQyoNwRvfYndTT8qK8/view
+  Manuale PDF → https://drive.google.com/file/d/1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy/view
+
+DIRITTO PENALE PA (Codice Penale)
+  Audio EP1   → https://drive.google.com/file/d/1vvsI3VSweOld_MRi24IJ_lesJCM9Nznx/view
+  Video EP1   → https://drive.google.com/file/d/1F7puILkbAnaZqTZwfi1QACRAwWEA4516/view
+  Manuale PDF → https://drive.google.com/file/d/15XP2oXuWTfZyGkuX4v3U_9FRu_2nd9CW/view
+
+GDPR E PRIVACY (Reg. UE 2016/679)
+  Audio EP1   → https://drive.google.com/file/d/14uYg15w3CJyKMMhKPEPU5jDVQ5Zlh4lW/view
+  Video EP1   → https://drive.google.com/file/d/1mjznBzT6niGLIVW2cVrXzIYCH7y5A3pq/view
+  Manuale PDF → https://drive.google.com/file/d/12Y1ukX0nI1ABAovt0lostZxAcDRGD4nA/view
+
+ORDINAMENTO PA (D.Lgs. 300/1999)
+  Audio EP1   → https://drive.google.com/file/d/1APPFfLTE5nYof4K24Ezo4GF4BxpwnntR/view
+  Video EP1   → https://drive.google.com/file/d/1gd1fn8tgeDBYd7tZbyNAH7qkOP2RJnKA/view
+  Manuale PDF → https://drive.google.com/file/d/1uVqAZUbbdJDSdDiIvFpgZUoKZBWAufZC/view
+
+
+== NOVITÀ · AUDIO + MANUALE · VIDEO IN ARRIVO ==
+
+ANTICORRUZIONE E TRASPARENZA (L. 190/2012 · D.Lgs. 33/2013)
+  Audio EP1   → https://drive.google.com/file/d/1_bDtTpeOFgeybg0m4rHSm47Ihku6I6nT/view
+  Manuale PDF → https://drive.google.com/file/d/16sQ2Cb8po8MSGsj3SFJJ0ru_VRlkivKL/view
+  Video EP1   → in arrivo
+
+INFORMATICA (Competenze digitali)
+  Audio EP1   → https://drive.google.com/file/d/1B4o7AFlyNKkL2EPtImHkmUtAYOV-VRit/view
+  Manuale PDF → https://drive.google.com/file/d/1ROh5VILoIDSYmASUCC9bfLdLqOBF8C6P/view
+  Video EP1   → in arrivo
+
+LOGICA E RAGIONAMENTO (Ragionamento critico)
+  Audio EP1   → https://drive.google.com/file/d/13WNdyrZ9Q1LSkIK5UCmaY9kezDgdQD8g/view
+  Manuale PDF → https://drive.google.com/file/d/1ZaorlL5PFzog31vV-K2n5xaolmAnwCUO/view
+  Video EP1   → in arrivo
+
+
+== STO CARICANDO ==
+Sto finendo i Video EP1 di Anticorruzione, Informatica e Logica: appena pronti
+li trovi nelle card qui sopra. E nelle prossime mail arrivano altre materie.
+Resta iscritto.
+
+
+TIP STUDIO — Usa le Audio Lezioni come fonte in NotebookLM
+Scarichi l'MP3 di un'Audio Lezione qui sopra, lo carichi in una nuova Notebook,
+e in 30 secondi hai trascrizione, riassunto a punti e domande di ripasso
+generate sul testo reale.
+
+
+PROSSIMA MOSSA
+Ti serve il manuale completo di una materia, o un materiale su misura — podcast,
+simulatore, report? Rispondi a questa email o usa il form:
+https://ripam-studio-craft.vercel.app/scrivimi
+
+
+A presto,
+Francesco Capurso
+Creatore di Ripam Studio, Ripam Studio Quiz Pro e Ripam Studio Logica
+
+--
+Stai ricevendo questa email perché ti sei iscritto alla newsletter di Ripam
+Studio Craft. Max 1-2 email al mese.
+Francesco Capurso · P.IVA 18528431002 · Roma
+ripamstudiocraft@gmail.com · ripam-studio-craft.vercel.app
+Disiscriviti one-click: {{UNSUB_URL}}
+Privacy: https://ripam-studio-craft.vercel.app/privacy

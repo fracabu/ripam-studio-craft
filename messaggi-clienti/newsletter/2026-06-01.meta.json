@@ -1,0 +1,27 @@
+{
+  "subject": "Le anteprime sono online: 14 materie da scaricare",
+  "preheader": "Audio EP1, Video EP1 e manuale PDF di ogni materia disponibile — link diretti, senza form.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_label": "NEWSLETTER",
+  "kicker": "NEWSLETTER",
+  "headline": "Le anteprime sono online. Scarica quelle che ti servono.",
+  "is_welcome": false,
+  "sections_used": [
+    "intro_anteprime_disponibili",
+    "box_14_materie",
+    "materie_complete_audio_video_manuale_11",
+    "materie_novita_audio_manuale_video_in_arrivo_3",
+    "tease_video_in_arrivo_3",
+    "tip_notebooklm",
+    "cta_scrivimi",
+    "closing_firma"
+  ],
+  "materie_disponibili": {
+    "complete": ["diritto-amministrativo", "pubblico-impiego", "contratti-pubblici", "cad", "diritto-ue", "contabilita-pubblica", "sicurezza-lavoro", "patrimonio-culturale", "diritto-penale-pa", "gdpr", "ordinamento-pa"],
+    "audio_manuale_no_video": ["anticorruzione-trasparenza", "informatica", "logica"],
+    "audio_video_only": [],
+    "in_arrivo": []
+  }
+}
