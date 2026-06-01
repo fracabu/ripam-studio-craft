@@ -19,22 +19,22 @@
 
 export const ANTEPRIME_MANIFEST = {
   'anticorruzione-trasparenza':  null,
-  'cad':                         null,
-  'contabilita-pubblica':        '187s0GdhUXuBrx_en2e0Q-VYCqDi8vC4l',
-  'contratti-pubblici':          null,
-  'diritto-amministrativo':      null,
+  'cad':                         '1e31Ei6EOuZf2FGaMYZG-TFbEhsTIlqaH',
+  'contabilita-pubblica':        '1EmAxlL-8-4CUbw_qmCl4FI1EQ0xtT1-K',
+  'contratti-pubblici':          '1c0ECzLDP5Xj4IOS6e6TKTTnvdlLqTroK',
+  'diritto-amministrativo':      '1uMrup1rmjdfcDsn1fya6S487fJP_qFlx',
   'diritto-civile':              null,
   'diritto-costituzionale':      null,
   'diritto-penale-pa':           null,
   'diritto-processuale-civile':  null,
-  'diritto-ue':                  '1N47ae_WQbIPcgMThFilBlfsu5mUZYjJh',
+  'diritto-ue':                  '1qVFE38twejtMv1yZdjWJphH7GkeZuSfr',
   'gdpr':                        null,
   'informatica':                 null,
   'logica':                      null,
   'ordinamento-pa':              null,
-  'patrimonio-culturale':        null,
-  'pubblico-impiego':            '1uwecpQ8Rd_8bKD8Lc3C8J7ejYGiHVg_K',
-  'sicurezza-lavoro':            null,
+  'patrimonio-culturale':        '1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy',
+  'pubblico-impiego':            '1p5lak1Eo0_WIR2b4BOGWqd2gBctxKFPS',
+  'sicurezza-lavoro':            '1zEh4-4cLBbZroEyO0oXyCiddkX-sMjqL',
 }
 
 // Lista degli slug ammessi (usata da subscribe.js per validare il body).

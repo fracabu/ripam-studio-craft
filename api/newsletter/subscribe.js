@@ -21,6 +21,7 @@ import nodemailer from 'nodemailer'
 import { randomBytes } from 'node:crypto'
 import { ANTEPRIME_SLUGS } from '../_lib/anteprime-manifest.js'
 import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
+import { emailShell, emailButton } from '../_lib/email-shell.js'
 
 const MAX_BODY = 4_000
 
@@ -248,21 +249,15 @@ Francesco
 ripamstudiocraft@gmail.com · P.IVA 18528431002
 `
 
-  const html = `
-<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0a0a0a;line-height:1.55;background:#f5f0e8">
-  <div style="background:#0a0a0a;color:#f5f0e8;padding:14px 20px;margin:-24px -24px 24px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;font-weight:700">
-    RIPAM STUDIO CRAFT &middot; CONFERMA ISCRIZIONE
-  </div>
+  const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 18px;font-size:15px">ti sei iscritto alla newsletter di <strong>Ripam Studio Craft</strong>. Manca solo un click per attivare l'iscrizione:</p>
   <p style="margin:24px 0;text-align:center">
-    <a href="${confirmUrl}" style="display:inline-block;background:#c6f432;color:#0a0a0a;padding:14px 28px;text-decoration:none;font-weight:700;font-size:15px;border:2px solid #0a0a0a;box-shadow:4px 4px 0 #0a0a0a">CONFERMA ISCRIZIONE &rarr;</a>
+    ${emailButton(confirmUrl, 'CONFERMA ISCRIZIONE &rarr;')}
   </p>
-  <p style="margin:18px 0;font-size:13px;color:#6b6458">Se non sei stato tu, ignora questa email — senza il click non riceverai nulla. Il link scade tra 30 giorni.</p>
-  <hr style="border:none;border-top:1px solid #e6dfd2;margin:24px 0">
-  <p style="margin:0;font-size:12px;color:#6b6458">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
-  ripamstudiocraft@gmail.com &middot; <a href="https://ripam-studio-craft.vercel.app" style="color:#6b6458">ripam-studio-craft.vercel.app</a></p>
-</div>`
+  <p style="margin:18px 0;font-size:13px;color:#6b6458">Se non sei stato tu, ignora questa email — senza il click non riceverai nulla. Il link scade tra 30 giorni.</p>`
+
+  const html = emailShell(inner, 'CONFERMA ISCRIZIONE')
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',

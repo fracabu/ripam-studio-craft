@@ -10,10 +10,12 @@
 
 import nodemailer from 'nodemailer'
 import { getAnteprimaDriveUrls } from './anteprime-manifest.js'
+import { emailShell, emailButton } from './email-shell.js'
 
 // Titolo umano per slug — speculare ai t: di src/data/materie.js.
 // Tenuto in sync a mano (basso churn, evita dipendenza cross-bundle).
-const MATERIA_LABEL = {
+// Esportato anche per lead-mail.js (skill auto-risposte-lead).
+export const MATERIA_LABEL = {
   'anticorruzione-trasparenza':  'Anticorruzione e Trasparenza',
   'cad':                         'CAD — Codice Amministrazione Digitale',
   'contabilita-pubblica':        'Contabilità Pubblica',
@@ -31,12 +33,6 @@ const MATERIA_LABEL = {
   'patrimonio-culturale':        'Patrimonio Culturale',
   'pubblico-impiego':            'Pubblico Impiego',
   'sicurezza-lavoro':            'Sicurezza sul Lavoro',
-}
-
-function brandFooterHtml() {
-  return `<hr style="border:none;border-top:1px solid #e6dfd2;margin:24px 0">
-  <p style="margin:0;font-size:12px;color:#6b6458">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
-  ripamstudiocraft@gmail.com &middot; <a href="https://ripam-studio-craft.vercel.app" style="color:#6b6458">ripam-studio-craft.vercel.app</a></p>`
 }
 
 function buildDeliveredEmail({ firstName, materiaLabel, viewUrl, downloadUrl }) {
@@ -66,24 +62,20 @@ Francesco
 ripamstudiocraft@gmail.com · P.IVA 18528431002
 `
 
-  const html = `
-<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0a0a0a;line-height:1.55;background:#f5f0e8">
-  <div style="background:#0a0a0a;color:#f5f0e8;padding:14px 20px;margin:-24px -24px 24px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;font-weight:700">
-    RIPAM STUDIO CRAFT &middot; ANTEPRIMA MANUALE
-  </div>
+  const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 18px;font-size:15px">ecco l'anteprima del manuale di <strong>${materiaLabel}</strong> (15 pp, PDF) come promesso.</p>
   <p style="margin:24px 0;text-align:center">
-    <a href="${downloadUrl}" style="display:inline-block;background:#c6f432;color:#0a0a0a;padding:14px 28px;text-decoration:none;font-weight:700;font-size:15px;border:2px solid #0a0a0a;box-shadow:4px 4px 0 #0a0a0a">&darr; SCARICA IL PDF</a>
+    ${emailButton(downloadUrl, '&darr; SCARICA IL PDF')}
   </p>
   <p style="margin:14px 0;text-align:center;font-size:13px;color:#6b6458">
     oppure <a href="${viewUrl}" style="color:#0a0a0a;font-weight:700;text-decoration:underline">apri nel browser</a> (Google Drive)
   </p>
   <p style="margin:18px 0;font-size:14px;color:#2a2a2a">Il pulsante avvia il download diretto del PDF — non serve account Google né autorizzazioni. Il link "apri nel browser" mostra il PDF su Drive, utile se preferisci leggerlo online.</p>
   <p style="margin:18px 0;font-size:14px;color:#2a2a2a"><strong>Cosa trovi dentro:</strong> indice completo del manuale, introduzione e primi due capitoli per intero. Così puoi valutare stile e profondità prima di chiedere il manuale completo.</p>
-  <p style="margin:18px 0;font-size:13px;color:#6b6458">Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email. Per qualunque cosa, rispondi pure a questa mail.</p>
-  ${brandFooterHtml()}
-</div>`
+  <p style="margin:18px 0;font-size:13px;color:#6b6458">Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email. Per qualunque cosa, rispondi pure a questa mail.</p>`
+
+  const html = emailShell(inner, 'ANTEPRIMA MANUALE')
 
   return { subject, text, html }
 }
@@ -110,17 +102,13 @@ Francesco
 ripamstudiocraft@gmail.com · P.IVA 18528431002
 `
 
-  const html = `
-<div style="font-family:system-ui,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:#0a0a0a;line-height:1.55;background:#f5f0e8">
-  <div style="background:#0a0a0a;color:#f5f0e8;padding:14px 20px;margin:-24px -24px 24px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;font-weight:700">
-    RIPAM STUDIO CRAFT &middot; ANTEPRIMA IN ARRIVO
-  </div>
+  const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 18px;font-size:15px">grazie per aver richiesto l'anteprima del manuale di <strong>${materiaLabel}</strong>.</p>
   <p style="margin:0 0 18px;font-size:15px">In questo momento sto rivedendo formattazione e design dei manuali, quindi l'anteprima ti arriverà via email non appena la nuova versione sarà pronta (giorni, non settimane).</p>
-  <p style="margin:18px 0;font-size:13px;color:#6b6458">Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.</p>
-  ${brandFooterHtml()}
-</div>`
+  <p style="margin:18px 0;font-size:13px;color:#6b6458">Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.</p>`
+
+  const html = emailShell(inner, 'ANTEPRIMA IN ARRIVO')
 
   return { subject, text, html }
 }
