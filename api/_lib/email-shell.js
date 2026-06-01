@@ -35,17 +35,20 @@ export const BRAND = {
 // Header brand: fascia crema col logo, bordo inferiore 3px nero (brutalist).
 // `kicker` opzionale = etichetta contestuale della mail (es. 'CONFERMA
 // ISCRIZIONE'), resa come riga monospace sotto il logo.
-// NB: i margini negativi presuppongono che il container abbia padding:24px
-//     (come emailShell). Usare standalone solo dentro un container equivalente.
+// NB: ritorna una RIGA <tr> di tabella — va usato SOLO dentro la tabella
+//     interna di emailShell (non standalone). Layout table-based per reggere su
+//     Outlook/live.it (che spogliano background/margini sui <div>).
 export function emailHeader(kicker = '') {
   const kickerHtml = kicker
-    ? `<div style="margin:10px 0 0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.12em;font-weight:700;color:${BRAND.muted}">${kicker}</div>`
+    ? `<div style="margin:10px 0 0;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;color:${BRAND.muted};">${kicker}</div>`
     : ''
-  return `<div style="background:${BRAND.cream};padding:18px 24px;margin:-24px -24px 24px;border-bottom:3px solid ${BRAND.ink};text-align:left">
-    <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0">
-      <img src="${BRAND.logoUrl}" alt="${BRAND.brandName}" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0">
-    </a>${kickerHtml}
-  </div>`
+  return `<tr>
+    <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:18px 24px;border-bottom:3px solid ${BRAND.ink};">
+      <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
+        <img src="${BRAND.logoUrl}" alt="${BRAND.brandName}" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;">
+      </a>${kickerHtml}
+    </td>
+  </tr>`
 }
 
 // Footer legale standard del titolare.
@@ -62,11 +65,21 @@ export function emailFooter() {
 // non si fa escaping, è una concatenazione di template HTML interni.
 export function emailShell(innerHtml, kicker = '') {
   return `
-<div style="font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:0 auto;padding:24px;color:${BRAND.ink};line-height:1.55;background:${BRAND.cream}">
-  ${emailHeader(kicker)}
-  ${innerHtml}
-  ${emailFooter()}
-</div>`
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.cream}" style="background:${BRAND.cream};margin:0;padding:0;width:100%;">
+  <tr>
+    <td align="center" style="padding:20px 12px;">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
+        ${emailHeader(kicker)}
+        <tr>
+          <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:24px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
+            ${innerHtml}
+            ${emailFooter()}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`
 }
 
 // Pulsante CTA brutalist (giallo brand, ombra hard-offset). Helper opzionale

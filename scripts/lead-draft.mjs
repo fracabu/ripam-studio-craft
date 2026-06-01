@@ -11,15 +11,21 @@
 //   node scripts/lead-draft.mjs --category=M3 --nome="Laura" --slug=diritto-amministrativo --audio="https://drive.google.com/..." --subject="..."
 //   node scripts/lead-draft.mjs --category=M3 --nome="Bea" --slug=contratti-pubblici --audio="..." --video="..." --manuale="..." --subject="..."
 //   node scripts/lead-draft.mjs --category=M4 --nome="Laura" --slug=diritto-amministrativo --link="https://drive.google.com/file/d/<id>/view" --subject="..."
+//   node scripts/lead-draft.mjs --category=M5 --nome="Petronella" --materia="SIAE" --subject="..."
+//   node scripts/lead-draft.mjs --category=M5 --nome="Petronella" --materia="SIAE" --formats=manuale,audio,video --subject="..."
 //
 // Argomenti:
-//   --category  M1 | M2 | M3 | M4            (obbligatorio)
+//   --category  M1 | M2 | M3 | M4 | M5       (obbligatorio)
 //   --nome      nome del lead                (consigliato; default "ciao")
 //   --slug      slug materia                 (obbligatorio per M2/M3/M4)
 //   --audio     URL anteprima audio EP1      (M3; uno o più tra audio/video/manuale)
 //   --video     URL anteprima video EP1      (M3)
 //   --manuale   URL anteprima manuale 15pp   (M3)
+//   --report    URL anteprima report PDF     (M3; da ANTEPRIME/<slug>/report/)
 //   --link      URL anteprima singola Drive  (M4; o M3 come anteprima generica)
+//   --materia   nome materia testo libero    (obbligatorio per M5, NON a catalogo)
+//   --formats   manuale,audio,video          (M5; default: solo manuale se omesso)
+//   --subscribed  true                       (M1; il lead è già iscritto alla newsletter)
 //   --subject   oggetto originale del thread (per generare "Re: ...")
 // ============================================================================
 
@@ -50,7 +56,7 @@ function parseArgs(argv) {
 const args = parseArgs(process.argv.slice(2))
 
 if (!args.category) {
-  console.error('Errore: --category obbligatorio (M1|M2|M3|M4)')
+  console.error('Errore: --category obbligatorio (M1|M2|M3|M4|M5)')
   process.exit(1)
 }
 
@@ -66,6 +72,10 @@ try {
     audio: args.audio,
     video: args.video,
     manuale: args.manuale,
+    report: args.report,
+    materia: args.materia,
+    formats: args.formats,
+    subscribed: args.subscribed,
     originalSubject: args.subject,
   })
   process.stdout.write(JSON.stringify(out))
