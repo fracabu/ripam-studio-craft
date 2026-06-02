@@ -33,28 +33,19 @@
 
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
-import { readFileSync } from 'node:fs'
+import { LOGO_B64 } from '../api/_lib/logo-data.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 
 // Logo brand come allegato INLINE per la bozza Gmail: il guscio email-shell.js
 // referenzia l'<img> con `cid:logo.png`, quindi la mail deve PORTARE con sé il
-// file (altrimenti header con immagine rotta). Lo leggiamo da public/logo.png e
-// lo emettiamo base64 nel JSON: la skill lo passa a create_draft come
-// attachment { inline:true, filename:'logo.png' } → Gmail genera il Content-ID
-// dal filename, combaciando col `cid:logo.png` del guscio. Stesso logo che le
-// mail di sistema (nodemailer) incorporano via logoAttachment().
+// file (altrimenti header con immagine rotta). I byte arrivano da logo-data.js
+// (stessa sorgente delle mail di sistema), già base64 → li mettiamo nel JSON: la
+// skill li passa a create_draft come attachment { inline:true, filename:'logo.png' }
+// → Gmail genera il Content-ID dal filename, combaciando col `cid:logo.png`.
 function logoAttachmentForDraft() {
-  try {
-    const b64 = readFileSync(join(ROOT, 'public', 'logo.png')).toString('base64')
-    return { filename: 'logo.png', mimeType: 'image/png', inline: true, content: b64 }
-  } catch (err) {
-    // Logo mancante → la bozza esce comunque (header con img rotta): meglio una
-    // bozza da sistemare che un crash. Segnaliamo su stderr per accorgersene.
-    console.error('⚠️  public/logo.png non leggibile, bozza senza logo inline:', err.message || err)
-    return null
-  }
+  return { filename: 'logo.png', mimeType: 'image/png', inline: true, content: LOGO_B64 }
 }
 
 // Parse --k=v / --k v

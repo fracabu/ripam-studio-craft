@@ -13,6 +13,8 @@
 //
 // Se cambia palette, logo o dati legali del titolare → si cambia QUI.
 
+import { LOGO_B64 } from './logo-data.js'
+
 const BASE_URL = 'https://ripam-studio-craft.vercel.app'
 const LOGO_URL = `${BASE_URL}/logo.png`
 // Content-ID dell'allegato logo INLINE. Il logo viaggia DENTRO la mail (allegato
@@ -93,11 +95,11 @@ export function emailShell(innerHtml, kicker = '') {
 // Allegato logo INLINE per nodemailer. Va passato in `attachments` a OGNI
 // sendMail che usa emailShell(), altrimenti l'header mostra un'immagine rotta
 // (l'<img> punta a `cid:logo.png`, che esiste solo se questo allegato c'è).
-// nodemailer scarica il file da `path` (URL di produzione) e lo incorpora come
-// MIME part inline → il destinatario lo vede senza caricare nulla da remoto.
-// `cid` è forzato uguale a LOGO_CID così combacia con l'<img> del guscio.
+// I byte arrivano da logo-data.js (incorporati nel codice): niente file locale,
+// niente fetch remoto → funziona ovunque, anche durante un deploy o a sito
+// irraggiungibile. `cid` è forzato uguale a LOGO_CID così combacia con l'<img>.
 export function logoAttachment() {
-  return { filename: 'logo.png', path: LOGO_URL, cid: LOGO_CID, contentType: 'image/png' }
+  return { filename: 'logo.png', content: Buffer.from(LOGO_B64, 'base64'), cid: LOGO_CID, contentType: 'image/png' }
 }
 
 // Pulsante CTA brutalist (giallo brand, ombra hard-offset). Helper opzionale
