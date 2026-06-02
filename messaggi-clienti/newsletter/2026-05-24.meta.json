@@ -1,6 +1,6 @@
 {
-  "subject": "Benvenuto. La tua prima anteprima: Patrimonio Culturale (EP1)",
-  "preheader": "Audio EP1 + Video EP1 + Manuale di Patrimonio Culturale, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
+  "subject": "Benvenuto. La tua prima anteprima: Diritto Amministrativo (EP1)",
+  "preheader": "Audio EP1 + Video EP1 + Manuale di Diritto Amministrativo, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
   "from_name": "Francesco — Ripam Studio Craft",
   "from_email": "ripamstudiocraft@gmail.com",
   "reply_to": "ripamstudiocraft@gmail.com",
@@ -10,17 +10,17 @@
   "is_welcome": true,
   "sections_used": [
     "intro_serie_mensile",
-    "box_anteprima_oggi_patrimonio_culturale",
-    "card_patrimonio_culturale_drive",
+    "box_anteprima_oggi_diritto_amministrativo",
+    "card_diritto_amministrativo_drive",
     "tease_prossima_mail",
     "bandi_mef_mic_inps_inail",
     "tip_notebooklm",
     "closing_scrivimi"
   ],
-  "materia_di_oggi": "patrimonio-culturale",
+  "materia_di_oggi": "diritto-amministrativo",
   "drive_file_ids_oggi": {
-    "audio":   "1vOU17nrXj0nuRglbEoPsly4RwwNMMDWE",
-    "video":   "1F_oNRF9WoCSoGjFQyoNwRvfYndTT8qK8",
-    "manuale": "1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy"
+    "audio":   "1WNNvtycRuX5TagnoVeAXUaZ8fKgdXGjj",
+    "video":   "1H08moAzySs8RAWr0uDL65pTsbJcCXRxJ",
+    "manuale": "1uMrup1rmjdfcDsn1fya6S487fJP_qFlx"
   }
 }

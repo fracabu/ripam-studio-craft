@@ -7,14 +7,14 @@ Ciao {{FIRST_NAME}}, grazie per esserti iscritto. Da oggi entri in una
 SERIE DI MAIL: ogni volta ti mando l'anteprima completa di una nuova
 materia, così resti sempre aggiornato sui contenuti.
 
-Oggi inizio con PATRIMONIO CULTURALE. Se ti serve un'altra materia subito,
+Oggi inizio con DIRITTO AMMINISTRATIVO. Se ti serve un'altra materia subito,
 rispondi a questa mail o usa il form del sito:
 https://ripam-studio-craft.vercel.app/scrivimi
 
 
 [ANTEPRIMA DI OGGI · SOLO PER ISCRITTI]
 ---------------------------------------------
-PATRIMONIO CULTURALE — EP1 IN 3 FORMATI
+DIRITTO AMMINISTRATIVO — EP1 IN 3 FORMATI
 
 Sul sito trovi un player da pochi minuti, gratis e senza iscrizione.
 A te che sei iscritto regalo l'EP1 COMPLETO in tre formati:
@@ -30,10 +30,10 @@ studio (termini nel PDF). Audio, video e manuale dell'EP1 sono tutti
 pronti qui sotto.
 
 
-PATRIMONIO CULTURALE (Normativa MIC)
-  Audio EP1 → https://drive.google.com/file/d/1vOU17nrXj0nuRglbEoPsly4RwwNMMDWE/view
-  Video EP1 → https://drive.google.com/file/d/1F_oNRF9WoCSoGjFQyoNwRvfYndTT8qK8/view
-  Manuale   → https://drive.google.com/file/d/1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy/view
+DIRITTO AMMINISTRATIVO (L. 241/1990)
+  Audio EP1 → https://drive.google.com/file/d/1WNNvtycRuX5TagnoVeAXUaZ8fKgdXGjj/view
+  Video EP1 → https://drive.google.com/file/d/1H08moAzySs8RAWr0uDL65pTsbJcCXRxJ/view
+  Manuale   → https://drive.google.com/file/d/1uMrup1rmjdfcDsn1fya6S487fJP_qFlx/view
 
 
 PROSSIMA MAIL
@@ -67,7 +67,7 @@ TIP STUDIO
 Usa le mie Audio Lezioni come fonte in NotebookLM
 
 NotebookLM accetta audio come fonte. Scarichi l'MP3 di un'Audio
-Lezione (es. EP1 di Patrimonio Culturale qui sopra), lo carichi in una
+Lezione (es. EP1 di Diritto Amministrativo qui sopra), lo carichi in una
 nuova Notebook, e in 30 secondi hai:
 
   - trascrizione automatica della lezione,
