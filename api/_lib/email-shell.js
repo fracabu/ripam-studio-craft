@@ -15,11 +15,19 @@
 
 const BASE_URL = 'https://ripam-studio-craft.vercel.app'
 const LOGO_URL = `${BASE_URL}/logo.png`
+// Content-ID dell'allegato logo INLINE. Il logo viaggia DENTRO la mail (allegato
+// inline) invece di essere linkato da URL: così si vede SEMPRE, anche nei client
+// che bloccano le immagini remote (Libero, Outlook…). L'<img> lo referenzia con
+// `cid:<LOGO_CID>`. Il valore coincide col filename dell'allegato perché il path
+// bozze della skill (Gmail API create_draft) genera il Content-ID DAL filename:
+// usando lo stesso identico CID, header (nodemailer) e bozze restano uniformi.
+const LOGO_CID = 'logo.png'
 
 // Token brand (speculari a :root in src/assets/main.css e ai dati di legale.js).
 export const BRAND = {
   baseUrl: BASE_URL,
   logoUrl: LOGO_URL,
+  logoCid: LOGO_CID,
   acid: '#c6f432', // giallo brand
   ink: '#0a0a0a', // nero
   cream: '#f5f0e8', // sfondo mail
@@ -45,7 +53,7 @@ export function emailHeader(kicker = '') {
   return `<tr>
     <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:18px 24px;border-bottom:3px solid ${BRAND.ink};">
       <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
-        <img src="${BRAND.logoUrl}" alt="${BRAND.brandName}" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;">
+        <img src="cid:${BRAND.logoCid}" alt="${BRAND.brandName}" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;">
       </a>${kickerHtml}
     </td>
   </tr>`
@@ -80,6 +88,16 @@ export function emailShell(innerHtml, kicker = '') {
     </td>
   </tr>
 </table>`
+}
+
+// Allegato logo INLINE per nodemailer. Va passato in `attachments` a OGNI
+// sendMail che usa emailShell(), altrimenti l'header mostra un'immagine rotta
+// (l'<img> punta a `cid:logo.png`, che esiste solo se questo allegato c'è).
+// nodemailer scarica il file da `path` (URL di produzione) e lo incorpora come
+// MIME part inline → il destinatario lo vede senza caricare nulla da remoto.
+// `cid` è forzato uguale a LOGO_CID così combacia con l'<img> del guscio.
+export function logoAttachment() {
+  return { filename: 'logo.png', path: LOGO_URL, cid: LOGO_CID, contentType: 'image/png' }
 }
 
 // Pulsante CTA brutalist (giallo brand, ombra hard-offset). Helper opzionale

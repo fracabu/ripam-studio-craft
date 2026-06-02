@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // ============================================================================
 // CLI usato dalla skill `auto-risposte-lead`: compone una bozza di risposta a
-// un lead (M1–M4) col guscio brand e stampa { subject, text, html } in JSON su
-// stdout. NON invia e NON tocca Gmail/DB — la skill prende l'output e crea la
-// BOZZA via MCP create_draft.
+// un lead (M1–M4) col guscio brand e stampa { subject, text, html, attachments }
+// in JSON su stdout. NON invia e NON tocca Gmail/DB — la skill prende l'output e
+// crea la BOZZA via MCP create_draft, passando `attachments` così com'è (porta
+// il logo brand inline → header sempre visibile anche con immagini bloccate).
 //
 // Uso:
 //   node scripts/lead-draft.mjs --category=M1 --nome="Laura" --subject="Nuova richiesta — MIC — Laura"
@@ -18,7 +19,8 @@
 //   --category  M1 | M2 | M3 | M4 | M5       (obbligatorio)
 //   --nome      nome del lead                (consigliato; default "ciao")
 //   --slug      slug materia                 (obbligatorio per M2/M3/M4)
-//   --audio     URL anteprima audio EP1      (M3; uno o più tra audio/video/manuale)
+//   --podcast   URL anteprima podcast EP1    (M3; podcast dialogato ≠ audio lezione)
+//   --audio     URL anteprima audio EP1      (M3; uno o più tra podcast/audio/video/manuale)
 //   --video     URL anteprima video EP1      (M3)
 //   --manuale   URL anteprima manuale 15pp   (M3)
 //   --report    URL anteprima report PDF     (M3; da ANTEPRIME/<slug>/report/)
@@ -31,9 +33,29 @@
 
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
+import { readFileSync } from 'node:fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
+
+// Logo brand come allegato INLINE per la bozza Gmail: il guscio email-shell.js
+// referenzia l'<img> con `cid:logo.png`, quindi la mail deve PORTARE con sé il
+// file (altrimenti header con immagine rotta). Lo leggiamo da public/logo.png e
+// lo emettiamo base64 nel JSON: la skill lo passa a create_draft come
+// attachment { inline:true, filename:'logo.png' } → Gmail genera il Content-ID
+// dal filename, combaciando col `cid:logo.png` del guscio. Stesso logo che le
+// mail di sistema (nodemailer) incorporano via logoAttachment().
+function logoAttachmentForDraft() {
+  try {
+    const b64 = readFileSync(join(ROOT, 'public', 'logo.png')).toString('base64')
+    return { filename: 'logo.png', mimeType: 'image/png', inline: true, content: b64 }
+  } catch (err) {
+    // Logo mancante → la bozza esce comunque (header con img rotta): meglio una
+    // bozza da sistemare che un crash. Segnaliamo su stderr per accorgersene.
+    console.error('⚠️  public/logo.png non leggibile, bozza senza logo inline:', err.message || err)
+    return null
+  }
+}
 
 // Parse --k=v / --k v
 function parseArgs(argv) {
@@ -69,6 +91,7 @@ try {
     nome: args.nome,
     slug: args.slug,
     link: args.link,
+    podcast: args.podcast,
     audio: args.audio,
     video: args.video,
     manuale: args.manuale,
@@ -78,6 +101,8 @@ try {
     subscribed: args.subscribed,
     originalSubject: args.subject,
   })
+  const logo = logoAttachmentForDraft()
+  if (logo) out.attachments = [logo]
   process.stdout.write(JSON.stringify(out))
 } catch (err) {
   console.error('Errore:', err.message || err)

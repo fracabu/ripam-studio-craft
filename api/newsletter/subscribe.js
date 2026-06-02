@@ -21,7 +21,7 @@ import nodemailer from 'nodemailer'
 import { randomBytes } from 'node:crypto'
 import { ANTEPRIME_SLUGS } from '../_lib/anteprime-manifest.js'
 import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
-import { emailShell, emailButton } from '../_lib/email-shell.js'
+import { emailShell, emailButton, logoAttachment } from '../_lib/email-shell.js'
 
 const MAX_BODY = 4_000
 
@@ -274,7 +274,8 @@ ripamstudiocraft@gmail.com · P.IVA 18528431002
       replyTo: user,
       subject,
       text,
-      html
+      html,
+      attachments: [logoAttachment()],
     })
   } catch (err) {
     console.error('Confirm mail send failed:', err)

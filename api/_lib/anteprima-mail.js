@@ -10,7 +10,7 @@
 
 import nodemailer from 'nodemailer'
 import { getAnteprimaDriveUrls } from './anteprime-manifest.js'
-import { emailShell, emailButton } from './email-shell.js'
+import { emailShell, emailButton, logoAttachment } from './email-shell.js'
 
 // Titolo umano per slug — speculare ai t: di src/data/materie.js.
 // Tenuto in sync a mano (basso churn, evita dipendenza cross-bundle).
@@ -180,6 +180,7 @@ export async function sendAnteprimaMail({ email, nome, slug }) {
     subject,
     text,
     html,
+    attachments: [logoAttachment()],
   })
 
   return { ok: true, delivered: !!urls }

@@ -20,12 +20,13 @@ const TELEGRAM_URL = 'https://t.me/fcapurso'
 // misura). Deciso 2026-06-01. ⚠️ NON è speculare a src/data/formati.js (quelli
 // sono i prezzi "da" del sito, più bassi e NON mostrati pubblicamente): questi
 // sono i prezzi di vendita reali comunicati ai lead via email.
-const PREZZI = { manuale: '24,99 €', audio: '34,99 €', video: '39,99 €', report: '9,99 €' }
+const PREZZI = { manuale: '24,99 €', audio: '34,99 €', video: '39,99 €', report: '9,99 €', podcast: '19,99 €' }
 const COMPLETO_LABEL = {
   manuale: 'Il Manuale completo',
   audio: 'Le Audio Lezioni complete',
   video: 'Le Video Lezioni complete',
   report: 'Il Report completo',
+  podcast: 'La Serie Podcast completa',
 }
 
 // Firma comune (il footer legale lo aggiunge il guscio).
@@ -136,6 +137,7 @@ ${sigText()}`
 // Metadati per formato anteprima usati da M3 (label + CTA). `generic` è il
 // fallback quando arriva un solo `link` non tipizzato (retrocompat).
 const M3_KINDS = {
+  podcast: { emoji: '🎙️', noun: 'podcast', detail: '(episodio 1)', btn: "🎙️ ASCOLTA IL PODCAST", price: PREZZI.podcast, completo: COMPLETO_LABEL.podcast },
   audio: { emoji: '🎧', noun: 'audio', detail: '(episodio 1)', btn: "🎧 ASCOLTA L'ANTEPRIMA", price: PREZZI.audio, completo: COMPLETO_LABEL.audio },
   video: { emoji: '🎥', noun: 'video', detail: '(episodio 1)', btn: "🎥 GUARDA L'ANTEPRIMA", price: PREZZI.video, completo: COMPLETO_LABEL.video },
   manuale: { emoji: '📚', noun: 'manuale', detail: '(15 pagine, PDF)', btn: '📚 APRI IL MANUALE', price: PREZZI.manuale, completo: COMPLETO_LABEL.manuale },
@@ -360,16 +362,17 @@ Telegram: @fcapurso`
 // Dispatcher. `category` ∈ {M1,M2,M3,M4,M5,NL}.
 //   M1                 → nessun dato extra
 //   M2/M3/M4           → slug (per materiaLabel)
-//   M3                 → audio/video/manuale/report (URL anteprime Drive, uno o
-//                        più); in alternativa `link` come anteprima singola
-//                        generica. Aggiunge il prezzo del completo (listino PREZZI).
+//   M3                 → podcast/audio/video/manuale/report (URL anteprime
+//                        Drive, uno o più); in alternativa `link` come anteprima
+//                        singola generica. Aggiunge il prezzo del completo
+//                        (listino PREZZI). NB: podcast ≠ audio lezione.
 //   M4                 → link (URL anteprima manuale; se assente → "in arrivo").
 //                        Aggiunge il prezzo del manuale completo.
 //   M5                 → materia (TESTO LIBERO, non a catalogo) + formats
 //                        (sottoinsieme di manuale/audio/video; vuoto → solo
 //                        manuale). Niente slug, niente link.
 // Ritorna { subject, text, html }. Throw se mancano dati obbligatori.
-export function buildLeadEmail({ category, nome, slug, link, audio, video, manuale, report, materia, formats, subscribed, originalSubject }) {
+export function buildLeadEmail({ category, nome, slug, link, podcast, audio, video, manuale, report, materia, formats, subscribed, originalSubject }) {
   const rawFirst = (nome || '').trim().split(/\s+/)[0] || 'ciao'
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1).toLowerCase()
   const materiaLabel = slug ? (MATERIA_LABEL[slug] || slug) : ''
@@ -399,12 +402,13 @@ export function buildLeadEmail({ category, nome, slug, link, audio, video, manua
     case 'M3': {
       if (!slug) throw new Error('M3 richiede slug materia')
       const links = []
+      if (podcast) links.push({ kind: 'podcast', url: podcast })
       if (audio) links.push({ kind: 'audio', url: audio })
       if (video) links.push({ kind: 'video', url: video })
       if (manuale) links.push({ kind: 'manuale', url: manuale })
       if (report) links.push({ kind: 'report', url: report })
       if (!links.length && link) links.push({ kind: 'generic', url: link })
-      if (!links.length) throw new Error('M3 richiede almeno un link anteprima (audio/video/manuale/report o link)')
+      if (!links.length) throw new Error('M3 richiede almeno un link anteprima (podcast/audio/video/manuale/report o link)')
       built = buildM3({ firstName, materiaLabel, links })
       break
     }
