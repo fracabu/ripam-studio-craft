@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ============================================================================
-// Applica lo schema newsletter al database Neon dedicato a Ripam Studio Craft.
+// Applica gli schema SQL al database Neon dedicato a Ripam Studio Craft.
 //
 // Setup:
 //   1. Crea database Neon dal dashboard Vercel del progetto ripam-studio-craft:
@@ -11,8 +11,10 @@
 //      npx vercel env pull .env.local
 //   3. Lancia: node db/apply_schema.mjs
 //
-// Lo script è idempotente: usa CREATE TABLE IF NOT EXISTS, lo puoi rilanciare
-// in sicurezza dopo modifiche allo schema.
+// Applica TUTTI gli schema in SCHEMAS (newsletter + ordini). È idempotente
+// (CREATE TABLE/INDEX IF NOT EXISTS, CREATE OR REPLACE VIEW): rilanciabile in
+// sicurezza dopo modifiche. Per applicarne uno solo:
+//   node db/apply_schema.mjs schema_ordini.sql
 // ============================================================================
 
 import { readFileSync } from 'node:fs'
@@ -21,6 +23,9 @@ import { dirname, join } from 'node:path'
 import { Client, neon } from '@neondatabase/serverless'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
+
+// Tutti gli schema da applicare, in ordine (newsletter prima, poi ordini).
+const SCHEMAS = ['schema_newsletter.sql', 'schema_ordini.sql']
 
 // Carica .env.local manualmente (no dotenv, niente dipendenze extra)
 function loadEnv() {
@@ -57,6 +62,10 @@ if (!url) {
   process.exit(1)
 }
 
+// Override opzionale: applica solo lo schema passato come argomento.
+const onlySchema = process.argv[2]
+const schemasToApply = onlySchema ? [onlySchema] : SCHEMAS
+
 // Maschera la password nel log: postgres://user:***@host/db
 const masked = url.replace(/:[^:@/]+@/, ':***@')
 console.log(`[..] DB target: ${masked}`)
@@ -67,9 +76,6 @@ await client.connect()
 
 // Per le query di verifica finali manteniamo anche l'API HTTP comoda.
 const sql = neon(url)
-
-const schemaPath = join(__dirname, 'schema_newsletter.sql')
-let schemaSql = readFileSync(schemaPath, 'utf8')
 
 // 1) Rimuovi commenti single-line '-- ...' prima dello split, altrimenti
 //    statement preceduti da commenti header vengono erroneamente scartati.
@@ -110,34 +116,46 @@ function splitStatements(s) {
   return statements
 }
 
-const statements = splitStatements(stripLineComments(schemaSql))
-console.log(`[..] Applico ${statements.length} statement allo schema newsletter`)
+let totalApplied = 0
+let totalFailed = 0
 
-let applied = 0
-let failed = 0
-for (const [i, stmt] of statements.entries()) {
-  const preview = stmt.slice(0, 70).replace(/\s+/g, ' ')
+for (const schemaFile of schemasToApply) {
+  let schemaSql
   try {
-    await client.query(stmt)
-    applied++
-    console.log(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] OK  ${preview}...`)
-  } catch (err) {
-    failed++
-    console.error(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] FAIL  ${preview}...`)
-    console.error(`       ${err.message}`)
+    schemaSql = readFileSync(join(__dirname, schemaFile), 'utf8')
+  } catch {
+    console.error(`\n[FAIL] schema non trovato: ${schemaFile}`)
+    totalFailed++
+    continue
+  }
+
+  const statements = splitStatements(stripLineComments(schemaSql))
+  console.log(`\n[..] ${schemaFile}: applico ${statements.length} statement`)
+
+  for (const [i, stmt] of statements.entries()) {
+    const preview = stmt.slice(0, 70).replace(/\s+/g, ' ')
+    try {
+      await client.query(stmt)
+      totalApplied++
+      console.log(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] OK  ${preview}...`)
+    } catch (err) {
+      totalFailed++
+      console.error(`  [${String(i + 1).padStart(2, '0')}/${statements.length}] FAIL  ${preview}...`)
+      console.error(`       ${err.message}`)
+    }
   }
 }
 
 await client.end()
 
 console.log(`\n=== Done ===`)
-console.log(`Applied: ${applied}/${statements.length}`)
-if (failed > 0) {
-  console.error(`Failed:  ${failed}`)
+console.log(`Applied: ${totalApplied}`)
+if (totalFailed > 0) {
+  console.error(`Failed:  ${totalFailed}`)
   process.exit(2)
 }
 
-// Smoke check: leggi struttura tabella e count
+// Smoke check: leggi struttura tabelle chiave e count.
 try {
   const cols = await sql`
     SELECT column_name, data_type
@@ -145,11 +163,24 @@ try {
     WHERE table_name = 'newsletter_subscribers'
     ORDER BY ordinal_position
   `
-  console.log(`\nnewsletter_subscribers ha ${cols.length} colonne:`)
-  for (const c of cols) console.log(`  · ${c.column_name} (${c.data_type})`)
+  if (cols.length) {
+    console.log(`\nnewsletter_subscribers ha ${cols.length} colonne`)
+    const count = await sql`SELECT COUNT(*)::int AS n FROM newsletter_subscribers`
+    console.log(`Iscritti attuali: ${count[0].n}`)
+  }
 
-  const count = await sql`SELECT COUNT(*)::int AS n FROM newsletter_subscribers`
-  console.log(`\nIscritti attuali: ${count[0].n}`)
+  const ordiniCols = await sql`
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_name = 'ordini'
+    ORDER BY ordinal_position
+  `
+  if (ordiniCols.length) {
+    console.log(`\nordini ha ${ordiniCols.length} colonne:`)
+    for (const c of ordiniCols) console.log(`  · ${c.column_name} (${c.data_type})`)
+    const oc = await sql`SELECT COUNT(*)::int AS n FROM ordini`
+    console.log(`Ordini registrati: ${oc[0].n}`)
+  }
 } catch (err) {
   console.error(`[WARN] smoke check fallita: ${err.message}`)
 }
