@@ -15,14 +15,33 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = join(ROOT, 'public', 'logo.png')
-const OUT = join(ROOT, 'api', '_lib', 'logo-data.js')
 
-const b64 = readFileSync(SRC).toString('base64')
-const header = `// AUTO-GENERATO da public/logo.png — NON modificare a mano.
+// Due loghi gemelli: scuro (su fondo crema) e chiaro (su fondo nero, stile
+// newsletter). Entrambi incorporati inline nelle mail/bozze → niente file
+// locale né fetch remoto a runtime (le immagini remote vengono bloccate da
+// Libero/Outlook → header senza logo). Vedi email-shell.js / lead-draft.mjs.
+const TARGETS = [
+  {
+    src: join(ROOT, 'public', 'logo.png'),
+    out: join(ROOT, 'api', '_lib', 'logo-data.js'),
+    name: 'LOGO_B64',
+    note: 'logo SCURO (per header su fondo crema)',
+  },
+  {
+    src: join(ROOT, 'public', 'logo-dark.png'),
+    out: join(ROOT, 'api', '_lib', 'logo-dark-data.js'),
+    name: 'LOGO_DARK_B64',
+    note: 'logo CHIARO (per header su fondo nero, stile newsletter)',
+  },
+]
+
+for (const { src, out, name, note } of TARGETS) {
+  const b64 = readFileSync(src).toString('base64')
+  const header = `// AUTO-GENERATO da ${src.replace(ROOT, '').replace(/\\/g, '/')} — NON modificare a mano.
 // Rigenera con: node scripts/gen-logo-data.mjs
-// Single source dei byte del logo brand per le mail (incorporato inline, niente
-// file locale né fetch remoto a runtime). Vedi email-shell.js / lead-draft.mjs.
+// ${note}. Single source dei byte: incorporato inline nelle mail (niente file
+// locale né fetch remoto a runtime). Vedi email-shell.js / lead-draft.mjs.
 `
-writeFileSync(OUT, `${header}export const LOGO_B64 =\n  '${b64}'\n`)
-console.error(`logo-data.js scritto (${b64.length} char base64 da ${SRC})`)
+  writeFileSync(out, `${header}export const ${name} =\n  '${b64}'\n`)
+  console.error(`${out.split(/[\\/]/).pop()} scritto (${b64.length} char base64)`)
+}
