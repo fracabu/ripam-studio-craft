@@ -13,8 +13,15 @@ npm run dev        # Vite dev server su localhost:5173 (apre il browser)
 npm run build      # build di produzione in dist/
 npm run preview    # preview della build
 
-node db/apply_schema.mjs                              # applica/migra lo schema Neon (idempotente)
+node db/apply_schema.mjs                              # applica/migra TUTTI gli schema Neon (newsletter + ordini, idempotente)
+node db/apply_schema.mjs schema_ordini.sql           # applica un solo schema
 node scripts/send_newsletter.mjs <YYYY-MM-DD> --dry-run   # invio newsletter in locale (vedi sotto)
+
+# Registro acquisti (tabella `ordini` su Neon) — gira a PC acceso, legge .env.local
+node scripts/order_add.mjs --email <email> --prodotto "<testo>" [--importo 29.98 --fattura 8/2026 ...]
+node scripts/orders_list.mjs                         # vista clienti aggregati (view `clienti`) + fatturato
+node scripts/orders_list.mjs --ordini                # tutti gli ordini, riga per riga
+node scripts/orders_list.mjs --email <email>         # ordini di un singolo cliente
 ```
 
 Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.mjs` sono diagnostiche usa-e-getta (git-ignored).
@@ -53,6 +60,11 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 ### Dati newsletter
 - Schema in `db/schema_newsletter.sql` (Neon Postgres, regione UE). Due tabelle: `newsletter_subscribers` (include **registro consensi GDPR**: `consent_text`/`consent_ip`/`consent_user_agent`/`consent_at`) e `newsletter_send_events` (audit + idempotenza). View `newsletter_active`. `apply_schema.mjs` la applica.
 - Le **bozze** newsletter vivono in `messaggi-clienti/newsletter/<YYYY-MM-DD>.{html,txt,meta.json}` — i 3 file con lo stesso basename sono la "newsletter" che `send.js` legge a runtime (il `file:` nel body è il basename). Generabili con la skill `newsletter-draft`.
+
+### Dati ordini / clienti
+- Schema in `db/schema_ordini.sql` (stesso DB Neon della newsletter). Tabella `ordini` = **fonte unica degli acquisti** (chi ha comprato cosa, quando, a quanto), pensata per sostituire la ricerca a mano delle fatture in Gmail. Solo DDL nel file: i dati reali si inseriscono a runtime. View `clienti` = una riga per cliente con aggregati (n. ordini, totale speso, ultimo ordine), filtra `stato='pagato'`.
+- Anti-doppione **morbido**: unique index parziale su `(LOWER(email), numero_fattura) WHERE numero_fattura IS NOT NULL` → `order_add.mjs` fa `ON CONFLICT DO NOTHING`, quindi rilanciare il backfill non duplica; ordini **senza** numero fattura vengono sempre inseriti.
+- Gli script CLI (`order_add.mjs`, `orders_list.mjs`) usano l'**API HTTP** `neon()` (template tag), mentre `apply_schema.mjs` usa il `Client` TCP/WebSocket perché il DDL non passa dall'API HTTP. Tutti caricano `.env.local` a mano (stesso pattern no-`dotenv`).
 
 ### Variabili d'ambiente (`.env.local`, mai committato)
 `DATABASE_URL`/`POSTGRES_URL` (Neon), `GMAIL_USER`, `GMAIL_APP_PASSWORD` (App Password Gmail), `ADMIN_SECRET` (auth di `send.js`), `PUBLIC_BASE_URL`. Su Vercel sono iniettate; in locale si fanno `npx vercel env pull .env.local`.
