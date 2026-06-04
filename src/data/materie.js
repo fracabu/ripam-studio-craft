@@ -188,7 +188,23 @@ export const MATERIE = [
   { n:46, slug:'valutazione-politiche-pubbliche', t:'Valutazione Politiche Pubbliche', norm:'VPP · AIR · VIR',          c:['RIPAM','FUNZ','MIMIT'],
     intro:'Valutazione ex ante, in itinere ed ex post delle politiche pubbliche: AIR, VIR, controfattuali, impatto sociale.',
     avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
-    topics:['Logica della valutazione','AIR (Analisi Impatto Regolazione)','VIR (Verifica Impatto)','Metodi controfattuali','Indicatori di impatto','Cost-benefit analysis','Valutazione partecipata','Reporting per stakeholder'] }
+    topics:['Logica della valutazione','AIR (Analisi Impatto Regolazione)','VIR (Verifica Impatto)','Metodi controfattuali','Indicatori di impatto','Cost-benefit analysis','Valutazione partecipata','Reporting per stakeholder'] },
+  { n:47, slug:'analisi-politiche-pubbliche',     t:'Analisi delle Politiche Pubbliche', norm:'Policy analysis',        c:['FUNZ','MIMIT'],
+    intro:'Il ciclo delle politiche pubbliche: agenda, formulazione, decisione, implementazione e analisi degli attori. Materia chiave dei concorsi SNA.',
+    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    topics:['Ciclo della policy','Agenda setting','Attori e arene decisionali','Strumenti di policy','Implementazione','Analisi degli stakeholder','Policy network','Fallimenti delle politiche'] },
+  { n:48, slug:'management-pubblico-innovazione',  t:'Management Pubblico e Innovazione Digitale', norm:'Public management', c:['FUNZ','MIMIT'],
+    intro:'Gestione e organizzazione delle amministrazioni pubbliche, performance, change management e trasformazione digitale della PA. Materia chiave dei concorsi SNA.',
+    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    topics:['New Public Management','Ciclo della performance','Organizzazione e processi','Change management','Trasformazione digitale PA','Project management pubblico','Leadership e competenze','Open government'] },
+  { n:49, slug:'economia-amministrazioni-pubbliche', t:'Economia delle Amministrazioni Pubbliche', norm:'Economia pubblica', c:['FUNZ','MIMIT'],
+    intro:'Economia del settore pubblico: bilancio, spesa, entrate, beni pubblici, intervento dello Stato e finanza pubblica. Materia chiave dei concorsi SNA.',
+    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    topics:['Beni pubblici e esternalità','Bilancio dello Stato','Entrate e spesa pubblica','Federalismo fiscale','Debito pubblico','Efficienza e equità','Fallimenti del mercato','Valutazione della spesa'] },
+  { n:50, slug:'politica-economica',              t:'Politica Economica',              norm:'Teoria economica',         c:['FUNZ','MIMIT'],
+    intro:'Obiettivi e strumenti della politica economica: politiche fiscali e monetarie, occupazione, inflazione, crescita e ruolo dello Stato. Materia chiave dei concorsi SNA.',
+    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    topics:['Obiettivi e strumenti','Politica fiscale','Politica monetaria','Occupazione e inflazione','Bilancia dei pagamenti','Politiche di sviluppo','Vincoli europei','Stabilizzazione macroeconomica'] }
 ]
 
 export const STATUS_LABELS = {
