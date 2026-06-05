@@ -24,8 +24,8 @@ import { Client, neon } from '@neondatabase/serverless'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-// Tutti gli schema da applicare, in ordine (newsletter prima, poi ordini).
-const SCHEMAS = ['schema_newsletter.sql', 'schema_ordini.sql']
+// Tutti gli schema da applicare, in ordine (newsletter, ordini, anteprime).
+const SCHEMAS = ['schema_newsletter.sql', 'schema_ordini.sql', 'schema_anteprime.sql']
 
 // Carica .env.local manualmente (no dotenv, niente dipendenze extra)
 function loadEnv() {
