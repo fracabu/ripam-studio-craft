@@ -12,6 +12,7 @@ const TIPI = [
 ]
 
 const QUIZ_PRO_NOTE = 'Vorrei ricevere le credenziali per accedere a RIPAM Studio Quiz Pro.'
+const QUIZ_PRO_RENEW_NOTE = 'Ho già un account su RIPAM Studio Quiz Pro e vorrei rinnovare le credenziali.'
 
 // Testo esatto della checkbox newsletter, registrato come consent_text
 // nel registro consensi GDPR (art. 7.1). Allineato a Newsletter.vue.
@@ -27,6 +28,12 @@ const privacy = ref(false)
 const newsletter = ref(false)
 const hp = ref('') // honeypot
 
+// Quiz Pro: distingue prima richiesta ('nuovo') da rinnovo di account esistente ('rinnovo').
+// Nel ramo rinnovo si chiede lo USERNAME (l'unico dato che hanno anche i tanti utenti
+// storici senza email a DB, perché è con quello che accedono).
+const quizProAction = ref('nuovo') // 'nuovo' | 'rinnovo'
+const username = ref('')
+
 const status = ref('idle') // idle | sending | sent | error
 const errorMsg = ref('')
 
@@ -34,18 +41,19 @@ const errorMsg = ref('')
 // i selettori "Cosa ti serve" e "Concorso", mostra banner contestuale,
 // pre-compila il testo della richiesta. L'utente deve solo nome + email.
 const isQuizProMode = computed(() => tipo.value === 'quiz-pro')
+const isRinnovo = computed(() => isQuizProMode.value && quizProAction.value === 'rinnovo')
 
 // Permetti pre-compilazione via query string: /scrivimi?tipo=coaching&concorso=RIPAM&note=...
 const route = useRoute()
 watch(() => route.query, (q) => {
   if (q.tipo && TIPI.some(t => t.v === q.tipo)) tipo.value = q.tipo
+  // Permetti link diretto al ramo rinnovo: /scrivimi?tipo=quiz-pro&azione=rinnovo
+  if (q.azione === 'rinnovo') quizProAction.value = 'rinnovo'
   if (q.concorso && (CONCORSI.includes(q.concorso) || q.concorso === 'Altro')) {
     concorso.value = q.concorso === 'Altro' ? 'Altro / non so ancora' : q.concorso
   }
   if (q.note) {
     note.value = String(q.note)
-  } else if (tipo.value === 'quiz-pro' && !note.value) {
-    note.value = QUIZ_PRO_NOTE
   }
 }, { immediate: true })
 
@@ -55,18 +63,29 @@ const submit = async (e) => {
   status.value = 'sending'
   errorMsg.value = ''
 
-  // Concateno "Cosa ti serve" davanti alle note per non toccare lo schema dell'API
-  const tipoLabel = TIPI.find(t => t.v === tipo.value)?.l || ''
-  const composedNote = tipoLabel
-    ? `Cosa serve: ${tipoLabel}\n\n${note.value}`
-    : note.value
+  // Concateno "Cosa ti serve" davanti alle note per non toccare lo schema dell'API.
+  // Per il rinnovo Quiz Pro lo username viaggia dentro le note in forma parsabile
+  // ("Username: X"), così la skill/endpoint lo riconosce come rinnovo e trova l'utente.
+  let composedNote
+  let nomeToSend = nome.value
+  if (isRinnovo.value) {
+    const extra = note.value || QUIZ_PRO_RENEW_NOTE
+    composedNote = `Cosa serve: Rinnovo credenziali RIPAM Studio Quiz Pro\n\nUsername: ${username.value.trim()}\n\n${extra}`
+    nomeToSend = username.value.trim() // l'API richiede un nome non vuoto
+  } else if (isQuizProMode.value) {
+    const extra = note.value || QUIZ_PRO_NOTE
+    composedNote = `Cosa serve: Credenziali RIPAM Studio Quiz Pro\n\n${extra}`
+  } else {
+    const tipoLabel = TIPI.find(t => t.v === tipo.value)?.l || ''
+    composedNote = tipoLabel ? `Cosa serve: ${tipoLabel}\n\n${note.value}` : note.value
+  }
 
   try {
     const r = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nome: nome.value,
+        nome: nomeToSend,
         email: email.value,
         concorso: concorso.value,
         note: composedNote,
@@ -93,7 +112,7 @@ const submit = async (e) => {
     }
 
     status.value = 'sent'
-    nome.value = ''; email.value = ''; note.value = ''
+    nome.value = ''; email.value = ''; note.value = ''; username.value = ''
     privacy.value = false
     newsletter.value = false
     setTimeout(() => {
@@ -109,14 +128,21 @@ const submit = async (e) => {
 <template>
   <main class="sv-page">
     <div class="wrap sv-wrap">
-      <div class="sv-kicker">{{ isQuizProMode ? 'RICHIESTA CREDENZIALI' : 'SCRIVIMI' }}</div>
-      <h1 v-if="isQuizProMode" class="sv-h1">
+      <div class="sv-kicker">{{ isRinnovo ? 'RINNOVO CREDENZIALI' : (isQuizProMode ? 'RICHIESTA CREDENZIALI' : 'SCRIVIMI') }}</div>
+      <h1 v-if="isRinnovo" class="sv-h1">
+        Rinnova le credenziali di <span class="hl-blue">Quiz Pro.</span>
+      </h1>
+      <h1 v-else-if="isQuizProMode" class="sv-h1">
         Richiedi le credenziali di <span class="hl-blue">Quiz Pro.</span>
       </h1>
       <h1 v-else class="sv-h1">
         Raccontami <span class="hl-blue">cosa ti serve.</span>
       </h1>
-      <p v-if="isQuizProMode" class="sv-lead">
+      <p v-if="isRinnovo" class="sv-lead">
+        Inserisci lo <strong>username con cui accedi</strong> e la tua email: ti riattivo l'account
+        entro 24h. Le credenziali <strong>restano le stesse</strong>, cambia solo la scadenza.
+      </p>
+      <p v-else-if="isQuizProMode" class="sv-lead">
         Bastano <strong>nome ed email</strong>. Ti invio le credenziali entro 24h via mail.
         L'app è in beta ed è <strong>100% gratuita</strong>: nessun pagamento, nessun carrello.
       </p>
@@ -128,7 +154,12 @@ const submit = async (e) => {
       <!-- Banner contestuale: richiesta credenziali Quiz Pro -->
       <div v-if="isQuizProMode && status !== 'sent'" class="sv-quiz-banner" role="status">
         <div class="sv-quiz-banner-k">🔐 RIPAM STUDIO QUIZ PRO</div>
-        <p>
+        <p v-if="isRinnovo">
+          Il tuo accesso è scaduto o sta per scadere? Indica lo <strong>username con cui accedi</strong>
+          e l'email: riattivo il tuo account per altri 30 giorni. <strong>Stesse credenziali</strong>,
+          non devi rifare nulla.
+        </p>
+        <p v-else>
           Stai richiedendo l'accesso a <strong>Quiz Pro</strong>: 5.500+ articoli di legge,
           26 leggi d'esame, quiz generati con AI. Compila <strong>nome ed email</strong> qui
           sotto — alle credenziali pensiamo noi.
@@ -138,9 +169,14 @@ const submit = async (e) => {
       <!-- SUCCESS STATE in pagina (no modal) -->
       <div v-if="status === 'sent'" id="sv-success" class="sv-success">
         <div class="sv-success-k">RICEVUTO &check;</div>
-        <h2 v-if="isQuizProMode" class="sv-success-h">Richiesta ricevuta. Credenziali in arrivo entro 24h.</h2>
+        <h2 v-if="isRinnovo" class="sv-success-h">Richiesta di rinnovo ricevuta. Ti riattivo entro 24h.</h2>
+        <h2 v-else-if="isQuizProMode" class="sv-success-h">Richiesta ricevuta. Credenziali in arrivo entro 24h.</h2>
         <h2 v-else class="sv-success-h">Grazie. Ti rispondo a mano entro 24h.</h2>
-        <p v-if="isQuizProMode">
+        <p v-if="isRinnovo">
+          Riattivo il tuo account e ti confermo via email (stesse credenziali, nuova scadenza).
+          Controlla anche la cartella <strong>spam/promozioni</strong>. Urgenza? Telegram <strong>@fcapurso</strong>.
+        </p>
+        <p v-else-if="isQuizProMode">
           Ti invio username e password via email. Controlla anche la cartella <strong>spam/promozioni</strong>.
           Se hai urgenza, scrivimi su Telegram <strong>@fcapurso</strong>.
         </p>
@@ -152,8 +188,27 @@ const submit = async (e) => {
       </div>
 
       <form v-else class="sv-form" @submit="submit" novalidate>
+        <!-- Quiz Pro: scelta prima volta / rinnovo. Un solo ingresso, niente bottoni gemelli da confondere. -->
+        <div v-if="isQuizProMode" class="sv-field">
+          <label>Hai già un account Quiz Pro?</label>
+          <div class="sv-seg" role="radiogroup" aria-label="Nuovo o rinnovo">
+            <label class="sv-seg-opt" :class="{active: quizProAction === 'nuovo'}">
+              <input type="radio" name="sv-qp-action" value="nuovo" v-model="quizProAction" :disabled="status==='sending'" />
+              <span>No, è la prima volta</span>
+            </label>
+            <label class="sv-seg-opt" :class="{active: quizProAction === 'rinnovo'}">
+              <input type="radio" name="sv-qp-action" value="rinnovo" v-model="quizProAction" :disabled="status==='sending'" />
+              <span>Sì, devo rinnovare</span>
+            </label>
+          </div>
+        </div>
+
         <div class="sv-row">
-          <div class="sv-field">
+          <div v-if="isRinnovo" class="sv-field">
+            <label for="sv-username">Username</label>
+            <input id="sv-username" v-model="username" type="text" required placeholder="Quello con cui accedi" :disabled="status==='sending'" />
+          </div>
+          <div v-else class="sv-field">
             <label for="sv-nome">Nome</label>
             <input id="sv-nome" v-model="nome" type="text" required placeholder="Come ti chiami" :disabled="status==='sending'" />
           </div>
@@ -212,12 +267,13 @@ const submit = async (e) => {
         <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="sv-hp" />
 
         <div class="sv-actions">
-          <button type="submit" class="btn btn-primary" :disabled="status==='sending' || !privacy">
+          <button type="submit" class="btn btn-primary" :disabled="status==='sending' || !privacy || (isRinnovo && !username.trim())">
             <span v-if="status==='sending'">Invio in corso…</span>
+            <span v-else-if="isRinnovo">Rinnova credenziali &rarr;</span>
             <span v-else-if="isQuizProMode">Richiedi credenziali &rarr;</span>
             <span v-else>Invia &rarr;</span>
           </button>
-          <span class="sv-hint">{{ isQuizProMode ? 'Credenziali via email entro 24h · 100% gratis' : 'Risposta entro 24h · nessun pagamento anticipato' }}</span>
+          <span class="sv-hint">{{ isRinnovo ? 'Riattivazione entro 24h · stesse credenziali' : (isQuizProMode ? 'Credenziali via email entro 24h · 100% gratis' : 'Risposta entro 24h · nessun pagamento anticipato') }}</span>
         </div>
 
         <p v-if="status==='error'" class="sv-err">{{ errorMsg }}</p>
