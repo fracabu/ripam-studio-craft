@@ -52,8 +52,8 @@ try {
 // ============================================================================
 // CONFIG DELL'INVIO — cambia qui per i drip successivi
 // ============================================================================
-const INVIO_ID = 'drip-2026-06-05'
-const SUBJECT = '3 nuove materie da scaricare: Pubblico Impiego, Contratti, Ordinamento PA'
+const INVIO_ID = 'drip-2026-06-09-l2'
+const SUBJECT = '2 nuove materie da scaricare: Ordinamento PA e Diritto Penale PA'
 const KICKER = 'NUOVE MATERIE'
 // IMPORTANTE: in locale .env.local ha PUBLIC_BASE_URL=http://localhost:5173 (dev).
 // Le mail vanno SEMPRE col dominio di produzione, altrimenti i link /scrivimi e
@@ -69,22 +69,16 @@ if (_envUrl && /localhost|127\.0\.0\.1/.test(_envUrl)) {
 // Le 3 materie del drip: slug (per il registro), titolo, normativa, link Drive.
 const MATERIE = [
   {
-    slug: 'pubblico-impiego', titolo: 'Pubblico Impiego', norm: 'D.Lgs. 165/2001',
-    audio: 'https://drive.google.com/file/d/1thiu-C7vC9tjYhRp1tpKhBYhECPqRr_z/view',
-    video: 'https://drive.google.com/file/d/1bbRz9Qz0tqwMod5EJsW7Nhqd3sk7P4fS/view',
-    manuale: 'https://drive.google.com/file/d/1p5lak1Eo0_WIR2b4BOGWqd2gBctxKFPS/view',
-  },
-  {
-    slug: 'contratti-pubblici', titolo: 'Contratti Pubblici', norm: 'D.Lgs. 36/2023',
-    audio: 'https://drive.google.com/file/d/1_9hYVJ58V1vq9VzYhII9j3EwQIutlc8G/view',
-    video: 'https://drive.google.com/file/d/1ZoTTz-nkQrdy6XhmNXKwtmc4gJnqhMFS/view',
-    manuale: 'https://drive.google.com/file/d/1c0ECzLDP5Xj4IOS6e6TKTTnvdlLqTroK/view',
-  },
-  {
     slug: 'ordinamento-pa', titolo: 'Ordinamento PA', norm: 'D.Lgs. 300/1999',
     audio: 'https://drive.google.com/file/d/1APPFfLTE5nYof4K24Ezo4GF4BxpwnntR/view',
     video: 'https://drive.google.com/file/d/1gd1fn8tgeDBYd7tZbyNAH7qkOP2RJnKA/view',
     manuale: 'https://drive.google.com/file/d/1uVqAZUbbdJDSdDiIvFpgZUoKZBWAufZC/view',
+  },
+  {
+    slug: 'diritto-penale-pa', titolo: 'Diritto Penale PA', norm: 'Codice Penale · artt. 314-360',
+    audio: 'https://drive.google.com/file/d/1vvsI3VSweOld_MRi24IJ_lesJCM9Nznx/view',
+    video: 'https://drive.google.com/file/d/1F7puILkbAnaZqTZwfi1QACRAwWEA4516/view',
+    manuale: 'https://drive.google.com/file/d/15XP2oXuWTfZyGkuX4v3U_9FRu_2nd9CW/view',
   },
 ]
 const FORMATO = 'completa-avm'
@@ -234,7 +228,7 @@ if (typeof args.preview === 'string') {
   try {
     const info = await sendMail(transporter, to, `[ANTEPRIMA] ${SUBJECT}`, html, text, unsubUrl)
     console.log(`[OK] anteprima inviata a ${to} — ${info.messageId}`)
-    console.log(`     (3 materie, nessun logging sul registro)`)
+    console.log(`     (${MATERIE.length} materie, nessun logging sul registro)`)
   } catch (e) { console.error(`[FAIL] ${e.message}`); process.exit(1) }
   process.exit(0)
 }
