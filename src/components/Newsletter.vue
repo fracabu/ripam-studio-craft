@@ -68,7 +68,7 @@ const submit = async (e) => {
         </p>
         <ul class="nl-bullets">
           <li><span class="nl-tick">›</span> Massimo 1-2 email/mese</li>
-          <li><span class="nl-tick">›</span> Anteprime gratuite dei manuali</li>
+          <li><span class="nl-tick">›</span> Anteprime gratuite dei materiali (audio, video, podcast, manuali)</li>
           <li><span class="nl-tick">›</span> Disiscrizione one-click sempre</li>
         </ul>
       </div>

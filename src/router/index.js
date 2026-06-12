@@ -7,6 +7,7 @@ import Coaching from '../views/Coaching.vue'
 import Tool from '../views/Tool.vue'
 import Scrivimi from '../views/Scrivimi.vue'
 import Anteprime from '../views/Anteprime.vue'
+import Iscriviti from '../views/Iscriviti.vue'
 import NotFound from '../views/NotFound.vue'
 
 const router = createRouter({
@@ -23,6 +24,8 @@ const router = createRouter({
     { path: '/materia/:slug', name: 'materia', component: Materia, props: true },
     // Landing condivisibile per materia (link puliti per Telegram): 1 CTA → modale opt-in
     { path: '/anteprime/:slug', name: 'anteprime', component: Anteprime, props: true },
+    // Landing iscrizione newsletter (link pulito /newsletter per i post social)
+    { path: '/newsletter', name: 'newsletter', component: Iscriviti },
     { path: '/privacy', name: 'privacy', component: Legale, props: { slug: 'privacy' }, meta: { slug: 'privacy' } },
     { path: '/cookie-policy', name: 'cookie-policy', component: Legale, props: { slug: 'cookie-policy' }, meta: { slug: 'cookie-policy' } },
     { path: '/termini', name: 'termini', component: Legale, props: { slug: 'termini' }, meta: { slug: 'termini' } },
