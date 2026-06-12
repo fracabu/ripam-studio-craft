@@ -14,9 +14,11 @@
 //   node scripts/lead-draft.mjs --category=M4 --nome="Laura" --slug=diritto-amministrativo --link="https://drive.google.com/file/d/<id>/view" --subject="..."
 //   node scripts/lead-draft.mjs --category=M5 --nome="Petronella" --materia="SIAE" --subject="..."
 //   node scripts/lead-draft.mjs --category=M5 --nome="Petronella" --materia="SIAE" --formats=manuale,audio,video --subject="..."
+//   node scripts/lead-draft.mjs --category=RC --nome="Stefania" --concorso=cpi-sicilia-sac --subject="..."
+//   node scripts/lead-draft.mjs --category=RC --nome="Stefania" --concorso=cpi-sicilia-sac --reports=contabilita-regionale,lr-10-2000 --prezzo="19,99 € a report" --subject="..."
 //
 // Argomenti:
-//   --category  M1 | M2 | M3 | M4 | M5       (obbligatorio)
+//   --category  M1 | M2 | M3 | M4 | M5 | RC  (obbligatorio)
 //   --nome      nome del lead                (consigliato; default "ciao")
 //   --slug      slug materia                 (obbligatorio per M2/M3/M4)
 //   --podcast   URL anteprima podcast EP1    (M3; podcast dialogato ≠ audio lezione)
@@ -27,6 +29,9 @@
 //   --link      URL anteprima singola Drive  (M4; o M3 come anteprima generica)
 //   --materia   nome materia testo libero    (obbligatorio per M5, NON a catalogo)
 //   --formats   manuale,audio,video          (M5; default: solo manuale se omesso)
+//   --concorso  chiave report-custom-manifest (obbligatorio per RC: es. cpi-sicilia-sac)
+//   --reports   sottoinsieme chiavi report   (RC opz.; default: tutte le disponibili)
+//   --prezzo    testo prezzo report completo (RC opz.; es. "25 €" o "19,99 € a report")
 //   --subscribed  true                       (M1; il lead è già iscritto alla newsletter)
 //   --subject   oggetto originale del thread (per generare "Re: ...")
 // ============================================================================
@@ -89,6 +94,9 @@ try {
     report: args.report,
     materia: args.materia,
     formats: args.formats,
+    concorso: args.concorso,
+    reports: args.reports,
+    prezzo: args.prezzo,
     subscribed: args.subscribed,
     originalSubject: args.subject,
   })

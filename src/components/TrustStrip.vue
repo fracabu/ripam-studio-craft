@@ -3,9 +3,8 @@
 
 <template>
   <div class="trust-strip" role="note" aria-label="Cosa garantisco">
-    <span><span class="check">&check;</span> Made in Roma</span>
     <span><span class="check">&check;</span> Revisione manuale dopo l'AI</span>
-    <span><span class="check">&check;</span> Pago dopo, non prima</span>
+    <span><span class="check">&check;</span> Paghi dopo, non prima</span>
     <span><span class="check">&check;</span> Telegram diretto col fondatore</span>
   </div>
 </template>

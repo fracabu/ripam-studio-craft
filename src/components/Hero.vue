@@ -89,11 +89,10 @@ const formats = [
     <div class="wrap">
       <div class="hero-grid hero-grid-v2">
         <div>
-          <h1>Formazione, consulenza e tool di studio fatti con l'AI. <span class="hl">Su misura per te.</span></h1>
-          <p class="hero-sub">Aiuto chi si prepara ai concorsi pubblici a studiare meglio: con materiali su misura, coaching 1:1 su NotebookLM e strumenti di studio pensati insieme.</p>
+          <h1>Studia solo quello che <span class="hl">serve.</span></h1>
+          <p class="hero-sub">Materiali su misura per il tuo concorso pubblico: l'essenziale di ogni materia, dalla normativa ufficiale, revisionato a mano. Niente sbobine infinite.</p>
           <div class="hero-ctas">
             <RouterLink to="/scrivimi" class="btn btn-primary">Scrivimi &rarr;</RouterLink>
-            <button type="button" class="btn btn-secondary" @click="goMateria">Vedi un esempio &rarr;</button>
           </div>
           <div class="hero-mono">
             &#9201; Rispondo entro 24h &middot; nessun pagamento anticipato richiesto
@@ -159,6 +158,9 @@ const formats = [
   gap:60px;
   align-items:center;
 }
+
+/* Un solo CTA dominante: "Scrivimi" primario, più grande (la prova è il player). */
+.hero-ctas .btn-primary{padding:18px 36px;font-size:18px}
 @media(max-width:880px){
   .hero-grid-v2{grid-template-columns:1fr;gap:32px}
 }

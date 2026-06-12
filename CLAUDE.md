@@ -66,6 +66,10 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 - Anti-doppione **morbido**: unique index parziale su `(LOWER(email), numero_fattura) WHERE numero_fattura IS NOT NULL` → `order_add.mjs` fa `ON CONFLICT DO NOTHING`, quindi rilanciare il backfill non duplica; ordini **senza** numero fattura vengono sempre inseriti.
 - Gli script CLI (`order_add.mjs`, `orders_list.mjs`) usano l'**API HTTP** `neon()` (template tag), mentre `apply_schema.mjs` usa il `Client` TCP/WebSocket perché il DDL non passa dall'API HTTP. Tutti caricano `.env.local` a mano (stesso pattern no-`dotenv`).
 
+### Dati candidati / profili lead
+- Schema in `db/schema_candidati.sql` (stesso DB Neon). Tabella `candidati` = **fonte unica del profilo della persona** (chi è, che concorso fa, quali materie/formati le interessano), una riga per persona con chiave `email` (lowercase). Separata dagli acquisti: `candidati` = cosa vuole, `ordini` = cosa ha pagato. Colonne array `concorsi`/`materie_interesse`/`formati_interesse` **accumulate in dedup** a ogni richiesta (merge `ARRAY(SELECT DISTINCT … unnest(vecchio || nuovo))` nell'`ON CONFLICT`). View **`candidato_completo`** = profilo + aggregati acquisti (LEFT JOIN su `clienti`) → quadro 360° per proposte su misura; va applicata **dopo** `schema_ordini.sql` (dipende da `clienti`).
+- L'**upsert è in `api/contact.js`** (best-effort dopo l'invio mail, non blocca la submit; skip silenzioso se manca `DATABASE_URL`). Il form invia solo `nome/email/concorso/note`: materie e formati **non sono campi strutturati**, vengono dedotti dal testo (`extractMaterie` matcha i nomi/slug di `materie.js`, `extractFormati` parole chiave, `extractConcorsi` sigle note + campo concorso). Migliorare l'estrazione = ritoccare quegli helper.
+
 ### Variabili d'ambiente (`.env.local`, mai committato)
 `DATABASE_URL`/`POSTGRES_URL` (Neon), `GMAIL_USER`, `GMAIL_APP_PASSWORD` (App Password Gmail), `ADMIN_SECRET` (auth di `send.js`), `PUBLIC_BASE_URL`. Su Vercel sono iniettate; in locale si fanno `npx vercel env pull .env.local`.
 

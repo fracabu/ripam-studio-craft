@@ -24,6 +24,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
               <li><span class="ar">&rarr;</span><a href="/#materie">Materie di studio</a></li>
               <li><span class="ar">&rarr;</span><RouterLink to="/coaching">Coaching NotebookLM</RouterLink></li>
               <li><span class="ar">&rarr;</span><RouterLink to="/tool">Tool su misura</RouterLink></li>
+              <li><span class="ar">&rarr;</span><RouterLink to="/quiz-pro">RIPAM Studio Quiz Pro</RouterLink></li>
               <li><span class="ar">&rarr;</span><RouterLink to="/chi-sono">Chi sono</RouterLink></li>
             </ul>
           </div>

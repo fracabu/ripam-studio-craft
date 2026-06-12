@@ -67,6 +67,31 @@ const flusso = [
       </div>
     </section>
 
+    <!-- GIÀ PRONTO: Quiz Pro (prodotto live) -->
+    <section class="tl-live">
+      <div class="wrap tl-live-grid">
+        <div class="tl-live-copy">
+          <div class="tl-live-pill">GIÀ ONLINE · NON SU MISURA</div>
+          <h2 class="tl-h2">RIPAM Studio <span class="hl-blue">Quiz&nbsp;Pro</span>.</h2>
+          <p class="tl-sub">
+            Il simulatore che ho già costruito e che gira adesso: <strong>5.500+ articoli,
+            26 leggi, quiz generati con l'AI</strong> sui programmi dei concorsi. La prova
+            che i tool di questa pagina non sono slide — sono software che funziona.
+          </p>
+          <div class="tl-ctas">
+            <RouterLink to="/quiz-pro" class="btn btn-primary">Richiedi le credenziali &rarr;</RouterLink>
+            <a href="https://ripam-studio-quiz-pro.vercel.app" target="_blank" rel="noopener" class="btn btn-secondary">Vai all'app &rarr;</a>
+          </div>
+        </div>
+        <ul class="tl-live-feat">
+          <li><span aria-hidden="true">📚</span> 5.500+ articoli indicizzati</li>
+          <li><span aria-hidden="true">⚖️</span> 26 leggi sempre aggiornate</li>
+          <li><span aria-hidden="true">🤖</span> Quiz generati con l'AI</li>
+          <li><span aria-hidden="true">📈</span> Tracking dei progressi</li>
+        </ul>
+      </div>
+    </section>
+
     <!-- COSA COSTRUISCO -->
     <section class="tl-build">
       <div class="wrap">
@@ -160,10 +185,18 @@ const flusso = [
   line-height:1.05;margin:0 0 24px;text-wrap:balance;max-width:30ch;
 }
 
-/* HERO */
-.tl-hero{padding:72px 0 60px;border-bottom:2px solid var(--ink)}
+/* HERO — full-viewport (riempie lo schermo sotto al nav) */
+.tl-hero{
+  min-height:calc(100vh - var(--nav-h, 76px));
+  display:flex;align-items:center;
+  padding:40px 0;border-bottom:2px solid var(--ink);
+}
+.tl-hero > .wrap{width:100%}
 .tl-hero-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:50px;align-items:center}
-@media(max-width:880px){.tl-hero-grid{grid-template-columns:1fr;gap:32px}}
+@media(max-width:880px){
+  .tl-hero{min-height:auto;padding:48px 0}
+  .tl-hero-grid{grid-template-columns:1fr;gap:32px}
+}
 .tl-sub{font-size:17px;line-height:1.55;color:var(--ink-soft,#2a2a2a);max-width:60ch;margin:0 0 22px}
 .tl-ctas{display:flex;gap:14px;flex-wrap:wrap}
 
@@ -185,6 +218,26 @@ const flusso = [
 .tl-receive ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px}
 .tl-receive li{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;line-height:1.45;font-weight:600}
 .tl-receive .r-ico{font-size:20px;line-height:1;flex:0 0 auto;width:28px;text-align:center}
+
+/* LIVE — Quiz Pro */
+.tl-live{padding:64px 0;border-bottom:2px solid var(--ink);background:var(--bg-alt,#ede6d8)}
+.tl-live-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:44px;align-items:center}
+@media(max-width:880px){.tl-live-grid{grid-template-columns:1fr;gap:28px}}
+.tl-live-pill{
+  display:inline-block;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  background:var(--acid,#c6f432);color:var(--ink);
+  padding:5px 10px;border:2px solid var(--ink);margin-bottom:14px;
+}
+.tl-live-feat{
+  list-style:none;margin:0;padding:22px 24px;
+  background:var(--ink);color:var(--bg);
+  border:2px solid var(--ink);box-shadow:6px 6px 0 var(--acid,#c6f432);
+  display:flex;flex-direction:column;gap:14px;
+}
+.tl-live-feat li{display:flex;gap:12px;align-items:center;font-size:14.5px;font-weight:600;line-height:1.35}
+.tl-live-feat li span{font-size:19px;line-height:1;flex:0 0 auto;width:26px;text-align:center}
 
 /* BUILD */
 .tl-build{padding:72px 0;border-bottom:2px solid var(--ink)}

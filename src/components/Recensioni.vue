@@ -87,7 +87,7 @@ const RECENSIONI = [
 .rec-blue .rec-quote{opacity:.55}
 .rec-text{
   margin:0 0 22px;
-  font-size:15.5px;line-height:1.62;
+  font-size:17px;line-height:1.62;
   font-weight:500;
 }
 .rec-foot{

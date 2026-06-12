@@ -3,12 +3,11 @@ import { useRouter } from 'vue-router'
 import Hero from '../components/Hero.vue'
 import TrustStrip from '../components/TrustStrip.vue'
 import Pilastri from '../components/Pilastri.vue'
-import Steps from '../components/Steps.vue'
 import Catalogo from '../components/Catalogo.vue'
 import Coaching from '../components/Coaching.vue'
 import Recensioni from '../components/Recensioni.vue'
+import ComeFunziona from '../components/ComeFunziona.vue'
 import Newsletter from '../components/Newsletter.vue'
-import ContactCTA from '../components/ContactCTA.vue'
 import Faq from '../components/Faq.vue'
 import StickyCTA from '../components/StickyCTA.vue'
 
@@ -33,11 +32,10 @@ const onPrefillSelect = (data = {}) => {
     <TrustStrip />
     <Pilastri />
     <Coaching @select="onPrefillSelect" />
-    <Steps />
     <Catalogo />
     <Recensioni />
+    <ComeFunziona />
     <Newsletter />
-    <ContactCTA />
     <Faq />
     <StickyCTA />
   </main>

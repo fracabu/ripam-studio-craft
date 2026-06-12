@@ -128,14 +128,20 @@ const flusso = [
   line-height:1.05;margin:0 0 24px;text-wrap:balance;max-width:30ch;
 }
 
-/* HERO */
+/* HERO — full-viewport (riempie lo schermo sotto al nav) */
 .cg-hero{
-  padding:72px 0 60px;border-bottom:2px solid var(--ink);
+  min-height:calc(100vh - var(--nav-h, 76px));
+  display:flex;align-items:center;
+  padding:40px 0;border-bottom:2px solid var(--ink);
 }
+.cg-hero > .wrap{width:100%}
 .cg-hero-grid{
   display:grid;grid-template-columns:1.4fr 1fr;gap:50px;align-items:center;
 }
-@media(max-width:880px){.cg-hero-grid{grid-template-columns:1fr;gap:32px}}
+@media(max-width:880px){
+  .cg-hero{min-height:auto;padding:48px 0}
+  .cg-hero-grid{grid-template-columns:1fr;gap:32px}
+}
 .cg-sub{
   font-size:17px;line-height:1.55;color:var(--ink-soft,#2a2a2a);
   max-width:60ch;margin:0 0 22px;

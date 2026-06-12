@@ -49,7 +49,7 @@ messaggi-clienti/*
 !messaggi-clienti/newsletter/**
 
 # script di test/diagnosi temporanei (vivono solo in locale)
-scripts/_tmp_*.mjs
+scripts/_tmp_*
 
 # anteprime PDF dei manuali: NON pubblicarle dal sito.
 # Vengono consegnate via link Google Drive a chi le richiede esplicitamente

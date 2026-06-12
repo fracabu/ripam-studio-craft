@@ -48,9 +48,10 @@ onUnmounted(() => {
         <span>Ripam Studio <em class="craft-mark">Craft</em><sup class="tm">™</sup></span>
       </RouterLink>
       <div class="nav-links">
-        <RouterLink to="/#pilastri" active-class="" exact-active-class="">Cosa faccio</RouterLink>
         <RouterLink to="/#materie" active-class="" exact-active-class="">Materie</RouterLink>
-        <RouterLink to="/#come-funziona" active-class="" exact-active-class="">Come lavoriamo</RouterLink>
+        <RouterLink to="/coaching">Coaching</RouterLink>
+        <RouterLink to="/tool">Tool</RouterLink>
+        <RouterLink to="/quiz-pro">Quiz Pro</RouterLink>
         <RouterLink to="/chi-sono">Chi sono</RouterLink>
         <RouterLink to="/#faq" active-class="" exact-active-class="">FAQ</RouterLink>
         <RouterLink to="/scrivimi" class="nav-cta">Scrivimi →</RouterLink>
@@ -73,9 +74,10 @@ onUnmounted(() => {
       class="nav-drawer"
       :hidden="!open"
     >
-      <RouterLink to="/#pilastri" active-class="" exact-active-class="" @click="close">Cosa faccio</RouterLink>
       <RouterLink to="/#materie" active-class="" exact-active-class="" @click="close">Materie</RouterLink>
-      <RouterLink to="/#come-funziona" active-class="" exact-active-class="" @click="close">Come lavoriamo</RouterLink>
+      <RouterLink to="/coaching" @click="close">Coaching</RouterLink>
+      <RouterLink to="/tool" @click="close">Tool</RouterLink>
+      <RouterLink to="/quiz-pro" @click="close">Quiz Pro</RouterLink>
       <RouterLink to="/chi-sono" @click="close">Chi sono</RouterLink>
       <RouterLink to="/#faq" active-class="" exact-active-class="" @click="close">FAQ</RouterLink>
       <RouterLink to="/scrivimi" class="nav-cta" @click="close">Scrivimi →</RouterLink>

@@ -6,8 +6,95 @@
 //   GMAIL_APP_PASSWORD   → App Password generata su myaccount.google.com
 
 import nodemailer from 'nodemailer'
+import { neon } from '@neondatabase/serverless'
+import { MATERIE } from '../src/data/materie.js'
 
 const MAX_BODY = 20_000 // anti-abuse: payload > 20KB = reject
+
+// --- Estrazione profilo dal testo libero del form -------------------------
+// Il form invia solo nome/email/concorso/note: materie e formati non sono campi
+// strutturati, quindi li deduciamo dal testo (best-effort). Servono a popolare
+// la tabella `candidati` per avere un quadro del candidato già pronto.
+
+// Concorsi noti (sigle dal campo `c` di materie.js + alias colloquiali).
+const CONCORSI_KNOWN = ['RIPAM', 'MIC', 'MIMIT', 'ISAC', 'CPI', 'SNA', 'DIFESA']
+
+function extractConcorsi(concorsoField = '', note = '') {
+  const up = `${concorsoField} ${note}`.toUpperCase()
+  const out = []
+  for (const k of CONCORSI_KNOWN) if (up.includes(k)) out.push(k)
+  if (/FUNZIONARI|\b1340\b/.test(up)) out.push('Funzionari')
+  // il campo `concorso` del form, se informativo (scarta "Altro / non so ancora")
+  const cf = String(concorsoField).trim()
+  if (cf && !/non so|altro/i.test(cf)) out.push(cf)
+  return [...new Set(out)]
+}
+
+// Materie: match sui nomi ufficiali / slug del catalogo (no falsi positivi).
+function extractMaterie(text = '') {
+  const low = text.toLowerCase()
+  const out = []
+  for (const m of MATERIE) {
+    if (low.includes(m.t.toLowerCase()) || low.includes(m.slug)) out.push(m.t)
+  }
+  return [...new Set(out)]
+}
+
+// Formati: parole chiave → label canonica (allineata a order_add.mjs).
+const FORMATI_RULES = [
+  [/\bpodcast\b/i, 'podcast'],
+  [/audio\s*lezion|audiolezion|\baudio\b/i, 'audio'],
+  [/\bvideo\b/i, 'video'],
+  [/\bmanuale\b|\bdispensa\b|\bpdf\b/i, 'manuale'],
+  [/\breport\b/i, 'report'],
+  [/simulator|simulazion/i, 'simulatore'],
+]
+
+function extractFormati(text = '') {
+  const out = []
+  for (const [re, label] of FORMATI_RULES) if (re.test(text)) out.push(label)
+  return [...new Set(out)]
+}
+
+// Upsert best-effort del profilo candidato sul DB Neon. Accumula dedup concorsi/
+// materie/formati a ogni richiesta. Non blocca mai la submit del form: se il DB
+// è assente o irraggiungibile, logga e prosegue.
+async function upsertCandidato({ email, nome, concorso, note, source }) {
+  const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL
+  if (!databaseUrl) return // niente DB configurato (es. preview) → skip silenzioso
+
+  const concorsi = extractConcorsi(concorso, note)
+  const materie = extractMaterie(`${concorso} ${note}`)
+  const formati = extractFormati(`${concorso} ${note}`)
+
+  // Passiamo gli array come stringhe joinate ('||' separatore improbabile nel
+  // testo) e li riconvertiamo con string_to_array: evita problemi di binding
+  // degli array col driver HTTP. NULL se vuoto → COALESCE a array vuoto.
+  const join = (arr) => (arr.length ? arr.join('||') : null)
+
+  const sql = neon(databaseUrl)
+  await sql`
+    INSERT INTO candidati (
+      email, nome, concorsi, materie_interesse, formati_interesse,
+      note_ultima, source, n_richieste, primo_contatto, ultimo_contatto
+    ) VALUES (
+      ${email}, ${nome},
+      COALESCE(string_to_array(${join(concorsi)}, '||'), ARRAY[]::text[]),
+      COALESCE(string_to_array(${join(materie)},  '||'), ARRAY[]::text[]),
+      COALESCE(string_to_array(${join(formati)},  '||'), ARRAY[]::text[]),
+      ${note}, ${source}, 1, now(), now()
+    )
+    ON CONFLICT (email) DO UPDATE SET
+      nome              = COALESCE(NULLIF(EXCLUDED.nome, ''), candidati.nome),
+      concorsi          = ARRAY(SELECT DISTINCT x FROM unnest(candidati.concorsi          || EXCLUDED.concorsi)          AS x WHERE x <> ''),
+      materie_interesse = ARRAY(SELECT DISTINCT x FROM unnest(candidati.materie_interesse || EXCLUDED.materie_interesse) AS x WHERE x <> ''),
+      formati_interesse = ARRAY(SELECT DISTINCT x FROM unnest(candidati.formati_interesse || EXCLUDED.formati_interesse) AS x WHERE x <> ''),
+      note_ultima       = EXCLUDED.note_ultima,
+      source            = EXCLUDED.source,
+      n_richieste       = candidati.n_richieste + 1,
+      ultimo_contatto   = now()
+  `
+}
 
 export default async function handler(req, res) {
   // CORS same-origin, in produzione Vercel e frontend stanno sullo stesso dominio
@@ -168,6 +255,26 @@ Questa è una conferma automatica. Ti rispondo a mano io appena posso.
     })
   } catch (err) {
     console.error('Ack mail failed (non blocking):', err)
+  }
+
+  // 3) upsert profilo candidato sul DB — best effort, non blocca la submit.
+  //    Popola `candidati` (concorso + materie/formati d'interesse) per avere
+  //    un quadro del candidato già pronto a ogni richiesta dal form.
+  try {
+    const source = isAnteprima
+      ? 'anteprima'
+      : /quiz\s*pro|credenzial/i.test(note)
+        ? 'quizpro'
+        : 'form'
+    await upsertCandidato({
+      email: clean(email).toLowerCase().trim(),
+      nome: clean(nome),
+      concorso: clean(concorso),
+      note: clean(note),
+      source,
+    })
+  } catch (err) {
+    console.error('Candidato upsert failed (non blocking):', err)
   }
 
   return res.status(200).json({ ok: true })

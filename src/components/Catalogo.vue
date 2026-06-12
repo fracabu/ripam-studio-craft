@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, nextTick } from 'vue'
+import { useRouter, RouterLink } from 'vue-router'
 import { MATERIE } from '../data/materie.js'
 import { CONCORSI } from '../data/formati.js'
 import { CONTENUTI } from '../data/contenuti.js'
@@ -8,6 +8,30 @@ import { CONTENUTI } from '../data/contenuti.js'
 const router = useRouter()
 const filtro = ref('ALL')
 const query = ref('')
+
+// --- typeahead state ---------------------------------------------------------
+const focused = ref(false)
+const activeIndex = ref(-1)
+const searchEl = ref(null)
+let blurTimer = null
+
+// Filtri per concorso: nascosti di default per non affollare la vista.
+// Si aprono on-demand col toggle "Sfoglia per concorso".
+const showConcorsi = ref(false)
+
+// Slug dei chip-suggerimento mostrati nello stato iniziale (materie più
+// richieste, con materiale già pronto). Il label si risolve a runtime da
+// MATERIE così non si duplica il testo. Francesco può ritoccare questa lista.
+const CHIP_SLUGS = [
+  'diritto-amministrativo', 'contabilita-pubblica', 'contratti-pubblici',
+  'diritto-ue', 'gdpr', 'logica',
+]
+const chips = computed(() =>
+  CHIP_SLUGS
+    .map(slug => MATERIE.find(m => m.slug === slug))
+    .filter(Boolean)
+    .map(m => ({ slug: m.slug, t: m.t }))
+)
 
 // Mappa stato avail → etichetta + classe styling
 const STATO = {
@@ -40,41 +64,164 @@ const epCount = (m) => {
   return null
 }
 
-const materieFiltered = computed(() => {
+// --- ricerca -----------------------------------------------------------------
+// Suggerimenti typeahead: materie che matchano la query, in ORDINE ALFABETICO,
+// massimo 8. La query matcha nome, normativa, concorsi e argomenti.
+const MAX_SUGGEST = 8
+const suggestions = computed(() => {
   const q = query.value.trim().toLowerCase()
+  if (!q) return []
+  return MATERIE
+    .filter(m => {
+      const hay = [m.t, m.norm, ...(m.c || []), ...(m.topics || [])].join(' ').toLowerCase()
+      return hay.includes(q)
+    })
+    .sort((a, b) => a.t.localeCompare(b.t, 'it'))
+    .slice(0, MAX_SUGGEST)
+})
+const totalMatches = computed(() => {
+  const q = query.value.trim().toLowerCase()
+  if (!q) return 0
   return MATERIE.filter(m => {
-    if (filtro.value !== 'ALL' && !m.c.includes(filtro.value)) return false
-    if (!q) return true
     const hay = [m.t, m.norm, ...(m.c || []), ...(m.topics || [])].join(' ').toLowerCase()
     return hay.includes(q)
-  })
+  }).length
 })
 
+const showDropdown = computed(() => focused.value && query.value.trim().length > 0)
+
+// Spezza il nome materia in [prima, match, dopo] per evidenziare la parte digitata
+const highlight = (name) => {
+  const q = query.value.trim()
+  if (!q) return [{ t: name, hit: false }]
+  const idx = name.toLowerCase().indexOf(q.toLowerCase())
+  if (idx === -1) return [{ t: name, hit: false }]
+  return [
+    { t: name.slice(0, idx), hit: false },
+    { t: name.slice(idx, idx + q.length), hit: true },
+    { t: name.slice(idx + q.length), hit: false },
+  ].filter(p => p.t.length)
+}
+
+// Griglia mostrata SOLO quando si naviga per famiglia di concorso (sottoinsieme
+// gestibile). Nello stato iniziale (ALL, nessuna query) si mostrano i chip,
+// niente muro di 47 card da scrollare.
+const showGrid = computed(() => filtro.value !== 'ALL')
+const materieByConcorso = computed(() =>
+  MATERIE.filter(m => filtro.value === 'ALL' || m.c.includes(filtro.value))
+)
+
 const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
+
+// --- handlers typeahead ------------------------------------------------------
+const onFocus = () => { if (blurTimer) clearTimeout(blurTimer); focused.value = true }
+const onBlur = () => { blurTimer = setTimeout(() => { focused.value = false; activeIndex.value = -1 }, 120) }
+
+const onKeydown = (e) => {
+  if (!showDropdown.value) return
+  const n = suggestions.value.length
+  if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex.value = (activeIndex.value + 1) % n }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex.value = (activeIndex.value - 1 + n) % n }
+  else if (e.key === 'Enter') {
+    const pick = activeIndex.value >= 0 ? suggestions.value[activeIndex.value] : suggestions.value[0]
+    if (pick) { e.preventDefault(); openMateria(pick.slug) }
+  }
+  else if (e.key === 'Escape') { query.value = ''; activeIndex.value = -1; searchEl.value?.blur() }
+}
+
+const pickChip = (slug) => openMateria(slug)
 </script>
 
 <template>
   <section id="materie">
     <div class="wrap">
-      <div v-reveal class="sec-head">
-        <span class="sec-kicker">MATERIE</span>
-        <h2>{{ MATERIE.length }} materie. <span class="sec-h2-muted">7 famiglie di concorsi.</span></h2>
-        <p class="sec-lead">
-          Cerca la materia che ti serve, oppure filtra per famiglia di concorso.
-          <strong>Non sei in un negozio</strong> — quando trovi quella giusta,
-          scrivimi e ne parliamo.
-        </p>
-      </div>
+      <div v-reveal class="cat-hero">
+        <div class="sec-head cat-head">
+          <span class="sec-kicker">MATERIE</span>
+          <h2>{{ MATERIE.length }} materie. <span class="sec-h2-muted">7 famiglie di concorsi.</span></h2>
+          <p class="sec-lead">
+            <strong>Scrivi la materia che ti serve</strong> — bastano due lettere — o scegli un suggerimento.
+          </p>
+        </div>
 
-      <div v-reveal="'up'" class="cat-toolbar">
-        <input
-          v-model="query"
-          class="cat-search"
-          type="search"
-          placeholder="Cerca materia, normativa, concorso…"
-          aria-label="Cerca tra le materie"
-        />
-        <div class="filters cat-filters" role="tablist" aria-label="Filtra per famiglia">
+        <!-- SEARCH typeahead -->
+        <div class="cat-combo">
+          <div class="cat-combo-field">
+            <span class="cat-combo-ico" aria-hidden="true">⌕</span>
+            <input
+              ref="searchEl"
+              v-model="query"
+              class="cat-search"
+              type="search"
+              role="combobox"
+              :aria-expanded="showDropdown"
+              aria-autocomplete="list"
+              aria-controls="cat-suggest"
+              placeholder="Es. diritto amministrativo, contabilità, GDPR…"
+              aria-label="Cerca tra le materie"
+              autocomplete="off"
+              @focus="onFocus"
+              @blur="onBlur"
+              @keydown="onKeydown"
+            />
+          </div>
+
+          <!-- dropdown suggerimenti -->
+          <ul
+            v-if="showDropdown"
+            id="cat-suggest"
+            class="cat-dropdown"
+            role="listbox"
+          >
+            <li
+              v-for="(m, i) in suggestions"
+              :key="m.slug"
+              class="cat-opt"
+              :class="{ active: i === activeIndex }"
+              role="option"
+              :aria-selected="i === activeIndex"
+              @mousedown.prevent="openMateria(m.slug)"
+              @mouseenter="activeIndex = i"
+            >
+              <span class="cat-opt-name">
+                <template v-for="(part, pi) in highlight(m.t)" :key="pi">
+                  <mark v-if="part.hit">{{ part.t }}</mark><span v-else>{{ part.t }}</span>
+                </template>
+              </span>
+              <span class="cat-opt-meta">{{ m.c.join(' · ') }}</span>
+            </li>
+            <li v-if="suggestions.length === 0" class="cat-opt cat-opt-empty">
+              Nessuna materia per “{{ query }}”. <a href="#contatti" @mousedown.prevent="$router.push('/scrivimi')">La costruiamo insieme &rarr;</a>
+            </li>
+            <li v-else-if="totalMatches > suggestions.length" class="cat-opt cat-opt-more">
+              …e altre {{ totalMatches - suggestions.length }}. Continua a scrivere per affinare.
+            </li>
+          </ul>
+        </div>
+
+        <!-- CHIP suggerimenti (stato iniziale) -->
+        <div v-if="!query.trim()" class="cat-chips">
+          <button
+            v-for="(c, i) in chips"
+            :key="c.slug"
+            type="button"
+            class="cat-chip"
+            :class="`chip-c${i % 6}`"
+            @click="pickChip(c.slug)"
+          >{{ c.t }}</button>
+        </div>
+
+        <!-- toggle filtri concorso (nascosti di default) -->
+        <button
+          type="button"
+          class="cat-concorsi-toggle"
+          :class="{ open: showConcorsi }"
+          :aria-expanded="showConcorsi"
+          @click="showConcorsi = !showConcorsi"
+        >Sfoglia per concorso <span class="cct-arrow" aria-hidden="true">▾</span></button>
+
+        <!-- FILTRI per famiglia concorso (collassabili) -->
+        <div v-if="showConcorsi" class="filters cat-filters" role="tablist" aria-label="Filtra per famiglia">
           <button class="filter f-all" :class="{active: filtro==='ALL'}" @click="filtro='ALL'">
             <span class="f-dot" aria-hidden="true"></span>Tutti
           </button>
@@ -90,14 +237,10 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
         </div>
       </div>
 
-      <div v-if="materieFiltered.length === 0" class="cat-empty">
-        Non trovo nessuna materia con questi criteri.
-        <a href="#contatti" @click.prevent="openMateria">La costruiamo insieme — scrivimi &rarr;</a>
-      </div>
-
-      <div v-else v-reveal class="cat-grid stagger">
+      <!-- GRIGLIA (solo quando si sfoglia per concorso) -->
+      <div v-if="showGrid" v-reveal class="cat-grid stagger">
         <article
-          v-for="m in materieFiltered"
+          v-for="m in materieByConcorso"
           :key="m.slug"
           class="cat-card"
           tabindex="0"
@@ -138,25 +281,104 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
 
 <style scoped>
 .sec-h2-muted{color:var(--muted,#6b6458);font-weight:700}
-.sec-lead{max-width:62ch}
 
-.cat-toolbar{
-  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
-  margin:24px 0 18px;
+/* HERO ricerca centrata */
+.cat-hero{max-width:840px;margin:0 auto}
+.cat-head{text-align:center}
+.cat-head h2{font-size:clamp(34px,4.8vw,60px)}
+.cat-head .sec-lead{max-width:56ch;margin-left:auto;margin-right:auto;font-size:17px}
+
+/* SEARCH / typeahead */
+.cat-combo{position:relative;margin:28px auto 22px;max-width:720px;text-align:left}
+.cat-combo-field{position:relative;display:flex;align-items:center}
+.cat-combo-ico{
+  position:absolute;left:20px;font-size:23px;color:var(--muted,#6b6458);
+  pointer-events:none;line-height:1;
 }
 .cat-search{
-  flex:1 1 280px;min-width:240px;
-  padding:12px 14px;
+  width:100%;
+  padding:21px 20px 21px 54px;
   background:var(--bg);color:var(--ink);
   border:2px solid var(--ink);
-  font-size:14px;line-height:1.2;
+  box-shadow:4px 4px 0 var(--ink);
+  font-size:19px;line-height:1.2;
   font-family:inherit;
-  transition:background .12s;
+  transition:background .12s, box-shadow .12s;
 }
-.cat-search:focus{background:var(--acid);outline:none}
+.cat-search:focus{background:var(--acid);outline:none;box-shadow:6px 6px 0 var(--ink)}
 .cat-search::placeholder{color:var(--muted,#6b6458);opacity:.85}
 
-.cat-filters{display:flex;gap:8px;flex-wrap:wrap;background:transparent;border:0;padding:0;margin:0}
+.cat-dropdown{
+  position:absolute;z-index:30;left:0;right:0;top:calc(100% + 6px);
+  margin:0;padding:0;list-style:none;
+  background:var(--bg);border:2px solid var(--ink);
+  box-shadow:6px 6px 0 var(--ink);
+  max-height:340px;overflow-y:auto;
+}
+.cat-opt{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:12px 16px;cursor:pointer;
+  border-bottom:1px solid var(--rule,#e6dfd2);
+}
+.cat-opt:last-child{border-bottom:0}
+.cat-opt.active{background:var(--acid)}
+.cat-opt-name{font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.cat-opt-name mark{background:var(--acid);color:var(--ink);padding:0 1px}
+.cat-opt.active .cat-opt-name mark{background:var(--ink);color:var(--acid)}
+.cat-opt-meta{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:10px;font-weight:700;letter-spacing:.06em;
+  color:var(--muted,#6b6458);white-space:nowrap;
+}
+.cat-opt-empty,.cat-opt-more{
+  cursor:default;font-size:13px;color:var(--muted,#6b6458);
+  font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.03em;
+}
+.cat-opt-empty a{color:var(--ink);font-weight:700;border-bottom:2px solid var(--acid)}
+
+/* CHIP suggerimenti (centrati, colorati) */
+.cat-chips{display:flex;gap:11px;flex-wrap:wrap;justify-content:center;margin:0 0 20px}
+.cat-chip{
+  padding:11px 18px;border:2px solid var(--ink);
+  font-family:inherit;font-size:15px;font-weight:700;letter-spacing:-.01em;
+  cursor:pointer;
+  box-shadow:3px 3px 0 var(--ink);
+  transition:transform .12s, box-shadow .12s, filter .12s;
+}
+.cat-chip:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 var(--ink);filter:brightness(1.06)}
+.cat-chip:active{transform:translate(0,0);box-shadow:2px 2px 0 var(--ink)}
+.chip-c0{background:var(--acid,#c6f432);color:var(--ink,#0a0a0a)}
+.chip-c1{background:var(--ripam,#3d5aff);color:#fff}
+.chip-c2{background:var(--mic,#1aa06b);color:#fff}
+.chip-c3{background:var(--funz,#9b4dff);color:#fff}
+.chip-c4{background:var(--mimit,#ff6b1a);color:#fff}
+.chip-c5{background:var(--isac,#ff3d52);color:#fff}
+
+/* toggle "Sfoglia per concorso" */
+.cat-concorsi-toggle{
+  display:flex;align-items:center;gap:9px;width:fit-content;margin:4px auto 0;
+  background:var(--bg);border:2px solid var(--ink);cursor:pointer;
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink);
+  padding:11px 20px;
+  box-shadow:3px 3px 0 var(--ink);
+  transition:transform .12s, box-shadow .12s, background .12s;
+}
+.cat-concorsi-toggle:hover{
+  background:var(--acid);
+  transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);
+}
+.cct-arrow{
+  display:inline-block;font-size:14px;line-height:1;
+  animation:cctBounce 1.5s ease-in-out infinite;
+  transition:transform .2s;
+}
+.cat-concorsi-toggle.open .cct-arrow{transform:rotate(180deg);animation:none}
+@keyframes cctBounce{0%,100%{transform:translateY(-1px)}50%{transform:translateY(3px)}}
+
+/* FILTRI (centrati, mostrati on-demand) */
+.cat-filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:transparent;border:0;padding:0;margin:14px 0 0}
 .cat-filters .filter{
   display:inline-flex;align-items:center;gap:8px;
   padding:8px 14px;border:2px solid var(--ink);background:var(--bg);
@@ -182,15 +404,6 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
 .cat-filters .f-isac  .f-dot{background:var(--isac,#ff3d52)}
 .cat-filters .f-cpi   .f-dot{background:var(--cpi,#14b8b8)}
 .cat-filters .f-reg   .f-dot{background:var(--ink)}
-
-.cat-empty{
-  margin:30px 0;padding:24px;
-  border:2px dashed var(--ink);background:var(--bg);
-  text-align:center;
-  font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;letter-spacing:.04em;
-}
-.cat-empty a{display:inline-block;margin-left:8px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--acid)}
 
 .cat-grid{
   display:grid;
@@ -273,7 +486,9 @@ const openMateria = (slug) => router.push({ name: 'materia', params: { slug } })
 .cat-card:hover .cc-arrow{transform:translateX(4px)}
 
 @media (prefers-reduced-motion:reduce){
-  .cat-card, .cc-arrow{transition:none}
+  .cat-card, .cc-arrow, .cat-chip{transition:none}
   .cat-card:hover, .cat-card:focus-visible{transform:none}
+  .cat-chip:hover{transform:none}
+  .cct-arrow{animation:none}
 }
 </style>

@@ -13,6 +13,7 @@
 
 import { emailShell, emailButton, BRAND } from './email-shell.js'
 import { MATERIA_LABEL } from './anteprima-mail.js'
+import { getReportCustomBundle } from './report-custom-manifest.js'
 
 const TELEGRAM_URL = 'https://t.me/fcapurso'
 
@@ -327,6 +328,62 @@ ${sigText()}`
   return { inner, text, kicker: 'PRODUZIONE SU MISURA' }
 }
 
+// RC — bundle anteprime REPORT STUDIO CUSTOM per un concorso/profilo specifico.
+// Consegna su richiesta esplicita uno o più estratti (Drive) dei report cuciti
+// su misura per quel concorso. `bundle` = { concorso, reports:[{label,viewUrl}] }
+// dal report-custom-manifest. `prezzo` (opzionale, testo libero) → se passato
+// mostra il blocco prezzo del completo; se assente → CTA soft "ti mando le
+// condizioni" (i report custom hanno listino client-specific: meglio non
+// inchiodare una tariffa di default e rischiare di sbagliarla). (lead Hot)
+function buildRC({ firstName, bundle, prezzo }) {
+  const { concorso, reports } = bundle
+  const multi = reports.length > 1
+  const introNoun = multi ? 'le anteprime dei report di studio' : "l'anteprima del report di studio"
+
+  // Cosa contiene un Report Studio Custom completo (vale per tutti).
+  const cosaText = multi
+    ? `Ognuna è un estratto (copertina, indice e prime sezioni) così vedi com'è fatto. Il report completo è la dispensa integrale cucita sul bando: tutte le sezioni, i "trabocchetti" più insidiosi e i quiz commentati.`
+    : `È un estratto (copertina, indice e prime sezioni) così vedi com'è fatto. Il report completo è la dispensa integrale cucita sul bando: tutte le sezioni, i "trabocchetti" più insidiosi e i quiz commentati.`
+  const cosaHtml = `<p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">${cosaText}</p>`
+
+  let prezzoText = ''
+  let prezzoHtml = ''
+  if (prezzo) {
+    prezzoText = `Report completo: ${prezzo}.`
+    prezzoHtml = `<p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:18px 0">Report completo: ${prezzo}</p>`
+  }
+
+  const closing = prezzo
+    ? 'Se ti convince, procediamo: te lo preparo e ti mando le istruzioni per il pagamento.'
+    : 'Se ti convince, rispondi a questa mail e ti mando subito le condizioni per i report completi.'
+
+  const textLinks = reports.map((r) => `📄 ${r.label}:\n${r.viewUrl}`).join('\n\n')
+  const text = `Ciao ${firstName},
+
+ecco ${introNoun} che ho preparato su misura per il ${concorso}, così vedi com'è il materiale:
+
+${textLinks}
+
+${cosaText}
+${prezzoText ? '\n' + prezzoText + '\n' : ''}
+${closing}
+
+${sigText()}`
+
+  const htmlBlocks = reports
+    .map((r) => `
+  <p style="margin:0 0 8px;font-size:14px;color:#2a2a2a">📄 <strong>${r.label}</strong></p>
+  <p style="margin:0 0 20px;text-align:center">${emailButton(r.viewUrl, "📄 APRI L'ANTEPRIMA")}</p>`)
+    .join('')
+  const inner = `
+  <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
+  <p style="margin:0 0 18px;font-size:15px">ecco ${introNoun} che ho preparato su misura per il <strong>${concorso}</strong>, così vedi com'è il materiale:</p>${htmlBlocks}${cosaHtml}${prezzoHtml}
+  <p style="margin:6px 0 0;font-size:15px">${closing}</p>
+  ${sigHtml()}`
+
+  return { inner, text, kicker: 'REPORT SU MISURA' }
+}
+
 // NL — nurture per chi ha chiesto SOLO le credenziali Quiz Pro: invito alla
 // newsletter per restare aggiornato + apertura a un'anteprima materia. (Cold)
 function buildNL({ firstName }) {
@@ -359,7 +416,7 @@ Telegram: @fcapurso`
   return { inner, text, kicker: '' }
 }
 
-// Dispatcher. `category` ∈ {M1,M2,M3,M4,M5,NL}.
+// Dispatcher. `category` ∈ {M1,M2,M3,M4,M5,RC,NL}.
 //   M1                 → nessun dato extra
 //   M2/M3/M4           → slug (per materiaLabel)
 //   M3                 → podcast/audio/video/manuale/report (URL anteprime
@@ -371,18 +428,46 @@ Telegram: @fcapurso`
 //   M5                 → materia (TESTO LIBERO, non a catalogo) + formats
 //                        (sottoinsieme di manuale/audio/video; vuoto → solo
 //                        manuale). Niente slug, niente link.
+//   RC                 → concorso (chiave report-custom-manifest) → bundle di
+//                        anteprime report su misura. `reports` (opzionale) =
+//                        sottoinsieme di chiavi report da includere (default:
+//                        tutte le disponibili). `prezzo` (opzionale, testo) →
+//                        mostra il prezzo del report completo. Niente slug.
 // Ritorna { subject, text, html }. Throw se mancano dati obbligatori.
-export function buildLeadEmail({ category, nome, slug, link, podcast, audio, video, manuale, report, materia, formats, subscribed, originalSubject }) {
+export function buildLeadEmail({ category, nome, slug, link, podcast, audio, video, manuale, report, materia, formats, concorso, reports, prezzo, subscribed, originalSubject }) {
   const rawFirst = (nome || '').trim().split(/\s+/)[0] || 'ciao'
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1).toLowerCase()
   const materiaLabel = slug ? (MATERIA_LABEL[slug] || slug) : ''
-  // Subject: NL è una campagna a sé (fisso); M5 senza thread originale usa un
-  // oggetto descrittivo; gli altri agganciano il thread con "Re: ...".
+
+  // RC: risolvo il bundle in anticipo (serve sia al subject sia al composer).
+  // Filtro opzionale `reports` = sottoinsieme di chiavi (CSV o array).
+  let rcBundle = null
+  if (category === 'RC') {
+    if (!concorso) throw new Error('RC richiede concorso (chiave report-custom-manifest)')
+    rcBundle = getReportCustomBundle(concorso)
+    if (!rcBundle) throw new Error(`RC: concorso sconosciuto "${concorso}"`)
+    const wanted = Array.isArray(reports)
+      ? reports
+      : (typeof reports === 'string' && reports.trim()
+          ? reports.split(',').map((s) => s.trim()).filter(Boolean)
+          : null)
+    if (wanted && wanted.length) {
+      rcBundle = { ...rcBundle, reports: rcBundle.reports.filter((r) => wanted.includes(r.key)) }
+    }
+    if (!rcBundle.reports.length) {
+      throw new Error(`RC: nessuna anteprima disponibile per "${concorso}"${wanted ? ' coi report richiesti ' + wanted.join(',') : ''} (fileId mancanti nel manifest)`)
+    }
+  }
+
+  // Subject: NL è una campagna a sé (fisso); M5/RC senza thread originale usano
+  // un oggetto descrittivo; gli altri agganciano il thread con "Re: ...".
   let subject
   if (category === 'NL') {
     subject = 'Resta aggiornato sui nuovi materiali — Ripam Studio Craft'
   } else if (category === 'M5' && !originalSubject) {
     subject = `${materia || 'La materia che cerchi'}: posso crearla su misura — Ripam Studio Craft`
+  } else if (category === 'RC' && !originalSubject) {
+    subject = `Le anteprime dei report — ${rcBundle.concorsoShort} — Ripam Studio Craft`
   } else {
     subject = replySubject(originalSubject)
   }
@@ -428,8 +513,11 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
       built = buildM5({ firstName, materia, formats: fmts })
       break
     }
+    case 'RC':
+      built = buildRC({ firstName, bundle: rcBundle, prezzo: prezzo || null })
+      break
     default:
-      throw new Error(`Categoria sconosciuta: ${category} (attese M1|M2|M3|M4|M5)`)
+      throw new Error(`Categoria sconosciuta: ${category} (attese M1|M2|M3|M4|M5|RC|NL)`)
   }
 
   return { subject, text: built.text, html: emailShell(built.inner, built.kicker) }

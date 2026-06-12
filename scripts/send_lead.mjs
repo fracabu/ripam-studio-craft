@@ -28,6 +28,8 @@
 //   --text     file col corpo plain-text (alternativa testuale)
 //   --kicker   etichetta monospace in alto a destra nell'header (default "RISPOSTA")
 //   --from     display name mittente (default "Francesco — Ripam Studio Craft")
+//   --light    guscio BIANCO con logo normale in alto (invece del guscio dark)
+//   --attach   allegati: "file1.pdf,file2.pdf" oppure "file.pdf|Nome visibile.pdf,..."
 //   --dry-run  stampa a video e NON invia
 //   --demo     invia una mail dimostrativa a fracabu@gmail.com (verifica il logo)
 //
@@ -113,6 +115,49 @@ function logoDarkAttachment() {
   return { filename: 'logo-dark.png', content: Buffer.from(LOGO_DARK_B64, 'base64'), cid: 'logo-dark.png', contentType: 'image/png' }
 }
 
+// --- guscio LIGHT (sfondo bianco + logo normale in alto, niente header nero) -
+function lightShell(innerHtml) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background:#ffffff;margin:0;padding:0;width:100%;">
+  <tr><td align="center" style="padding:24px 12px;">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
+      <tr>
+        <td align="left" style="padding:8px 28px 18px;border-bottom:1px solid ${BRAND.rule};">
+          <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
+            <img src="cid:logo.png" alt="Ripam Studio Craft" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;" />
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:26px 28px 8px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
+          ${innerHtml}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:8px 28px 28px;">
+          <hr style="border:none;border-top:1px solid ${BRAND.rule};margin:18px 0">
+          <p style="margin:0;font-size:12px;color:${BRAND.muted};line-height:1.55">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
+          <a href="mailto:ripamstudiocraft@gmail.com" style="color:${BRAND.muted}">ripamstudiocraft@gmail.com</a> &middot; <a href="${BRAND.baseUrl}" style="color:${BRAND.muted}">ripam-studio-craft.vercel.app</a></p>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>`
+}
+
+function logoLightAttachment() {
+  return { filename: 'logo.png', content: readFileSync(join(ROOT, 'public', 'logo.png')), cid: 'logo.png', contentType: 'image/png' }
+}
+
+// --- allegati extra: "file.pdf,altro.pdf" o "file.pdf|Nome visibile.pdf,..." -
+function parseAttachments(spec) {
+  if (typeof spec !== 'string' || !spec.trim()) return []
+  return spec.split(',').map(s => s.trim()).filter(Boolean).map(item => {
+    const [p, name] = item.split('|').map(x => x.trim())
+    const path = p
+    return name ? { filename: name, path } : { path }
+  })
+}
+
 // --- compone subject/to/inner/text (demo o da file) -------------------------
 let to, subject, innerHtml, text, kicker
 if (args.demo) {
@@ -136,16 +181,22 @@ if (args.demo) {
   text = typeof args.text === 'string' ? readFileSync(args.text, 'utf8') : subject
 }
 
-const html = darkShell(innerHtml, kicker)
+const useLight = !!args.light
+const html = useLight ? lightShell(innerHtml) : darkShell(innerHtml, kicker)
 const fromName = typeof args.from === 'string' ? args.from : 'Francesco — Ripam Studio Craft'
+const extraAttachments = parseAttachments(args.attach)
 
 if (args['dry-run']) {
   console.log(`[dry-run] NON invio.`)
   console.log(`  to:      ${to}`)
   console.log(`  subject: ${subject}`)
-  console.log(`  kicker:  ${kicker}`)
-  console.log(`  html:    ${html.length} char (guscio dark + logo-dark inline)`)
+  console.log(`  guscio:  ${useLight ? 'LIGHT (sfondo bianco + logo.png)' : `DARK (header nero + logo-dark, kicker "${kicker}")`}`)
+  console.log(`  html:    ${html.length} char`)
   console.log(`  text:    ${String(text).length} char`)
+  if (extraAttachments.length) {
+    console.log(`  allegati: ${extraAttachments.length}`)
+    for (const a of extraAttachments) console.log(`    - ${a.filename || a.path}`)
+  }
   process.exit(0)
 }
 
@@ -165,7 +216,7 @@ try {
   const info = await transporter.sendMail({
     from: `"${fromName}" <${user}>`,
     to, replyTo: user, subject, text, html,
-    attachments: [logoDarkAttachment()],
+    attachments: [useLight ? logoLightAttachment() : logoDarkAttachment(), ...extraAttachments],
   })
   console.log(`[OK] inviata a ${to} — ${info.messageId}`)
 } catch (err) {

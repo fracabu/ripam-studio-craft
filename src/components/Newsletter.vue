@@ -174,8 +174,8 @@ const submit = async (e) => {
   padding:5px 12px;margin-bottom:18px;
 }
 .nl-h2{
-  font-size:clamp(30px,3.8vw,46px);font-weight:700;
-  letter-spacing:-.035em;line-height:1.05;
+  font-size:clamp(34px,4.8vw,60px);font-weight:700;
+  letter-spacing:-.035em;line-height:1.02;
   margin:0 0 16px;text-wrap:balance;
 }
 .nl-hl{
