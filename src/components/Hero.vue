@@ -90,7 +90,7 @@ const formats = [
       <div class="hero-grid hero-grid-v2">
         <div>
           <h1>Studia solo quello che <span class="hl">serve.</span></h1>
-          <p class="hero-sub">Materiali su misura per il tuo concorso pubblico: l'essenziale di ogni materia, dalla normativa ufficiale, revisionato a mano. Niente sbobine infinite.</p>
+          <p class="hero-sub">Per il tuo concorso pubblico, solo l'essenziale di ogni materia: preso dalla normativa ufficiale e revisionato a mano. Niente sbobine infinite, niente pagine che non leggerai.</p>
           <div class="hero-ctas">
             <RouterLink to="/scrivimi" class="btn btn-primary">Scrivimi &rarr;</RouterLink>
           </div>
