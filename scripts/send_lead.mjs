@@ -30,8 +30,21 @@
 //   --from     display name mittente (default "Francesco — Ripam Studio Craft")
 //   --light    guscio BIANCO con logo normale in alto (invece del guscio dark)
 //   --attach   allegati: "file1.pdf,file2.pdf" oppure "file.pdf|Nome visibile.pdf,..."
+//   --label    Gmail label da AGGIUNGERE al thread dopo l'invio (nomi, separati da virgola)
+//              es. --label "Lead - Hot,Anteprima inviata"
+//   --unlabel  Gmail label da RIMUOVERE dal thread dopo l'invio (nomi, separati da virgola)
+//              es. --unlabel "Da rispondere"
 //   --dry-run  stampa a video e NON invia
 //   --demo     invia una mail dimostrativa a fracabu@gmail.com (verifica il logo)
+//
+// Le label NON passano da SMTP: --label/--unlabel agiscono via IMAP (stesse
+// credenziali app-password). Dopo l'invio lo script ritrova il messaggio appena
+// spedito per Message-ID nella cartella "Tutta la posta" (\All), risale al thread
+// (X-GM-THRID) e applica add/del label a TUTTI i messaggi del thread — così p.es.
+// "Da rispondere" sparisce anche dalla mail in arrivo del lead. Per i NOMI esatti
+// delle label vedi list_labels (MCP Gmail). L'etichettatura è best-effort: se
+// fallisce la mail resta inviata, viene solo stampato un warning.
+// ⚠️ Non toccare le label Quiz Pro (gestite da un'altra app): non passarle qui.
 //
 // Richiede .env.local: GMAIL_USER, GMAIL_APP_PASSWORD. Gira a PC acceso.
 // ============================================================================
@@ -158,6 +171,89 @@ function parseAttachments(spec) {
   })
 }
 
+// --- etichettatura Gmail via IMAP (le label non passano da SMTP) ------------
+// Trova la cartella speciale "Tutta la posta" (attributo \All), indipendente
+// dalla lingua dell'account (it: "Tutta la posta", en: "All Mail").
+function findAllMailBox(boxes, prefix = '') {
+  for (const name of Object.keys(boxes)) {
+    const box = boxes[name]
+    const full = prefix + name
+    if (box.attribs && box.attribs.includes('\\All')) return full
+    if (box.children) {
+      const sub = findAllMailBox(box.children, full + (box.delimiter || '/'))
+      if (sub) return sub
+    }
+  }
+  return null
+}
+
+async function applyGmailLabels({ user, pass, messageId, add = [], remove = [] }) {
+  const { default: Imap } = await import('imap')
+  const cleanId = String(messageId).replace(/^<|>$/g, '')
+
+  return new Promise((resolve, reject) => {
+    const imap = new Imap({
+      user, password: pass,
+      host: 'imap.gmail.com', port: 993, tls: true,
+      tlsOptions: { rejectUnauthorized: false, servername: 'imap.gmail.com' },
+      authTimeout: 20000,
+    })
+    const fail = (e) => { try { imap.end() } catch {} ; reject(e) }
+    imap.once('error', fail)
+
+    imap.once('ready', () => {
+      imap.getBoxes((err, boxes) => {
+        if (err) return fail(err)
+        const allMail = findAllMailBox(boxes)
+        if (!allMail) return fail(new Error('Cartella "Tutta la posta" (\\All) non trovata via IMAP'))
+
+        imap.openBox(allMail, false, (errOpen) => {
+          if (errOpen) return fail(errOpen)
+
+          // Il sent può tardare un attimo a essere indicizzato: piccola attesa+retry.
+          let attempts = 0
+          const findSent = () => {
+            attempts++
+            imap.search([['HEADER', 'MESSAGE-ID', cleanId]], (errS, uids) => {
+              if (errS) return fail(errS)
+              if (!uids || !uids.length) {
+                if (attempts >= 4) return fail(new Error('Messaggio inviato non ancora indicizzato su IMAP'))
+                return setTimeout(findSent, 2000)
+              }
+              const sentUid = uids[uids.length - 1]
+              // Risalgo al thread (X-GM-THRID) del messaggio inviato.
+              const f = imap.fetch(sentUid, { bodies: 'HEADER.FIELDS (MESSAGE-ID)' })
+              let thrid = null
+              f.on('message', (m) => m.once('attributes', (attrs) => { thrid = attrs['x-gm-thrid'] }))
+              f.once('error', fail)
+              f.once('end', () => {
+                if (!thrid) return fail(new Error('X-GM-THRID non disponibile'))
+                imap.search([['X-GM-THRID', thrid]], (errT, threadUids) => {
+                  if (errT) return fail(errT)
+                  const targets = (threadUids && threadUids.length) ? threadUids : [sentUid]
+                  const doAdd = (cb) => add.length ? imap.addLabels(targets, add, cb) : cb()
+                  const doDel = (cb) => remove.length ? imap.delLabels(targets, remove, cb) : cb()
+                  doAdd((eA) => {
+                    if (eA) return fail(eA)
+                    doDel((eD) => {
+                      if (eD) return fail(eD)
+                      imap.end()
+                      resolve({ thrid, count: targets.length })
+                    })
+                  })
+                })
+              })
+            })
+          }
+          findSent()
+        })
+      })
+    })
+
+    imap.connect()
+  })
+}
+
 // --- compone subject/to/inner/text (demo o da file) -------------------------
 let to, subject, innerHtml, text, kicker
 if (args.demo) {
@@ -186,6 +282,10 @@ const html = useLight ? lightShell(innerHtml) : darkShell(innerHtml, kicker)
 const fromName = typeof args.from === 'string' ? args.from : 'Francesco — Ripam Studio Craft'
 const extraAttachments = parseAttachments(args.attach)
 
+const splitLabels = (v) => typeof v === 'string' ? v.split(',').map(s => s.trim()).filter(Boolean) : []
+const addLabels = splitLabels(args.label)
+const delLabels = splitLabels(args.unlabel)
+
 if (args['dry-run']) {
   console.log(`[dry-run] NON invio.`)
   console.log(`  to:      ${to}`)
@@ -197,6 +297,8 @@ if (args['dry-run']) {
     console.log(`  allegati: ${extraAttachments.length}`)
     for (const a of extraAttachments) console.log(`    - ${a.filename || a.path}`)
   }
+  if (addLabels.length) console.log(`  +label:  ${addLabels.join(', ')}`)
+  if (delLabels.length) console.log(`  -label:  ${delLabels.join(', ')}`)
   process.exit(0)
 }
 
@@ -219,6 +321,20 @@ try {
     attachments: [useLight ? logoLightAttachment() : logoDarkAttachment(), ...extraAttachments],
   })
   console.log(`[OK] inviata a ${to} — ${info.messageId}`)
+
+  // Etichettatura best-effort: la mail è già partita, un errore qui non è fatale.
+  if (addLabels.length || delLabels.length) {
+    try {
+      const r = await applyGmailLabels({ user, pass, messageId: info.messageId, add: addLabels, remove: delLabels })
+      const parts = []
+      if (addLabels.length) parts.push(`+[${addLabels.join(', ')}]`)
+      if (delLabels.length) parts.push(`-[${delLabels.join(', ')}]`)
+      console.log(`[OK] label aggiornate su ${r.count} messaggi del thread: ${parts.join(' ')}`)
+    } catch (e) {
+      console.error(`[WARN] invio ok, ma etichettatura fallita: ${e.message}`)
+      console.error(`       applica le label a mano (oggetto: "${subject}").`)
+    }
+  }
 } catch (err) {
   console.error(`[FAIL] invio fallito: ${err.message}`)
   process.exit(1)
