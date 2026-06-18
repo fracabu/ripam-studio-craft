@@ -32,7 +32,7 @@ const flusso = [
 </script>
 
 <template>
-  <main class="cg-page">
+  <main id="main" class="cg-page">
     <!-- HERO -->
     <section class="cg-hero">
       <div class="wrap cg-hero-grid">

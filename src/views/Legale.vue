@@ -38,7 +38,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 </script>
 
 <template>
-  <main v-if="page" class="lh-page">
+  <main id="main" v-if="page" class="lh-page">
     <!-- HERO -->
     <section class="lh-hero">
       <div class="wrap lh-hero-in">

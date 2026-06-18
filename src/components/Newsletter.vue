@@ -230,7 +230,8 @@ const submit = async (e) => {
   font:inherit;font-size:15px;line-height:1.4;
   transition:background .12s;
 }
-.nl-field input:focus{outline:none;background:var(--acid)}
+.nl-field input:focus{background:var(--acid)}
+.nl-field input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 .nl-consent{
   display:flex;align-items:flex-start;gap:10px;

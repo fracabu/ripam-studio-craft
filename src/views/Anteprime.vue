@@ -27,7 +27,7 @@ const closeModale = () => { open.value = false }
 </script>
 
 <template>
-  <main class="ap-page">
+  <main id="main" class="ap-page">
     <div class="wrap ap-wrap">
       <!-- MATERIA SCONOSCIUTA -->
       <template v-if="!materia">

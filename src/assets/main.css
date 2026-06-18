@@ -58,6 +58,9 @@ html{
   scroll-behavior:smooth;
   scroll-padding-top:var(--nav-h); /* compensa il nav sticky negli scroll ad hash */
 }
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+}
 /* fallback robusto: alcuni browser ignorano scroll-padding-top con <a href="#x">.
    scroll-margin-top sul target garantisce che la sezione non finisca sotto la navbar. */
 section[id]{ scroll-margin-top:calc(var(--nav-h) + 12px) }
@@ -85,6 +88,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 img,svg{display:block;max-width:100%}
 
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter)}
+
+/* skip link: visibile solo al focus da tastiera */
+.skip-link{
+  position:absolute;left:8px;top:-56px;z-index:1000;
+  padding:10px 16px;background:var(--ink);color:var(--bg);
+  border:2px solid var(--acid);font-weight:700;
+  transition:top .15s;
+}
+.skip-link:focus{top:8px}
 
 /* ===== NAV ===== */
 .nav{
@@ -379,11 +391,11 @@ section{padding:90px 0;border-bottom:2px solid var(--ink)}
   font-family:"JetBrains Mono",monospace;
 }
 .badge[data-c="RIPAM"]{background:var(--ripam)}
-.badge[data-c="MIC"]{background:var(--mic)}
-.badge[data-c="FUNZ"]{background:var(--funz)}
-.badge[data-c="MIMIT"]{background:var(--mimit)}
-.badge[data-c="ISAC"]{background:var(--isac)}
-.badge[data-c="CPI"]{background:var(--cpi)}
+.badge[data-c="MIC"]{background:var(--mic);color:var(--ink)}
+.badge[data-c="FUNZ"]{background:var(--funz);color:var(--ink)}
+.badge[data-c="MIMIT"]{background:var(--mimit);color:var(--ink)}
+.badge[data-c="ISAC"]{background:var(--isac);color:var(--ink)}
+.badge[data-c="CPI"]{background:var(--cpi);color:var(--ink)}
 .formats{
   display:flex;gap:12px;margin-bottom:20px;
   padding-top:18px;border-top:2px solid var(--ink);
@@ -539,7 +551,8 @@ input,select,textarea{
   font-family:inherit;font-size:14px;color:var(--ink);
   transition:background .15s;
 }
-input:focus,select:focus,textarea:focus{outline:none;background:var(--acid)}
+input:focus,select:focus,textarea:focus{background:var(--acid)}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 textarea{resize:vertical;min-height:60px;max-height:120px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 form.contact button[type=submit]{
@@ -1005,8 +1018,8 @@ footer{
   font-size:10px;font-weight:700;letter-spacing:0.08em;
   border:2px solid var(--ink);
 }
-.status-badge[data-s="ready"]{background:var(--mic);color:#fff}
-.status-badge[data-s="soon"]{background:var(--orange);color:#fff}
+.status-badge[data-s="ready"]{background:var(--mic);color:var(--ink)}
+.status-badge[data-s="soon"]{background:var(--orange);color:var(--ink)}
 .status-badge[data-s="custom"]{background:var(--blue);color:#fff}
 .status-badge .dot{
   width:6px;height:6px;border-radius:50%;background:currentColor;

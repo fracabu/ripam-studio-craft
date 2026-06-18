@@ -12,7 +12,7 @@ const stats = [
 </script>
 
 <template>
-  <main class="about-page">
+  <main id="main" class="about-page">
     <!-- HERO -->
     <section class="ab-hero">
       <div class="wrap ab-hero-grid">

@@ -6,7 +6,7 @@ import Newsletter from '../components/Newsletter.vue'
 </script>
 
 <template>
-  <main class="iscriviti-page">
+  <main id="main" class="iscriviti-page">
     <Newsletter />
   </main>
 </template>

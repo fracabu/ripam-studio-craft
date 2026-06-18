@@ -121,7 +121,7 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
             <span v-else>Scrivimi →</span>
           </button>
 
-          <p v-if="status==='error'" class="form-err">{{ errorMsg }}</p>
+          <p v-if="status==='error'" class="form-err" role="alert">{{ errorMsg }}</p>
           <p v-else class="form-note">Nessun pagamento anticipato. Risposta entro poche ore.</p>
         </form>
       </div>
@@ -129,10 +129,10 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
 
     <!-- MODAL SUCCESS -->
     <transition name="modal">
-      <div v-if="status==='sent'" class="modal-backdrop" @click.self="reset" role="dialog" aria-modal="true">
+      <div v-if="status==='sent'" class="modal-backdrop" @click.self="reset" role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
         <div class="modal-card">
           <div class="modal-ico">✓</div>
-          <h3 class="modal-title">Richiesta inviata!</h3>
+          <h3 id="cf-modal-title" class="modal-title">Richiesta inviata!</h3>
           <p class="modal-text">Grazie, <strong>ho ricevuto la tua richiesta</strong>. Ti rispondo entro poche ore con domande, idee o una proposta concreta — direttamente all'email che mi hai dato.</p>
           <p class="modal-text" style="opacity:0.8;font-size:14px">Nel frattempo, se vuoi, puoi anche scrivermi su Telegram.</p>
           <button type="button" class="btn btn-primary modal-btn" @click="reset">Perfetto, chiudi →</button>

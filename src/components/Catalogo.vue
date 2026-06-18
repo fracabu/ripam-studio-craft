@@ -305,7 +305,8 @@ const pickChip = (slug) => openMateria(slug)
   font-family:inherit;
   transition:background .12s, box-shadow .12s;
 }
-.cat-search:focus{background:var(--acid);outline:none;box-shadow:6px 6px 0 var(--ink)}
+.cat-search:focus{background:var(--acid);box-shadow:6px 6px 0 var(--ink)}
+.cat-search:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .cat-search::placeholder{color:var(--muted,#6b6458);opacity:.85}
 
 .cat-dropdown{

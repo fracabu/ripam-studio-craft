@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="nf-page">
+  <main id="main" class="nf-page">
     <section class="nf-hero">
       <div class="wrap nf-hero-grid">
         <div>

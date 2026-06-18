@@ -145,7 +145,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 </script>
 
 <template>
-  <main v-if="materia" class="materia-page">
+  <main id="main" v-if="materia" class="materia-page">
     <!-- HERO MATERIA — 2 colonne: editorial sx + rail formati acid dx -->
     <section class="detail-hero">
       <div class="wrap">

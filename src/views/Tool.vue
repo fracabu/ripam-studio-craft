@@ -34,7 +34,7 @@ const flusso = [
 </script>
 
 <template>
-  <main class="tl-page">
+  <main id="main" class="tl-page">
     <!-- HERO -->
     <section class="tl-hero">
       <div class="wrap tl-hero-grid">

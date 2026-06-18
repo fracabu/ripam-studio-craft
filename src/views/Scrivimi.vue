@@ -155,7 +155,7 @@ const submit = async (e) => {
 </script>
 
 <template>
-  <main class="sv-page">
+  <main id="main" class="sv-page">
     <div class="wrap sv-wrap">
       <div class="sv-kicker">{{ isRinnovo ? 'RINNOVO CREDENZIALI' : (isQuizProMode ? 'RICHIESTA CREDENZIALI' : 'SCRIVIMI') }}</div>
       <h1 v-if="isRinnovo" class="sv-h1">
@@ -381,7 +381,9 @@ const submit = async (e) => {
   transition:background .12s;
 }
 .sv-field input:focus,
-.sv-field textarea:focus{outline:none;background:var(--acid)}
+.sv-field textarea:focus{background:var(--acid)}
+.sv-field input:focus-visible,
+.sv-field textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .sv-field textarea{resize:vertical;min-height:110px;font-family:inherit}
 .sv-opt{color:var(--muted,#6b6458);font-weight:500;text-transform:none;letter-spacing:0}
 
@@ -397,7 +399,8 @@ const submit = async (e) => {
   background-repeat:no-repeat;background-position:right 14px center;
   padding-right:38px;
 }
-.sv-select:focus{outline:none;background-color:var(--acid)}
+.sv-select:focus{background-color:var(--acid)}
+.sv-select:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 /* Reveal progressivo dei campi di dettaglio */
 .sv-reveal{animation:svReveal .22s ease-out}

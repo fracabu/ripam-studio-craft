@@ -215,7 +215,7 @@ const submit = async (e) => {
             >Annulla</button>
           </div>
 
-          <p v-if="status === 'error'" class="ant-err">{{ errorMsg }}</p>
+          <p v-if="status === 'error'" class="ant-err" role="alert">{{ errorMsg }}</p>
           <p class="ant-hint">Doppio opt-in via email · GDPR-clean</p>
         </form>
       </div>
@@ -296,7 +296,8 @@ const submit = async (e) => {
   font:inherit;font-size:15px;line-height:1.4;
   transition:background .12s;
 }
-.ant-field input:focus{outline:none;background:var(--acid,#c6f432)}
+.ant-field input:focus{background:var(--acid,#c6f432)}
+.ant-field input:focus-visible{outline:2px solid var(--blue,#3d5aff);outline-offset:2px}
 
 .ant-consent{
   display:flex;align-items:flex-start;gap:10px;
