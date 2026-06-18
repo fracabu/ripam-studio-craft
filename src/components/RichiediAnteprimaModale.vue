@@ -24,10 +24,15 @@ const errorMsg = ref('')
 
 const emailInput = ref(null)
 const closeBtn = ref(null)
+const trapRef = ref(null)
+let prevFocused = null
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
 
 // Reset stato quando il modale si apre, focus su email
 watch(() => props.open, async (isOpen) => {
   if (isOpen) {
+    prevFocused = document.activeElement // per ripristinare il focus alla chiusura
     status.value = 'idle'
     errorMsg.value = ''
     email.value = ''
@@ -39,6 +44,8 @@ watch(() => props.open, async (isOpen) => {
     emailInput.value?.focus()
   } else {
     document.body.style.overflow = ''
+    prevFocused?.focus?.() // torna sull'elemento che aveva aperto il modale
+    prevFocused = null
   }
 })
 
@@ -52,7 +59,22 @@ const onBackdrop = (e) => {
 }
 
 const onKeydown = (e) => {
-  if (e.key === 'Escape') close()
+  if (e.key === 'Escape') { close(); return }
+  if (e.key !== 'Tab') return
+  // focus-trap: tieni il Tab dentro al modale
+  const root = trapRef.value
+  if (!root) return
+  const items = Array.from(root.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null)
+  if (!items.length) return
+  const first = items[0]
+  const last = items[items.length - 1]
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault()
+    last.focus()
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault()
+    first.focus()
+  }
 }
 
 const submit = async (e) => {
@@ -100,6 +122,7 @@ const submit = async (e) => {
   <Teleport to="body">
     <div
       v-if="open"
+      ref="trapRef"
       class="ant-backdrop"
       role="dialog"
       aria-modal="true"

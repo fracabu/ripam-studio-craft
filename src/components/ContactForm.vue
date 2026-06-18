@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { RouterLink } from 'vue-router'
 import { CONCORSI } from '../data/formati.js'
 
@@ -62,6 +62,36 @@ const submit = async (e) => {
 }
 
 const reset = () => { status.value = 'idle'; errorMsg.value = '' }
+
+// --- A11y modale di conferma: focus dentro, trap del Tab, Esc, ripristino ---
+const modalBtn = ref(null)
+const successTrap = ref(null)
+let prevFocusedCF = null
+const MODAL_FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
+
+watch(() => status.value === 'sent', async (open) => {
+  if (open) {
+    prevFocusedCF = document.activeElement
+    await nextTick()
+    modalBtn.value?.focus()
+  } else {
+    prevFocusedCF?.focus?.()
+    prevFocusedCF = null
+  }
+})
+
+const onModalKeydown = (e) => {
+  if (e.key === 'Escape') { reset(); return }
+  if (e.key !== 'Tab') return
+  const root = successTrap.value
+  if (!root) return
+  const items = Array.from(root.querySelectorAll(MODAL_FOCUSABLE)).filter((el) => el.offsetParent !== null)
+  if (!items.length) return
+  const first = items[0]
+  const last = items[items.length - 1]
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+}
 </script>
 
 <template>
@@ -110,7 +140,7 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
 
           <label class="privacy-check">
             <input v-model="privacy" type="checkbox" required :disabled="status==='sending'" />
-            <span>Ho letto la <RouterLink to="/privacy" target="_blank">Privacy Policy</RouterLink> e acconsento al trattamento dei miei dati per rispondere a questa richiesta.</span>
+            <span>Ho letto la <RouterLink to="/privacy" target="_blank" @click.stop>Privacy Policy</RouterLink> e acconsento al trattamento dei miei dati per rispondere a questa richiesta.</span>
           </label>
 
           <!-- honeypot nascosto: bot lo compilano, umani no -->
@@ -129,13 +159,13 @@ const reset = () => { status.value = 'idle'; errorMsg.value = '' }
 
     <!-- MODAL SUCCESS -->
     <transition name="modal">
-      <div v-if="status==='sent'" class="modal-backdrop" @click.self="reset" role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
+      <div v-if="status==='sent'" ref="successTrap" class="modal-backdrop" @click.self="reset" @keydown="onModalKeydown" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
         <div class="modal-card">
           <div class="modal-ico">✓</div>
           <h3 id="cf-modal-title" class="modal-title">Richiesta inviata!</h3>
           <p class="modal-text">Grazie, <strong>ho ricevuto la tua richiesta</strong>. Ti rispondo entro poche ore con domande, idee o una proposta concreta — direttamente all'email che mi hai dato.</p>
           <p class="modal-text" style="opacity:0.8;font-size:14px">Nel frattempo, se vuoi, puoi anche scrivermi su Telegram.</p>
-          <button type="button" class="btn btn-primary modal-btn" @click="reset">Perfetto, chiudi →</button>
+          <button ref="modalBtn" type="button" class="btn btn-primary modal-btn" @click="reset">Perfetto, chiudi →</button>
         </div>
       </div>
     </transition>
