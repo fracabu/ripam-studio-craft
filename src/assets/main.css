@@ -1357,7 +1357,6 @@ footer{
 .bundle.reveal.in{transform:none}
 
 /* hero: auto-play on load (no observer) */
-.hero-anim h1,
 .hero-anim .hero-sub,
 .hero-anim .hero-ctas,
 .hero-anim .hero-visual > *{
@@ -1365,7 +1364,12 @@ footer{
   transform:translateY(18px);
   animation:heroIn .7s cubic-bezier(.2,.8,.2,1) forwards;
 }
-.hero-anim h1{animation-delay:.05s}
+/* h1 = elemento LCP: dipinto subito (opacity:1), anima solo lo scorrimento
+   così non ritarda il Largest Contentful Paint. */
+.hero-anim h1{
+  transform:translateY(18px);
+  animation:heroInSlide .7s cubic-bezier(.2,.8,.2,1) .05s forwards;
+}
 .hero-anim .hero-sub{animation-delay:.25s}
 .hero-anim .hero-ctas{animation-delay:.40s}
 .hero-anim .hero-visual > *:nth-child(1){animation-delay:.55s}
@@ -1373,6 +1377,7 @@ footer{
 .hero-anim .hero-visual > *:nth-child(3){animation-delay:.75s}
 .hero-anim .hero-visual > *:nth-child(4){animation-delay:.85s}
 @keyframes heroIn{to{opacity:1;transform:none}}
+@keyframes heroInSlide{to{transform:none}}
 
 /* hover tilt sulle card del catalogo (già c'è il translate, aggiungo micro-rotate) */
 .card{transition:transform .2s cubic-bezier(.2,.8,.2,1), box-shadow .2s}
