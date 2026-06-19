@@ -1,0 +1,22 @@
+{
+  "subject": "Concorso CPI Sicilia: 3 report, prime pagine gratis",
+  "preheader": "Contabilità regionale, ordinamento siciliano e L.R. 10/2000 — le prime pagine in chiaro.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-06-22",
+  "issue_label": "NEWSLETTER",
+  "kicker": "CONCORSI REGIONALI",
+  "headline": "Concorso CPI Sicilia: 3 report, le prime pagine gratis.",
+  "is_welcome": false,
+  "sections_used": ["intro", "hero_anteprime_report", "sec1_tre_report_link_drive", "sec2_piano_studio_personalizzato", "closing_cta_scrivimi"],
+  "report_anteprime": {
+    "concorso": "cpi-sicilia-sac",
+    "links": [
+      "https://drive.google.com/file/d/1NT__cNzQdtrGrh9PjkTmICEnA8LRxz56/view",
+      "https://drive.google.com/file/d/1UXTic5Pz2hPdVl3iyPxYRGgrYa88xfQA/view",
+      "https://drive.google.com/file/d/1bSfd_aU5Obu4Kvi6XHWNDWTKgCglvfN3/view"
+    ]
+  },
+  "word_count": 335
+}
