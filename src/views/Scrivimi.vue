@@ -5,6 +5,7 @@ import { CONCORSI } from '../data/formati.js'
 
 const TIPI = [
   { v: 'materia', l: 'Materia di studio' },
+  { v: 'piano-studio', l: 'Piano di studio' },
   { v: 'coaching', l: 'Coaching NotebookLM' },
   { v: 'tool', l: 'Tool su misura' },
   { v: 'quiz-pro', l: 'Credenziali RIPAM Studio Quiz Pro' },
@@ -51,6 +52,7 @@ const errorMsg = ref('')
 // pre-compila il testo della richiesta. L'utente deve solo nome + email.
 const isQuizProMode = computed(() => tipo.value === 'quiz-pro')
 const isRinnovo = computed(() => isQuizProMode.value && quizProAction.value === 'rinnovo')
+const isPianoStudio = computed(() => tipo.value === 'piano-studio')
 
 const route = useRoute()
 const router = useRouter()
@@ -273,7 +275,7 @@ const submit = async (e) => {
             v-model="note"
             :rows="isQuizProMode ? 3 : 4"
             :required="!isQuizProMode"
-            :placeholder="isQuizProMode ? 'Aggiungi qualcosa se vuoi — oppure lascia così com\'è.' : 'Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…'"
+            :placeholder="isQuizProMode ? 'Aggiungi qualcosa se vuoi — oppure lascia così com\'è.' : (isPianoStudio ? 'Il tuo percorso di studi, dove ti senti più scoperto e quante ore puoi studiare — così te lo personalizzo.' : 'Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…')"
             :disabled="status==='sending'"
           ></textarea>
         </div>
