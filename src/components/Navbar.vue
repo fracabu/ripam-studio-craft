@@ -49,6 +49,7 @@ onUnmounted(() => {
       </RouterLink>
       <div class="nav-links">
         <RouterLink to="/#materie" active-class="" exact-active-class="">Materie</RouterLink>
+        <RouterLink to="/report-custom">Report</RouterLink>
         <RouterLink to="/coaching">Coaching</RouterLink>
         <RouterLink to="/tool">Tool</RouterLink>
         <RouterLink to="/quiz-pro">Quiz Pro</RouterLink>
@@ -75,6 +76,7 @@ onUnmounted(() => {
       :hidden="!open"
     >
       <RouterLink to="/#materie" active-class="" exact-active-class="" @click="close">Materie</RouterLink>
+      <RouterLink to="/report-custom" @click="close">Report</RouterLink>
       <RouterLink to="/coaching" @click="close">Coaching</RouterLink>
       <RouterLink to="/tool" @click="close">Tool</RouterLink>
       <RouterLink to="/quiz-pro" @click="close">Quiz Pro</RouterLink>

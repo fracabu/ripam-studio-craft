@@ -275,6 +275,9 @@ const pickChip = (slug) => openMateria(slug)
           </div>
         </article>
       </div>
+      <p class="cc-rc-link">
+        Fai un concorso specifico? <RouterLink to="/report-custom">Guarda i report su misura per RIPAM 3.997 e INPS 1.695 PECS &rarr;</RouterLink>
+      </p>
     </div>
   </section>
 </template>
@@ -485,6 +488,11 @@ const pickChip = (slug) => openMateria(slug)
   transition:transform .15s;
 }
 .cat-card:hover .cc-arrow{transform:translateX(4px)}
+
+.cc-rc-link{
+  margin-top:22px;font-size:14px;color:var(--ink-soft);
+}
+.cc-rc-link a{ color:var(--ink);font-weight:700;text-decoration:underline; }
 
 @media (prefers-reduced-motion:reduce){
   .cat-card, .cc-arrow, .cat-chip{transition:none}

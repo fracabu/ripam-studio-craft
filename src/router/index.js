@@ -8,6 +8,7 @@ import Tool from '../views/Tool.vue'
 import Scrivimi from '../views/Scrivimi.vue'
 import Anteprime from '../views/Anteprime.vue'
 import Iscriviti from '../views/Iscriviti.vue'
+import ReportCustom from '../views/ReportCustom.vue'
 import NotFound from '../views/NotFound.vue'
 
 const router = createRouter({
@@ -26,6 +27,7 @@ const router = createRouter({
     { path: '/anteprime/:slug', name: 'anteprime', component: Anteprime, props: true },
     // Landing iscrizione newsletter (link pulito /newsletter per i post social)
     { path: '/newsletter', name: 'newsletter', component: Iscriviti },
+    { path: '/report-custom', name: 'report-custom', component: ReportCustom },
     { path: '/privacy', name: 'privacy', component: Legale, props: { slug: 'privacy' }, meta: { slug: 'privacy' } },
     { path: '/cookie-policy', name: 'cookie-policy', component: Legale, props: { slug: 'cookie-policy' }, meta: { slug: 'cookie-policy' } },
     { path: '/termini', name: 'termini', component: Legale, props: { slug: 'termini' }, meta: { slug: 'termini' } },

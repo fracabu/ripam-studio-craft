@@ -4,6 +4,7 @@ import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { getMateriaBySlug, MATERIE } from '../data/materie.js'
 import { FORMATI } from '../data/formati.js'
 import { getContenuti } from '../data/contenuti.js'
+import { getReportCustom } from '../data/report-custom.js'
 import ContactForm from '../components/ContactForm.vue'
 import EpisodePlayer from '../components/EpisodePlayer.vue'
 import RichiediAnteprimaModale from '../components/RichiediAnteprimaModale.vue'
@@ -24,6 +25,12 @@ const route = useRoute()
 const slug = computed(() => route.params.slug)
 const materia = computed(() => getMateriaBySlug(slug.value))
 const contenuti = computed(() => getContenuti(slug.value))
+// Report di studio su misura (nuovo) — sostituisce il report NotebookLM nel tab REPORT
+const reportCustom = computed(() => getReportCustom(slug.value))
+const reportCoverUrl = computed(() => {
+  const rc = reportCustom.value
+  return rc ? `/report-cover/${rc.concorsoKey}/${rc.cover}.png` : ''
+})
 
 const contactRef = ref(null)
 const activeTab = ref('pod')
@@ -54,6 +61,24 @@ const requestSample = () => {
   })
   scrollToContact()
 }
+
+// Richiesta anteprima del report custom (prefill del form contatti)
+const requestReportAnteprima = () => {
+  const rc = reportCustom.value
+  contactRef.value?.prefill({
+    materia: materia.value.t,
+    prodotto: 'Report di studio',
+    concorso: materia.value.c[0],
+    note: `Vorrei l'anteprima gratuita del Report di ${materia.value.t}${rc?.concorso ? ` (taratura ${rc.concorso})` : ''}.`
+  })
+  scrollToContact()
+}
+
+// Il tab REPORT è attivo se esiste un report custom (i vecchi report NB non
+// contano più come contenuto del tab). Gli altri tab restano legati a contenuti.
+const tabEnabled = (k) => k === 'rep'
+  ? !!reportCustom.value
+  : !!contenuti.value?.[k]
 
 const tabIcon = { pod:'🎙️', aul:'🎧', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
 const tabLabel = { pod:'Podcast', aul:'Audio Lezioni', vid:'Video', rep:'Report', man:'Manuale', sim:'Simulatore' }
@@ -252,7 +277,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
         <div class="struct-tabs">
           <button v-for="k in ['pod','aul','vid','rep','man','sim']" :key="k"
             class="struct-tab" :class="{active: activeTab===k}" @click="activeTab=k"
-            :disabled="!contenuti[k]">
+            :disabled="!tabEnabled(k)">
             <span class="struct-tab-ico">{{ tabIcon[k] }}</span>
             {{ tabLabel[k] }}
           </button>
@@ -296,15 +321,53 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
           </div>
         </div>
 
-        <!-- REPORT / MANUALE -->
-        <div v-else-if="(activeTab==='rep' || activeTab==='man') && contenuti[activeTab]" class="struct-panel">
+        <!-- REPORT DI STUDIO SU MISURA (nuovo — sostituisce il report NotebookLM) -->
+        <div v-else-if="activeTab==='rep' && reportCustom" class="struct-panel">
+          <div class="rep-custom">
+            <a :href="`/report-cover/${reportCustom.concorsoKey}/${reportCustom.cover}.png`"
+               class="rep-custom-cover" @click.prevent="requestReportAnteprima">
+              <img :src="reportCoverUrl" :alt="`Copertina report ${materia.t}`" loading="lazy" />
+            </a>
+            <div class="rep-custom-body">
+              <p class="rep-custom-desc">{{ reportCustom.desc }}</p>
+              <div class="struct-summary rep-custom-stats">
+                <div class="struct-stat">
+                  <div class="struct-stat-num">{{ reportCustom.sezioni }}</div>
+                  <div class="struct-stat-lbl">SEZIONI</div>
+                </div>
+                <div class="struct-stat">
+                  <div class="struct-stat-num">{{ reportCustom.trabocchetti }}</div>
+                  <div class="struct-stat-lbl">TRABOCCHETTI</div>
+                </div>
+                <div class="struct-stat">
+                  <div class="struct-stat-num">{{ reportCustom.quiz }}</div>
+                  <div class="struct-stat-lbl">QUIZ</div>
+                </div>
+                <div class="struct-stat">
+                  <div class="struct-stat-num">PDF</div>
+                  <div class="struct-stat-lbl">RIPASSO VELOCE</div>
+                </div>
+              </div>
+              <p class="rep-custom-note">
+                Schemi a due colonne, tabelle e trabocchetti — pensato per il ripasso veloce e
+                per fissare i concetti. Versione tarata sul concorso <strong>{{ reportCustom.concorso }}</strong>.
+              </p>
+              <button type="button" class="btn btn-primary" @click="requestReportAnteprima">
+                Richiedi l'anteprima gratis &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MANUALE -->
+        <div v-else-if="activeTab==='man' && contenuti.man" class="struct-panel">
           <div class="struct-summary">
             <div class="struct-stat">
-              <div class="struct-stat-num">{{ contenuti[activeTab].chapters.length }}</div>
-              <div class="struct-stat-lbl">{{ activeTab==='man' ? 'CAPITOLI' : 'SEZIONI' }}</div>
+              <div class="struct-stat-num">{{ contenuti.man.chapters.length }}</div>
+              <div class="struct-stat-lbl">CAPITOLI</div>
             </div>
             <div class="struct-stat">
-              <div class="struct-stat-num">{{ contenuti[activeTab].total }}</div>
+              <div class="struct-stat-num">{{ contenuti.man.total }}</div>
               <div class="struct-stat-lbl">PAGINE</div>
             </div>
             <div class="struct-stat">
@@ -331,7 +394,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
           </div>
 
           <div class="chapters">
-            <div v-for="(c, i) in contenuti[activeTab].chapters" :key="i" class="chap">
+            <div v-for="(c, i) in contenuti.man.chapters" :key="i" class="chap">
               <span class="chap-num">{{ String(i+1).padStart(2,'0') }}</span>
               <span>{{ c }}</span>
             </div>
@@ -367,8 +430,8 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
           </div>
         </div>
 
-        <!-- CTA unico, dipendente dal formato selezionato -->
-        <div v-if="activeFormato" class="struct-cta">
+        <!-- CTA unico, dipendente dal formato selezionato (il tab REPORT ha già il suo) -->
+        <div v-if="activeFormato && activeTab!=='rep'" class="struct-cta">
           <button class="btn btn-primary" type="button" @click="requestFormat(activeFormato)">
             Richiedi {{ activeFormato.t }} →
           </button>
@@ -431,6 +494,25 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 </template>
 
 <style scoped>
+/* REPORT DI STUDIO SU MISURA (tab REPORT) */
+.rep-custom{ display:grid; grid-template-columns:minmax(220px,300px) 1fr; gap:32px; align-items:start; }
+.rep-custom-cover{ display:block; }
+.rep-custom-cover img{
+  width:100%; height:auto; display:block;
+  border:3px solid var(--ink); box-shadow:var(--shadow-lg,8px 8px 0 var(--ink));
+  transition:transform .15s ease;
+}
+.rep-custom-cover:hover img{ transform:translateY(-3px); }
+.rep-custom-body{ display:flex; flex-direction:column; gap:18px; }
+.rep-custom-desc{ font-size:17px; line-height:1.5; color:var(--ink-soft); margin:0; }
+.rep-custom-stats{ margin:0; }
+.rep-custom-note{ font-size:14px; line-height:1.5; color:var(--ink-soft); margin:0; }
+.rep-custom-body .btn{ align-self:flex-start; }
+@media (max-width:720px){
+  .rep-custom{ grid-template-columns:1fr; gap:22px; }
+  .rep-custom-cover{ max-width:280px; }
+}
+
 /* HERO v2 */
 .mat-breadcrumb{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
