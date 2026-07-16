@@ -11,6 +11,7 @@
 import nodemailer from 'nodemailer'
 import { getAnteprimaDriveUrls } from './anteprime-manifest.js'
 import { emailShell, emailButton, logoAttachment } from './email-shell.js'
+import { logAnteprima } from './anteprime-log.js'
 
 // Titolo umano per slug — speculare ai t: di src/data/materie.js.
 // Tenuto in sync a mano (basso churn, evita dipendenza cross-bundle).
@@ -156,7 +157,9 @@ function buildTransporter({ user, pass }) {
 // e "in arrivo" in base alla presenza del fileId nel manifest.
 //
 // Throw se mancano env vars Gmail o se l'invio SMTP fallisce.
-export async function sendAnteprimaMail({ email, nome, slug }) {
+// `canale` finisce nel registro anteprime (welcome | drip | lead | blast | manuale):
+// serve a sapere DA DOVE è arrivata la consegna, non solo che è avvenuta.
+export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome' }) {
   const user = process.env.GMAIL_USER
   const pass = process.env.GMAIL_APP_PASSWORD
   if (!user || !pass) {
@@ -182,6 +185,13 @@ export async function sendAnteprimaMail({ email, nome, slug }) {
     html,
     attachments: [logoAttachment()],
   })
+
+  // Registro anteprime: si logga SOLO la consegna vera (urls presenti). La mail
+  // "in arrivo" (fileId non ancora caricato) non ha consegnato nulla → loggarla
+  // farebbe credere al drip che la persona ha già la materia, e non l'avrebbe.
+  if (urls) {
+    await logAnteprima({ email, nome, materia: slug, formato: 'manuale', canale })
+  }
 
   return { ok: true, delivered: !!urls }
 }

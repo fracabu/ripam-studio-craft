@@ -16,6 +16,7 @@
 import nodemailer from 'nodemailer'
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { logAnteprima } from './anteprime-log.js'
 
 const ITALIAN_MONTHS = [
   'GENNAIO','FEBBRAIO','MARZO','APRILE','MAGGIO','GIUGNO',
@@ -134,6 +135,21 @@ export async function sendWelcomeNewsletter({ sql, subscriber }) {
       SET last_email_sent_at = now()
       WHERE id = ${subscriber.id}
     `
+
+    // Registro anteprime: la welcome CONSEGNA una materia (meta.materia_di_oggi,
+    // audio+video+manuale da Drive) → va scritto, altrimenti il drip non sa che
+    // questa persona ce l'ha già e gliela rimanda. Best-effort: un errore qui
+    // non deve toccare l'esito dell'invio, che è già avvenuto.
+    if (meta.materia_di_oggi) {
+      await logAnteprima({
+        email: subscriber.email,
+        nome: subscriber.nome,
+        materia: meta.materia_di_oggi,
+        formato: 'completa-avm',
+        canale: 'welcome',
+        invioId: newsletterId,
+      })
+    }
 
     return { sent: true }
   } catch (err) {

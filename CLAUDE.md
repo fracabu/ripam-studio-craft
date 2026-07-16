@@ -13,7 +13,7 @@ npm run dev        # Vite dev server su localhost:5173 (apre il browser)
 npm run build      # build di produzione in dist/
 npm run preview    # preview della build
 
-node db/apply_schema.mjs                              # applica/migra TUTTI gli schema Neon (newsletter + ordini, idempotente)
+node db/apply_schema.mjs                              # applica/migra TUTTI gli schema Neon (newsletter+ordini+candidati+anteprime, idempotente)
 node db/apply_schema.mjs schema_ordini.sql           # applica un solo schema
 node scripts/send_newsletter.mjs <YYYY-MM-DD> --dry-run   # invio newsletter in locale (vedi sotto)
 
@@ -22,6 +22,16 @@ node scripts/order_add.mjs --email <email> --prodotto "<testo>" [--importo 29.98
 node scripts/orders_list.mjs                         # vista clienti aggregati (view `clienti`) + fatturato
 node scripts/orders_list.mjs --ordini                # tutti gli ordini, riga per riga
 node scripts/orders_list.mjs --email <email>         # ordini di un singolo cliente
+
+# Drip anteprime + invio diretto lead — INVIANO mail vere via nodemailer (no bozza). Girano a PC acceso.
+node scripts/send_drip.mjs --dry-run                 # consegna "a goccia" nuove materie agli iscritti (anti-doppione su `anteprime_inviate`)
+node scripts/send_lead.mjs ...                       # invio diretto mail a un lead (guscio DARK + logo inline); bozza composta da lead-draft.mjs / skill auto-risposte-lead
+node scripts/anteprima_log.mjs ...                   # registra a mano una consegna nel registro `anteprime_inviate`
+node scripts/anteprime_list.mjs                      # elenca chi ha ricevuto quale anteprima
+
+# Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
+node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
+node scripts/backfill_invii.mjs --apply              # lo riversa su DB (idempotente, ~4 min su 2.6k messaggi)
 ```
 
 Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.mjs` sono diagnostiche usa-e-getta (git-ignored).
@@ -42,6 +52,7 @@ Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.
   - `contenuti.js` — `CONTENUTI{}`: indice dettagliato per materia (episodi, capitoli, breakdown). Se una materia manca qui, `Materia.vue` fa fallback sui `topics` di `materie.js`. I campi `preview:` puntano a file audio in `public/preview/<slug>/`.
   - `legale.js` — `LEGAL_HOLDER` + `PAGES`: testi privacy/cookie/termini renderizzati da `Legale.vue`. **Unica fonte** dei dati del titolare (P.IVA, email).
 - `views/` = pagine instradate, `components/` = sezioni componibili (la Home assembla Hero, Catalogo, Newsletter, ecc.). `composables/useReveal.js` registra la directive globale `v-reveal` (scroll reveal).
+- Rotte chiave in `src/router/index.js`: oltre a `/materia/:slug` ci sono `/anteprime/:slug` (landing "cerca per materia → ricevi anteprima"), `/newsletter` (landing iscrizione), `/scrivimi` (form contatti) e `/quiz-pro` (riusa `Scrivimi` con `meta.tipo`). `/privacy`, `/cookie-policy`, `/termini` riusano `Legale.vue` via prop `slug`.
 - Design system **brutalist** in `src/assets/main.css`: token CSS in `:root` (`--acid:#c6f432` è il giallo brand, `--ink:#0a0a0a`, ombre `--shadow*` hard-offset). Le mail HTML inline negli endpoint replicano a mano questi colori — se cambi la palette aggiorna anche gli HTML in `api/`.
 
 ### Backend — serverless function (`api/`)
@@ -54,8 +65,10 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
   - `unsubscribe.js` — disiscrizione one-click via `unsubscribe_token`.
   - `send.js` — `POST` protetto da header `X-Admin-Secret == ADMIN_SECRET`: spedisce una newsletter draft a tutti i confermati. **Idempotente** via `newsletter_send_events UNIQUE(subscriber_id, newsletter_id)` (anti-join filtra chi ha già ricevuto). Batch con `limit`/`rate_ms` per stare sotto il timeout serverless (10s hobby) e i limiti Gmail (~50 mail/min). Rieseguire l'endpoint per liste lunghe.
 - `api/_lib/` — moduli condivisi (non sono endpoint):
+  - `email-shell.js` — guscio email **unico** (header logo brand + footer legale, stili INLINE email-safe) riusato da tutte le mail di sistema. Il logo viaggia come allegato inline `cid:logo.png` (importato da `logo-data.js`/`logo-dark-data.js` come base64) così è sempre visibile anche nei client che bloccano le immagini remote (Libero, Outlook). Se cambia palette/logo/dati legali → si cambia **qui**.
   - `anteprime-manifest.js` — `ANTEPRIME_MANIFEST` mappa `slug → fileId Google Drive` del PDF anteprima manuale (15 pp). `null` = non ancora caricato. **Single source of truth**, importato da `subscribe.js`/`confirm.js` e dalla skill `deliver-anteprima-manuale`.
-  - `anteprima-mail.js`, `welcome-newsletter.js` — compongono e inviano le rispettive mail.
+  - `report-custom-manifest.js` — `REPORT_CUSTOM_MANIFEST` mappa `concorso/profilo → bundle di report custom` (più PDF) su Drive. Chiave = concorso (non slug materia) → resta **fuori** dal matching automatico delle skill. Consegna solo semi-manuale su richiesta (categoria RC di `lead-draft.mjs`), mai flusso automatico. Prezzo passato esplicitamente (vedi listino custom).
+  - `anteprima-mail.js`, `welcome-newsletter.js`, `lead-mail.js` — compongono e inviano le rispettive mail.
 
 ### Dati newsletter
 - Schema in `db/schema_newsletter.sql` (Neon Postgres, regione UE). Due tabelle: `newsletter_subscribers` (include **registro consensi GDPR**: `consent_text`/`consent_ip`/`consent_user_agent`/`consent_at`) e `newsletter_send_events` (audit + idempotenza). View `newsletter_active`. `apply_schema.mjs` la applica.
@@ -69,6 +82,17 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 ### Dati candidati / profili lead
 - Schema in `db/schema_candidati.sql` (stesso DB Neon). Tabella `candidati` = **fonte unica del profilo della persona** (chi è, che concorso fa, quali materie/formati le interessano), una riga per persona con chiave `email` (lowercase). Separata dagli acquisti: `candidati` = cosa vuole, `ordini` = cosa ha pagato. Colonne array `concorsi`/`materie_interesse`/`formati_interesse` **accumulate in dedup** a ogni richiesta (merge `ARRAY(SELECT DISTINCT … unnest(vecchio || nuovo))` nell'`ON CONFLICT`). View **`candidato_completo`** = profilo + aggregati acquisti (LEFT JOIN su `clienti`) → quadro 360° per proposte su misura; va applicata **dopo** `schema_ordini.sql` (dipende da `clienti`).
 - L'**upsert è in `api/contact.js`** (best-effort dopo l'invio mail, non blocca la submit; skip silenzioso se manca `DATABASE_URL`). Il form invia solo `nome/email/concorso/note`: materie e formati **non sono campi strutturati**, vengono dedotti dal testo (`extractMaterie` matcha i nomi/slug di `materie.js`, `extractFormati` parole chiave, `extractConcorsi` sigle note + campo concorso). Migliorare l'estrazione = ritoccare quegli helper.
+
+### Dati anteprime inviate (registro drip)
+- Schema in `db/schema_anteprime.sql` (stesso DB Neon). Tabella `anteprime_inviate` = **fonte unica di "chi ha ricevuto quale anteprima, quando, con che canale"** (`materia` slug, `formato`, `canale` welcome/drip/lead/blast/manuale, `invio_id`). Solo DDL nel file; le righe si scrivono a runtime con `scripts/anteprima_log.mjs` e dal drip.
+- Serve come **anti-doppione** al drip: `send_drip.mjs` sceglie alcune materie, e a ogni iscritto manda solo quelle non ancora ricevute (check sul registro), poi logga l'invio. Evita di rimandare a un iscritto ciò che ha già avuto da welcome/lead/blast/drip precedente.
+
+### Dati invii email (registro anti-doppione)
+- Schema in `db/schema_invii.sql` (stesso DB Neon). Tabella `invii_email` = **fonte unica di "a chi ho mandato cosa, quando"**, gemella di `anteprime_inviate` ma per le *comunicazioni* (inviti, campagne, risposte lead) invece che per i materiali. Viste `invii_per_persona` (cosa ha già visto questa persona) e `invii_per_campagna` (cosa è partito e a quanti).
+- **Perché esiste** (16/07/2026): prima la verità sugli invii stava solo nella Posta inviata di Gmail, e i blast usa-e-getta non lasciavano traccia → il filtro "chi ha già ricevuto?" era un *proxy* (presenza in `candidati` prima della data del blast). Il proxy mentiva: su 99 destinatari diceva "0 già invitati", la posta inviata ne conteneva **38**. Lo storico Gmail è stato riversato a DB con `scripts/backfill_invii.mjs` (1.970 righe, 429 persone).
+- **Regola**: ogni script che manda mail **logga qui** via `api/_lib/invii-log.js` (`logInvio`). Chi non logga, per il sistema non è partito → la campagna dopo ricontatta la stessa persona. Il filtro anti-doppione si fa con `giaRicevuto(emails, {tipi|campagne})`, **mai** con proxy su altre tabelle.
+- `campagna` = slug parlante e stabile (es. `invito-newsletter-quizpro-2026-07-16`): è la chiave dell'unique `(LOWER(email), campagna)` e quella con cui i blast futuri filtrano. Per invii ricorrenti (drip, newsletter) **la data va nello slug**, altrimenti l'unique collassa più invii in una riga sola.
+- ⚠️ Gli oggetti letti da IMAP sono MIME encoded-word (`=?UTF-8?Q?…`) e "folded" su più righe: vanno **unfoldati e decodificati** prima di qualunque match, altrimenti il filtro è cieco (è l'errore che aveva prodotto il falso "0 già invitati").
 
 ### Variabili d'ambiente (`.env.local`, mai committato)
 `DATABASE_URL`/`POSTGRES_URL` (Neon), `GMAIL_USER`, `GMAIL_APP_PASSWORD` (App Password Gmail), `ADMIN_SECRET` (auth di `send.js`), `PUBLIC_BASE_URL`. Su Vercel sono iniettate; in locale si fanno `npx vercel env pull .env.local`.

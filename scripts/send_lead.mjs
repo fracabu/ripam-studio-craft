@@ -30,6 +30,9 @@
 //   --from     display name mittente (default "Francesco — Ripam Studio Craft")
 //   --light    guscio BIANCO con logo normale in alto (invece del guscio dark)
 //   --attach   allegati: "file1.pdf,file2.pdf" oppure "file.pdf|Nome visibile.pdf,..."
+//   --campagna slug per il registro invii (default 'lead-<data>'). Tenerlo PARLANTE
+//              e stabile: è la chiave con cui i blast futuri chiedono "gliel'ho
+//              già mandata?" — es. --campagna "invito-newsletter-2026-07"
 //   --label    Gmail label da AGGIUNGERE al thread dopo l'invio (nomi, separati da virgola)
 //              es. --label "Lead - Hot,Anteprima inviata"
 //   --unlabel  Gmail label da RIMUOVERE dal thread dopo l'invio (nomi, separati da virgola)
@@ -54,6 +57,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import nodemailer from 'nodemailer'
 import { LOGO_DARK_B64 } from '../api/_lib/logo-dark-data.js'
+import { logInvio } from '../api/_lib/invii-log.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -286,6 +290,11 @@ const splitLabels = (v) => typeof v === 'string' ? v.split(',').map(s => s.trim(
 const addLabels = splitLabels(args.label)
 const delLabels = splitLabels(args.unlabel)
 
+// Slug per il registro invii: esplicito se passato, altrimenti 'lead-<data>'.
+const campagna = typeof args.campagna === 'string'
+  ? args.campagna
+  : `lead-${new Date().toISOString().slice(0, 10)}`
+
 if (args['dry-run']) {
   console.log(`[dry-run] NON invio.`)
   console.log(`  to:      ${to}`)
@@ -293,6 +302,7 @@ if (args['dry-run']) {
   console.log(`  guscio:  ${useLight ? 'LIGHT (sfondo bianco + logo.png)' : `DARK (header nero + logo-dark, kicker "${kicker}")`}`)
   console.log(`  html:    ${html.length} char`)
   console.log(`  text:    ${String(text).length} char`)
+  console.log(`  campagna: ${campagna}  (registro invii_email)`)
   if (extraAttachments.length) {
     console.log(`  allegati: ${extraAttachments.length}`)
     for (const a of extraAttachments) console.log(`    - ${a.filename || a.path}`)
@@ -321,6 +331,16 @@ try {
     attachments: [useLight ? logoLightAttachment() : logoDarkAttachment(), ...extraAttachments],
   })
   console.log(`[OK] inviata a ${to} — ${info.messageId}`)
+
+  // Registro invii: la riga va scritta SEMPRE, anche per una singola mail a un
+  // lead. È così che il prossimo blast sa di non ricontattare questa persona.
+  const esitoLog = await logInvio({
+    email: to, campagna, oggetto: subject, tipo: 'lead', canale: 'lead',
+    messageId: info.messageId,
+  })
+  if (esitoLog === 'inserita') console.log(`[OK] registro invii: '${campagna}'`)
+  else if (esitoLog === 'gia-presente') console.log(`[i]  registro invii: '${campagna}' già registrata per ${to}`)
+  else if (esitoLog === 'skip-no-db') console.log('[WARN] registro invii saltato: manca DATABASE_URL')
 
   // Etichettatura best-effort: la mail è già partita, un errore qui non è fatale.
   if (addLabels.length || delLabels.length) {
