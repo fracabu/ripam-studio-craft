@@ -31,7 +31,17 @@ export const ANTEPRIME_MANIFEST = {
   'gdpr':                        '12Y1ukX0nI1ABAovt0lostZxAcDRGD4nA',
   'informatica':                 '1ROh5VILoIDSYmASUCC9bfLdLqOBF8C6P',
   'logica':                      '1ZaorlL5PFzog31vV-K2n5xaolmAnwCUO',
-  'ordinamento-pa':              '1KO6u3m5074WBEyWlYSGR6JL3HEyrbMaG',
+  // ⚠️ NON confondere queste due: sono PRODOTTI DIVERSI, non due versioni.
+  //   'ordinamento-pa'              → anteprima del manuale Ordinamento PA (D.Lgs. 300/1999),
+  //                                   materia storica a catalogo in src/data/materie.js.
+  //   'ordinamento-amministrazioni' → anteprima del manuale NUOVO "Amministrazioni
+  //                                   Pubbliche/Statali" (19 capitoli, trasversale a più
+  //                                   concorsi). Vive di vita propria: sovrascrivere il
+  //                                   fileId di 'ordinamento-pa' con questo farebbe
+  //                                   consegnare il manuale sbagliato a chi chiede
+  //                                   Ordinamento PA, e renderebbe l'altro irraggiungibile.
+  'ordinamento-pa':              '1uVqAZUbbdJDSdDiIvFpgZUoKZBWAufZC',
+  'ordinamento-amministrazioni': '1KO6u3m5074WBEyWlYSGR6JL3HEyrbMaG',
   'patrimonio-culturale':        '1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy',
   'pubblico-impiego':            '1p5lak1Eo0_WIR2b4BOGWqd2gBctxKFPS',
   'sicurezza-lavoro':            '1zEh4-4cLBbZroEyO0oXyCiddkX-sMjqL',
