@@ -70,6 +70,112 @@ export const REPORT_CUSTOM_MANIFEST = {
       },
     ],
   },
+  'ripam-1340-amm': {
+    concorso: 'RIPAM — Funzionari amministrativi (bando 1340), profilo Amministrativo (AMM)',
+    concorsoShort: 'concorso RIPAM 1340 Funzionari · profilo Amministrativo (AMM)',
+    // Cartella Drive anteprime: ANTEPRIME/report-custom/funz-1340-amm (10 report).
+    reports: [
+      {
+        key: 'diritto-amm',
+        label: 'Diritto amministrativo (L. 241/1990 — procedimento, provvedimento, accesso)',
+        fileId: '1aqb1pSX-TVJca3IPND25cVAvlyn9teFj',
+      },
+      {
+        key: 'diritto-costituzionale',
+        label: 'Diritto costituzionale (fonti, organi, artt. 97-98 Cost.)',
+        fileId: '1vjevz4ncIY-FdcAWKW_WVE9NBZL-qqFv',
+      },
+      {
+        key: 'diritto-civile',
+        label: 'Diritto civile (nozioni essenziali per la PA)',
+        fileId: '1JvSJyTU_0KbqyNY0tXZcPtEa40pISzQr',
+      },
+      {
+        key: 'diritto-penale',
+        label: 'Diritto penale — reati contro la PA (314, 317, 319, 323 abrogato, 328)',
+        fileId: '1mQ2sQvOWMPMjFv-J470jH8uLUu95Wtr4',
+      },
+      {
+        key: 'contratti-pubblici',
+        label: 'Contratti pubblici (D.Lgs. 36/2023 — principi, soglie, procedure)',
+        fileId: '1Wje2nMKfGutRv8W8WyDczfFpGQDHPMw_',
+      },
+      {
+        key: 'contabilita-pubblica',
+        label: 'Contabilità pubblica (L. 196/2009, art. 81 Cost., ciclo di bilancio, Corte dei conti)',
+        fileId: '1J42TtZu16rl1t95X384NKoVGTcIVrd_n',
+      },
+      {
+        key: 'pubblico-impiego',
+        label: 'Pubblico impiego — TUPI (D.Lgs. 165/2001: indirizzo/gestione, reclutamento, disciplina)',
+        fileId: '1POFnqWZHrlKPDQrCwCbAZ_1JAKSGh8Yy',
+      },
+      {
+        key: 'anticorruzione-trasparenza',
+        label: 'Anticorruzione e trasparenza (L. 190/2012, D.Lgs. 33/2013, PIAO/RPCT, whistleblowing)',
+        fileId: '17R68tZzQ53Rz8a8EN19yVuU0mBQWHy0E',
+      },
+      {
+        key: 'cad',
+        label: 'CAD — Codice dell\'Amministrazione Digitale (SPID, firme, documento informatico)',
+        fileId: '12fbUw9G5Nd2UJ_im0ipyWBnz2N41_aL3',
+      },
+      {
+        key: 'gdpr-privacy',
+        label: 'GDPR e privacy (principi art. 5, basi giuridiche, data breach)',
+        fileId: '1AvQ29xq028haZxutJobIJO5Eo8WOchIv',
+      },
+    ],
+  },
+  'ripam-1340-com': {
+    concorso: 'RIPAM — Funzionari amministrativi (bando 1340), profilo Comunicazione (COM)',
+    concorsoShort: 'concorso RIPAM 1340 Funzionari · profilo Comunicazione (COM)',
+    // Cartella Drive anteprime: ANTEPRIME/report-custom/funz-1340-com (8 report).
+    // Dossier completo (8 report in un unico PDF): fileId 1HUewe3UDt7bEuFjTuPVEnrYaT8lONhC6
+    // (tenuto fuori dai reports: è la raccolta d'insieme, non un report singolo).
+    reports: [
+      {
+        key: 'comunicazione-pubblica',
+        label: 'Comunicazione pubblica (L. 150/2000 e teoria della comunicazione)',
+        fileId: '1c3IwKEWItzKizn0kqZF3xV-EFHSXXCnE',
+      },
+      {
+        key: 'comunicazione-digitale',
+        label: 'Comunicazione digitale e social',
+        fileId: '1ennHs5aIiPS_1y-AJuG4Z3cWn201W3pS',
+      },
+      {
+        key: 'urp-ufficio-stampa',
+        label: 'URP, ufficio stampa e giornalismo PA (campagne, comunicazione di crisi)',
+        fileId: '1ORCmtazfOOZ5vSWurob-2sOIfwe8Inln',
+      },
+      {
+        key: 'diritto-amm',
+        label: 'Diritto amministrativo (L. 241/1990 — procedimento, provvedimento, accesso)',
+        fileId: '1TvhTYQ0MJAAfIewJ0W6TzWnI7iAmrlNz',
+      },
+      {
+        key: 'contratti-pubblici',
+        label: 'Contratti pubblici (D.Lgs. 36/2023 — principi, soglie, procedure)',
+        fileId: '1whqgm0_1aau9TAQBoonWRaNYIP8RoaFB',
+      },
+      {
+        key: 'anticorruzione-trasparenza',
+        label: 'Anticorruzione e trasparenza (L. 190/2012, D.Lgs. 33/2013, PIAO/RPCT, whistleblowing)',
+        fileId: '1h7HaZZog0QodzgXCUffUwsb5GmNECAQZ',
+      },
+      {
+        key: 'gdpr-privacy',
+        label: 'GDPR e privacy (principi art. 5, basi giuridiche, data breach)',
+        fileId: '1wjWhW9NEmNREYsZCBjxQSliyuVz7w3pc',
+      },
+      {
+        key: 'cad',
+        label: 'CAD — Codice dell\'Amministrazione Digitale (SPID, firme, documento informatico)',
+        fileId: '1OH2xRVQbyF9j4kCmtIJ6aYUIz5UILjmI',
+      },
+    ],
+  },
 }
 
 // Lista delle chiavi concorso ammesse (per validare l'input lato CLI/skill).

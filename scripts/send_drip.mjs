@@ -52,8 +52,8 @@ try {
 // ============================================================================
 // CONFIG DELL'INVIO — cambia qui per i drip successivi
 // ============================================================================
-const INVIO_ID = 'drip-2026-06-09-l2'
-const SUBJECT = '2 nuove materie da scaricare: Ordinamento PA e Diritto Penale PA'
+const INVIO_ID = 'drip-2026-07-03-completamento'
+const SUBJECT = 'Le ultime 5 materie: Anticorruzione, Contabilità, Logica, Patrimonio e Sicurezza'
 const KICKER = 'NUOVE MATERIE'
 // IMPORTANTE: in locale .env.local ha PUBLIC_BASE_URL=http://localhost:5173 (dev).
 // Le mail vanno SEMPRE col dominio di produzione, altrimenti i link /scrivimi e
@@ -66,22 +66,52 @@ if (_envUrl && /localhost|127\.0\.0\.1/.test(_envUrl)) {
   console.log(`[i] PUBLIC_BASE_URL è "${_envUrl}" (dev): forzo i link mail a ${PROD_URL}`)
 }
 
-// Le 3 materie del drip: slug (per il registro), titolo, normativa, link Drive.
+// Le materie del drip: slug (per il registro), titolo, normativa, link Drive.
+// `video` opzionale: se assente la card mostra solo AUDIO + MANUALE e l'invio
+// viene loggato come formato 'audio-manuale' (es. Informatica, senza video EP1).
+// Tutti i fileId presi da Drive ANTEPRIME (cartella=slug), permessi anyone/reader
+// verificati il 2026-06-13.
 const MATERIE = [
   {
-    slug: 'ordinamento-pa', titolo: 'Ordinamento PA', norm: 'D.Lgs. 300/1999',
-    audio: 'https://drive.google.com/file/d/1APPFfLTE5nYof4K24Ezo4GF4BxpwnntR/view',
-    video: 'https://drive.google.com/file/d/1gd1fn8tgeDBYd7tZbyNAH7qkOP2RJnKA/view',
-    manuale: 'https://drive.google.com/file/d/1uVqAZUbbdJDSdDiIvFpgZUoKZBWAufZC/view',
+    slug: 'anticorruzione-trasparenza', titolo: 'Anticorruzione e Trasparenza', norm: 'L. 190/2012 · D.Lgs. 33/2013',
+    audio: 'https://drive.google.com/file/d/1_bDtTpeOFgeybg0m4rHSm47Ihku6I6nT/view',
+    manuale: 'https://drive.google.com/file/d/16sQ2Cb8po8MSGsj3SFJJ0ru_VRlkivKL/view',
+    // niente video EP1 → card a 2 pulsanti, formato 'audio-manuale'
   },
   {
-    slug: 'diritto-penale-pa', titolo: 'Diritto Penale PA', norm: 'Codice Penale · artt. 314-360',
-    audio: 'https://drive.google.com/file/d/1vvsI3VSweOld_MRi24IJ_lesJCM9Nznx/view',
-    video: 'https://drive.google.com/file/d/1F7puILkbAnaZqTZwfi1QACRAwWEA4516/view',
-    manuale: 'https://drive.google.com/file/d/15XP2oXuWTfZyGkuX4v3U_9FRu_2nd9CW/view',
+    slug: 'contabilita-pubblica', titolo: 'Contabilità Pubblica', norm: 'L. 196/2009 · D.Lgs. 118/2011',
+    audio: 'https://drive.google.com/file/d/1o1x7iwknwtKc_BheGzzHCY04u5pXk-5q/view',
+    video: 'https://drive.google.com/file/d/1C-Z2g58c5-qZIrn8J4Yjc7viwKR_YFK4/view',
+    manuale: 'https://drive.google.com/file/d/1EmAxlL-8-4CUbw_qmCl4FI1EQ0xtT1-K/view',
+  },
+  {
+    slug: 'logica', titolo: 'Logica e ragionamento', norm: 'Ragionamento critico',
+    audio: 'https://drive.google.com/file/d/13WNdyrZ9Q1LSkIK5UCmaY9kezDgdQD8g/view',
+    manuale: 'https://drive.google.com/file/d/1ZaorlL5PFzog31vV-K2n5xaolmAnwCUO/view',
+    // niente video EP1 → card a 2 pulsanti, formato 'audio-manuale'
+  },
+  {
+    slug: 'patrimonio-culturale', titolo: 'Patrimonio Culturale', norm: 'Normativa MIC',
+    audio: 'https://drive.google.com/file/d/1vOU17nrXj0nuRglbEoPsly4RwwNMMDWE/view',
+    video: 'https://drive.google.com/file/d/1F_oNRF9WoCSoGjFQyoNwRvfYndTT8qK8/view',
+    manuale: 'https://drive.google.com/file/d/1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy/view',
+  },
+  {
+    slug: 'sicurezza-lavoro', titolo: 'Sicurezza sul Lavoro', norm: 'D.Lgs. 81/2008',
+    audio: 'https://drive.google.com/file/d/14M0G7y0wC1k4FBTpqchsJgxU-NvdkS3o/view',
+    video: 'https://drive.google.com/file/d/1RPRoaTJNrjK2Zno37xaHg9xW2t3vUdse/view',
+    manuale: 'https://drive.google.com/file/d/1zEh4-4cLBbZroEyO0oXyCiddkX-sMjqL/view',
   },
 ]
+// formato di default per il registro; le materie senza `video` → 'audio-manuale'
 const FORMATO = 'completa-avm'
+const formatoDi = (m) => m.video ? FORMATO : 'audio-manuale'
+
+// Teaser report custom per concorso (Drive report-custom/<slug-concorso>/), NON
+// tracciati nel registro anteprime_inviate (quello è per materia, non per
+// concorso) — annuncio una-tantum a tutta la lista, come nel blast CPI Sicilia
+// SAC del 22/06. Un report rappresentativo per concorso + CTA per gli altri.
+const REPORT_EXTRA = []
 
 // --- args -------------------------------------------------------------------
 function parseArgs(argv) {
@@ -148,7 +178,17 @@ function materiaCard(m) {
     <tr><td style="border:2px solid ${BRAND.ink};padding:18px 20px;background:${BRAND.cream};">
       <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:0.12em;color:${BRAND.muted};margin-bottom:6px;text-transform:uppercase;">${m.norm} &middot; ${m.titolo}</div>
       <div style="font-size:22px;font-weight:800;color:${BRAND.ink};margin-bottom:14px;letter-spacing:-0.02em;line-height:1.15;">${m.titolo} &mdash; EP1</div>
-      ${pill(m.audio, 'AUDIO EP1')}${pill(m.video, 'VIDEO EP1')}${pill(m.manuale, 'MANUALE PDF', { orange: true })}
+      ${pill(m.audio, 'AUDIO EP1')}${m.video ? pill(m.video, 'VIDEO EP1') : ''}${pill(m.manuale, 'MANUALE PDF', { orange: true })}
+    </td></tr>
+  </table>`
+}
+function reportCard(r) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px;">
+    <tr><td style="border:2px solid ${BRAND.ink};padding:18px 20px;background:${BRAND.cream};">
+      <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:0.12em;color:${BRAND.muted};margin-bottom:6px;text-transform:uppercase;">REPORT CUSTOM &middot; ${r.concorso}</div>
+      <div style="font-size:22px;font-weight:800;color:${BRAND.ink};margin-bottom:10px;letter-spacing:-0.02em;line-height:1.15;">${r.titolo}</div>
+      ${pill(r.url, 'ANTEPRIMA REPORT', { orange: true })}
+      <div style="margin-top:10px;font-size:13px;color:${BRAND.muted}">+ altri ${r.altri} report per questo concorso &mdash; rispondi a questa mail per riceverli.</div>
     </td></tr>
   </table>`
 }
@@ -156,10 +196,13 @@ function buildHtml(firstName, materie, unsubUrl) {
   const n = materie.length
   const parolaMaterie = n === 1 ? 'una materia' : `${n} materie`
   const cards = materie.map(materiaCard).join('\n')
+  const reportCards = REPORT_EXTRA.map(reportCard).join('\n')
   const saluto = firstName ? `Ciao <strong>${firstName}</strong>,` : 'Ciao,'
   return `<p style="margin:0 0 14px">${saluto}</p>
   <p style="margin:0 0 16px">quando ti sei iscritto ti avevo promesso che ti avrei mandato <strong>nuove materie</strong> a mano a mano. Eccoti <strong>${parolaMaterie}</strong> tra le più richieste per i concorsi pubblici &mdash; ognuna con <strong>Audio EP1, Video EP1 e anteprima del Manuale</strong> (PDF). Clicchi e scarichi, senza passare dal form.</p>
   ${cards}
+  ${REPORT_EXTRA.length ? `<p style="margin:20px 0 16px">Ho anche preparato dei <strong>report di studio su misura per concorso specifico</strong> &mdash; qui un'anteprima per due concorsi molto richiesti:</p>
+  ${reportCards}` : ''}
   <p style="margin:18px 0 0">Ti serve una materia che non trovi qui, o il manuale completo di una di queste? Rispondi a questa mail o usa il <a href="${BASE_URL}/scrivimi" style="color:${BRAND.ink};font-weight:700">form del sito</a>.</p>
   <p style="margin:16px 0 0">A presto,<br><strong>Francesco Capurso</strong></p>
   <p style="margin:18px 0 0;font-size:11px;color:${BRAND.muted};font-family:'Courier New',monospace;letter-spacing:.06em"><a href="${unsubUrl}" style="color:${BRAND.muted};text-decoration:underline">DISISCRIVITI ONE-CLICK</a> &middot; ricevi max 1-2 mail al mese</p>`
@@ -173,8 +216,17 @@ function buildText(firstName, materie, unsubUrl) {
   for (const m of materie) {
     lines.push(`${m.titolo.toUpperCase()} (${m.norm})`)
     lines.push(`  Audio EP1   -> ${m.audio}`)
-    lines.push(`  Video EP1   -> ${m.video}`)
+    if (m.video) lines.push(`  Video EP1   -> ${m.video}`)
     lines.push(`  Manuale PDF -> ${m.manuale}`, '')
+  }
+  if (REPORT_EXTRA.length) {
+    lines.push(`Ho anche preparato dei report di studio su misura per concorso specifico,`)
+    lines.push(`ecco un'anteprima per due concorsi molto richiesti:`, '')
+    for (const r of REPORT_EXTRA) {
+      lines.push(`REPORT CUSTOM - ${r.concorso}: ${r.titolo}`)
+      lines.push(`  Anteprima -> ${r.url}`)
+      lines.push(`  (+ altri ${r.altri} report per questo concorso, rispondi a questa mail)`, '')
+    }
   }
   lines.push(`Ti serve un'altra materia o il manuale completo? Rispondi a questa mail o usa il form:`)
   lines.push(`${BASE_URL}/scrivimi`, '')
@@ -277,7 +329,7 @@ for (const email of emails) {
     for (const m of daInviare) {
       await sql`
         INSERT INTO anteprime_inviate (email, nome, materia, formato, canale, invio_id)
-        VALUES (${email}, ${sub.nome}, ${m.slug}, ${FORMATO}, 'drip', ${INVIO_ID})
+        VALUES (${email}, ${sub.nome}, ${m.slug}, ${formatoDi(m)}, 'drip', ${INVIO_ID})
         ON CONFLICT (LOWER(email), materia, formato) DO NOTHING
       `
     }

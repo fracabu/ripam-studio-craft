@@ -31,7 +31,7 @@ export const ANTEPRIME_MANIFEST = {
   'gdpr':                        '12Y1ukX0nI1ABAovt0lostZxAcDRGD4nA',
   'informatica':                 '1ROh5VILoIDSYmASUCC9bfLdLqOBF8C6P',
   'logica':                      '1ZaorlL5PFzog31vV-K2n5xaolmAnwCUO',
-  'ordinamento-pa':              '1uVqAZUbbdJDSdDiIvFpgZUoKZBWAufZC',
+  'ordinamento-pa':              '1KO6u3m5074WBEyWlYSGR6JL3HEyrbMaG',
   'patrimonio-culturale':        '1OdwQQxv5fXakU0F6K-fPH0wCfXXOhYAy',
   'pubblico-impiego':            '1p5lak1Eo0_WIR2b4BOGWqd2gBctxKFPS',
   'sicurezza-lavoro':            '1zEh4-4cLBbZroEyO0oXyCiddkX-sMjqL',
