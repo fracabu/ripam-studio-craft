@@ -467,7 +467,8 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
   } else if (category === 'M5' && !originalSubject) {
     subject = `${materia || 'La materia che cerchi'}: posso crearla su misura — Ripam Studio Craft`
   } else if (category === 'RC' && !originalSubject) {
-    subject = `Le anteprime dei report — ${rcBundle.concorsoShort} — Ripam Studio Craft`
+    const uno = rcBundle.reports.length === 1
+    subject = `${uno ? "L'anteprima del report" : 'Le anteprime dei report'} — ${rcBundle.concorsoShort} — Ripam Studio Craft`
   } else {
     subject = replySubject(originalSubject)
   }

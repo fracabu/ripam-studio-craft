@@ -127,6 +127,40 @@ export const REPORT_CUSTOM_MANIFEST = {
       },
     ],
   },
+  'inps-1695-pecs': {
+    concorso: 'concorso INPS 1.695 Funzionari — profilo Consulente Protezione Sociale (PECS)',
+    concorsoShort: 'concorso INPS 1.695 Funzionari · profilo PECS',
+    // Cartella Drive anteprime: ANTEPRIME/report-custom/inps-1695-pecs (5 report =
+    // le 5 materie della Sezione A della prova scritta). Stessi fileId esposti
+    // dalla vetrina /report-custom (src/views/ReportCustom.vue).
+    reports: [
+      {
+        key: 'diritto-lavoro-previdenza',
+        label: 'Diritto del lavoro e della previdenza (rapporto subordinato, pensioni, ammortizzatori, INAIL)',
+        fileId: '1u5EUA8O0Ob8OwXW1gRRq4vVlMixTaqVk',
+      },
+      {
+        key: 'legislazione-sociale',
+        label: 'Legislazione sociale (invalidità civile, ISEE, Assegno Unico, Assegno di Inclusione)',
+        fileId: '1aezvJ_PXauQ9jhKsNeC8WFrYE5TuoRmC',
+      },
+      {
+        key: 'organizzazione-pa',
+        label: 'Organizzazione e funzionamento della PA (pubblico impiego, ordinamento INPS, trasparenza, privacy)',
+        fileId: '1fIT5frKIzMcleRdxGHDx1fPlFXSq3tnA',
+      },
+      {
+        key: 'pianificazione-controllo',
+        label: 'Pianificazione e controllo di gestione (budget, scostamenti, ROI/EVA, performance)',
+        fileId: '1WBrDY9zVELhdIO4_9F1Fm2vwkO8qnwhq',
+      },
+      {
+        key: 'competenze-informatiche',
+        label: 'Competenze informatiche (CAD, SPID/PEC, firme, PDND, GDPR)',
+        fileId: '19GtKRXMnSGihOODuxuJCSp4pGzchcEUz',
+      },
+    ],
+  },
   'ripam-1340-com': {
     concorso: 'RIPAM — Funzionari amministrativi (bando 1340), profilo Comunicazione (COM)',
     concorsoShort: 'concorso RIPAM 1340 Funzionari · profilo Comunicazione (COM)',
