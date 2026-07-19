@@ -130,10 +130,16 @@ export const REPORT_CUSTOM_MANIFEST = {
   'inps-1695-pecs': {
     concorso: 'concorso INPS 1.695 Funzionari — profilo Consulente Protezione Sociale (PECS)',
     concorsoShort: 'concorso INPS 1.695 Funzionari · profilo PECS',
-    // Cartella Drive anteprime: ANTEPRIME/report-custom/inps-1695-pecs (5 report =
-    // le 5 materie della Sezione A della prova scritta). Stessi fileId esposti
-    // dalla vetrina /report-custom (src/views/ReportCustom.vue).
+    // Cartella Drive anteprime: ANTEPRIME/report-custom/inps-1695-pecs (7 report =
+    // la preselettiva Cultura generale + le 5 materie della Sezione A della prova
+    // scritta + la Sezione B, prova situazionale SJT). Stessi fileId esposti dalla
+    // vetrina /report-custom (src/views/ReportCustom.vue).
     reports: [
+      {
+        key: 'cultura-generale',
+        label: 'Cultura generale — la preselettiva (Costituzione e ordinamento dello Stato, UE, storia, geografia, scienza, letteratura)',
+        fileId: '1zkYbN0hzpU1lmI-HmZYVYm30DnRzcmLW',
+      },
       {
         key: 'diritto-lavoro-previdenza',
         label: 'Diritto del lavoro e della previdenza (rapporto subordinato, pensioni, ammortizzatori, INAIL)',
@@ -158,6 +164,11 @@ export const REPORT_CUSTOM_MANIFEST = {
         key: 'competenze-informatiche',
         label: 'Competenze informatiche (CAD, SPID/PEC, firme, PDND, GDPR)',
         fileId: '19GtKRXMnSGihOODuxuJCSp4pGzchcEUz',
+      },
+      {
+        key: 'sezione-b-sjt',
+        label: 'Sezione B — Prova situazionale (SJT): metodo, griglia decisionale e 20 scenari commentati',
+        fileId: '10sumfSmjfLktX4EPcTVFN4NKSVugzHHP',
       },
     ],
   },
