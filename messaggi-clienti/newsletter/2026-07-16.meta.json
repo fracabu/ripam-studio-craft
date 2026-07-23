@@ -1,0 +1,33 @@
+{
+  "subject": "Funzionari 1340 profilo AMM: Diritto amministrativo e Costituzionale (1 di 5)",
+  "preheader": "Diritto amministrativo e Diritto costituzionale, anteprime in chiaro. Primo di cinque numeri, due materie alla volta.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-07-16",
+  "issue_label": "NEWSLETTER",
+  "kicker": "SERIE AMM 1 DI 5",
+  "headline": "Il profilo AMM del 1340, due materie alla volta.",
+  "is_welcome": false,
+  "serie": {
+    "nome": "serie-amm-1340",
+    "numero": 1,
+    "totale": 5,
+    "cadenza": "settimanale",
+    "tema": "Le basi giuridiche",
+    "prossimi": [
+      { "numero": 2, "tema": "Dove girano i soldi", "report": ["contratti-pubblici", "contabilita-pubblica"] },
+      { "numero": 3, "tema": "Chi lavora nella PA", "report": ["pubblico-impiego", "anticorruzione-trasparenza"] },
+      { "numero": 4, "tema": "La PA digitale", "report": ["cad", "gdpr-privacy"] },
+      { "numero": 5, "tema": "Le trasversali", "report": ["diritto-civile", "diritto-penale"] }
+    ]
+  },
+  "sections_used": ["intro", "hero_numero1_basi_giuridiche", "sec1_due_anteprime", "sec2_prossimi_numeri", "sec3_report_o_manuale", "closing_cta_scrivimi"],
+  "report_anteprime": {
+    "funz-1340-amm": [
+      "https://drive.google.com/file/d/1aqb1pSX-TVJca3IPND25cVAvlyn9teFj/view",
+      "https://drive.google.com/file/d/1vjevz4ncIY-FdcAWKW_WVE9NBZL-qqFv/view"
+    ]
+  },
+  "word_count": 340
+}

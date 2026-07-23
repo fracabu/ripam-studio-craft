@@ -1,0 +1,34 @@
+{
+  "subject": "Nuovi report su misura: profilo Comunicazione e INPS PECS",
+  "preheader": "8 report per il profilo COM del Funzionari 1340 e 5 report per l'INPS 1695 PECS — anteprime in chiaro.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-07-06",
+  "issue_label": "NEWSLETTER",
+  "kicker": "REPORT SU MISURA",
+  "headline": "Nuovi report su misura: profilo Comunicazione e INPS PECS.",
+  "is_welcome": false,
+  "sections_used": ["intro", "hero_com_funz1340", "sec1_report_com", "sec2_report_inps_pecs", "closing_cta_scrivimi"],
+  "report_anteprime": {
+    "funz-1340-com": [
+      "https://drive.google.com/file/d/1c3IwKEWItzKizn0kqZF3xV-EFHSXXCnE/view",
+      "https://drive.google.com/file/d/1ennHs5aIiPS_1y-AJuG4Z3cWn201W3pS/view",
+      "https://drive.google.com/file/d/1ORCmtazfOOZ5vSWurob-2sOIfwe8Inln/view",
+      "https://drive.google.com/file/d/1TvhTYQ0MJAAfIewJ0W6TzWnI7iAmrlNz/view",
+      "https://drive.google.com/file/d/1whqgm0_1aau9TAQBoonWRaNYIP8RoaFB/view",
+      "https://drive.google.com/file/d/1h7HaZZog0QodzgXCUffUwsb5GmNECAQZ/view",
+      "https://drive.google.com/file/d/1wjWhW9NEmNREYsZCBjxQSliyuVz7w3pc/view",
+      "https://drive.google.com/file/d/1OH2xRVQbyF9j4kCmtIJ6aYUIz5UILjmI/view",
+      "https://drive.google.com/file/d/1HUewe3UDt7bEuFjTuPVEnrYaT8lONhC6/view"
+    ],
+    "inps-pecs-1695": [
+      "https://drive.google.com/file/d/1fIT5frKIzMcleRdxGHDx1fPlFXSq3tnA/view",
+      "https://drive.google.com/file/d/1u5EUA8O0Ob8OwXW1gRRq4vVlMixTaqVk/view",
+      "https://drive.google.com/file/d/1aezvJ_PXauQ9jhKsNeC8WFrYE5TuoRmC/view",
+      "https://drive.google.com/file/d/1WBrDY9zVELhdIO4_9F1Fm2vwkO8qnwhq/view",
+      "https://drive.google.com/file/d/19GtKRXMnSGihOODuxuJCSp4pGzchcEUz/view"
+    ]
+  },
+  "word_count": 420
+}

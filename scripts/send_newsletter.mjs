@@ -11,6 +11,8 @@
 //   --only-email=<email>  spedisce solo a quell'indirizzo (test mirato)
 //   --limit=<n>           max destinatari in questa esecuzione (default 30, max 200)
 //   --rate-ms=<ms>        pausa tra una mail e l'altra (default 1300, min 800)
+//   --require-received=<YYYY-MM-DD>  manda SOLO a chi ha gia' ricevuto quel numero
+//                         (serie a puntate: il n.2 solo a chi ha il n.1)
 //
 // Esempi:
 //   node scripts/send_newsletter.mjs 2026-05-24 --dry-run
@@ -53,12 +55,13 @@ if (!file || file.startsWith('--')) {
   process.exit(1)
 }
 
-const flags = { dry_run: false, only_email: null, limit: null, rate_ms: null }
+const flags = { dry_run: false, only_email: null, limit: null, rate_ms: null, require_received: null }
 for (const a of rest) {
   if (a === '--dry-run') flags.dry_run = true
   else if (a.startsWith('--only-email=')) flags.only_email = a.split('=')[1]
   else if (a.startsWith('--limit=')) flags.limit = parseInt(a.split('=')[1], 10)
   else if (a.startsWith('--rate-ms=')) flags.rate_ms = parseInt(a.split('=')[1], 10)
+  else if (a.startsWith('--require-received=')) flags.require_received = a.split('=')[1]
   else { console.error(`Argomento sconosciuto: ${a}`); process.exit(1) }
 }
 
@@ -92,6 +95,7 @@ const res = {
 console.log(`\n=== SEND ${file} ===`)
 console.log(`Mode:        ${flags.dry_run ? 'DRY RUN (no mail)' : 'LIVE SEND'}`)
 if (flags.only_email) console.log(`Only-email:  ${flags.only_email}`)
+if (flags.require_received) console.log(`Solo a chi ha ricevuto: ${flags.require_received}`)
 if (flags.limit) console.log(`Limit:       ${flags.limit}`)
 if (flags.rate_ms) console.log(`Rate ms:     ${flags.rate_ms}`)
 console.log('')

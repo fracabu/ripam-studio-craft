@@ -1,0 +1,32 @@
+{
+  "subject": "Funzionari 1340 profilo AMM: Contratti e Contabilità pubblica (2 di 5)",
+  "preheader": "Contratti pubblici e Contabilità pubblica, anteprime in chiaro. Secondo di cinque numeri, due materie alla volta.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-07-20",
+  "issue_label": "NEWSLETTER",
+  "kicker": "SERIE AMM 2 DI 5",
+  "headline": "Dove girano i soldi nella PA: come si spendono e come si contano.",
+  "is_welcome": false,
+  "serie": {
+    "nome": "serie-amm-1340",
+    "numero": 2,
+    "totale": 5,
+    "cadenza": "settimanale",
+    "tema": "Dove girano i soldi",
+    "prossimi": [
+      { "numero": 3, "tema": "Chi lavora nella PA", "report": ["pubblico-impiego", "anticorruzione-trasparenza"] },
+      { "numero": 4, "tema": "La PA digitale", "report": ["cad", "gdpr-privacy"] },
+      { "numero": 5, "tema": "Le trasversali", "report": ["diritto-civile", "diritto-penale"] }
+    ]
+  },
+  "sections_used": ["intro", "hero_numero2_dove_girano_soldi", "sec1_due_anteprime", "sec2_prossimi_numeri", "sec3_report_o_manuale", "closing_cta_scrivimi"],
+  "report_anteprime": {
+    "funz-1340-amm": [
+      "https://drive.google.com/file/d/1Wje2nMKfGutRv8W8WyDczfFpGQDHPMw_/view",
+      "https://drive.google.com/file/d/1J42TtZu16rl1t95X384NKoVGTcIVrd_n/view"
+    ]
+  },
+  "word_count": 350
+}

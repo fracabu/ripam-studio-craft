@@ -5,6 +5,16 @@
 //
 // Sicurezza: protetto da header X-Admin-Secret == process.env.ADMIN_SECRET.
 //
+// DUE REGISTRI, DUE SCOPI DIVERSI — si scrive in entrambi:
+//   - newsletter_send_events: idempotenza di QUESTO endpoint (l'anti-join qui
+//     sotto legge solo questa tabella). Governa chi riceve la prossima chiamata.
+//   - invii_email (via _lib/invii-log.js): registro trasversale "a chi ho mandato
+//     cosa". È quello che i blast futuri interrogano con giaRicevuto() per non
+//     ricontattare chi ha già visto una comunicazione. Chi non logga qui, per il
+//     sistema non è partito → doppione alla campagna successiva.
+// Lo slug campagna è `newsletter-<basename>` (la data è già nel basename, quindi
+// ogni numero resta una campagna distinta) oppure meta.campagna se specificato.
+//
 // Body atteso:
 //   {
 //     file: '2026-05-24',          // basename dei 3 file (senza estensione)
@@ -27,6 +37,7 @@ import { neon } from '@neondatabase/serverless'
 import nodemailer from 'nodemailer'
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
+import { logInvio } from '../_lib/invii-log.js'
 
 const DEFAULT_LIMIT = 30
 const DEFAULT_RATE_MS = 1300
@@ -53,10 +64,17 @@ export default async function handler(req, res) {
   } catch {
     return res.status(400).json({ error: 'Body JSON non valido' })
   }
-  const { file, dry_run, only_email, limit, rate_ms } = body
+  const { file, dry_run, only_email, limit, rate_ms, require_received } = body
   if (!file || typeof file !== 'string' || !/^[\w.-]{1,64}$/.test(file)) {
     return res.status(400).json({ error: 'Parametro "file" mancante o non valido' })
   }
+  // Filtro audience opzionale: manda SOLO a chi ha gia' ricevuto un altro numero
+  // (newsletter_id passato qui). Serve alle serie a puntate: "il n.2 va solo a chi
+  // ha ricevuto il n.1", senza agganciare i nuovi iscritti arrivati dopo. null =
+  // nessun filtro (comportamento storico: tutti gli active non ancora serviti).
+  const requireReceived = (typeof require_received === 'string' && /^[\w.-]{1,64}$/.test(require_received))
+    ? require_received
+    : null
 
   const effLimit = Math.min(Math.max(parseInt(limit || DEFAULT_LIMIT, 10) || DEFAULT_LIMIT, 1), MAX_LIMIT)
   const effRate = Math.max(parseInt(rate_ms || DEFAULT_RATE_MS, 10) || DEFAULT_RATE_MS, MIN_RATE_MS)
@@ -90,6 +108,12 @@ export default async function handler(req, res) {
   if (!meta.subject) return res.status(400).json({ error: 'meta.subject mancante' })
 
   const newsletterId = file  // usiamo il basename come id idempotente
+  // Slug campagna per il registro invii_email. Il basename contiene gia' la data
+  // (2026-07-16), quindi ogni numero e' una campagna a se': l'unique
+  // (LOWER(email), campagna) non collassa piu' invii in una riga sola.
+  const campagna = (typeof meta.campagna === 'string' && meta.campagna.trim())
+    ? meta.campagna.trim()
+    : `newsletter-${newsletterId}`
   const sql = neon(databaseUrl)
 
   // Anti-join: prendi gli active che NON hanno gia' una row send_events per questa newsletter.
@@ -119,6 +143,10 @@ export default async function handler(req, res) {
           AND s.unsubscribed_at IS NULL
           AND s.bounce_count < 3
           AND e.id IS NULL
+          AND (${requireReceived}::text IS NULL OR EXISTS (
+            SELECT 1 FROM newsletter_send_events e2
+            WHERE e2.subscriber_id = s.id AND e2.newsletter_id = ${requireReceived}
+          ))
         ORDER BY s.confirmed_at ASC
         LIMIT ${effLimit}
       `
@@ -140,6 +168,10 @@ export default async function handler(req, res) {
         AND s.unsubscribed_at IS NULL
         AND s.bounce_count < 3
         AND e.id IS NULL
+        AND (${requireReceived}::text IS NULL OR EXISTS (
+          SELECT 1 FROM newsletter_send_events e2
+          WHERE e2.subscriber_id = s.id AND e2.newsletter_id = ${requireReceived}
+        ))
     `
     remainingAfter = Math.max(0, (remRows[0]?.n || 0) - rows.length)
   } catch {
@@ -176,6 +208,10 @@ export default async function handler(req, res) {
   const currentMonthYearFull = `${monthsIt[now.getMonth()]} ${now.getFullYear()}`
   const currentMonthYearShort = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`
 
+  // Righe che il registro invii_email non e' riuscito a scrivere: la mail e'
+  // partita comunque (non si "disinvia"), ma la persona risultera' mai contattata
+  // al prossimo giaRicevuto() → va segnalato all'admin, non ingoiato.
+  const registroKo = []
   const results = { sent: [], failed: [] }
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i]
@@ -225,6 +261,12 @@ export default async function handler(req, res) {
         WHERE id = ${r.id}
       `
 
+      // Registro invii trasversale: e' cio' che i blast futuri interrogano.
+      if (await logInvio({
+        email: r.email, nome: r.nome, campagna, oggetto: meta.subject,
+        tipo: 'newsletter', canale: 'blast', messageId: info.messageId, esito: 'sent',
+      }) === 'errore') registroKo.push(r.email)
+
       results.sent.push({ id: r.id, email: r.email, messageId: info.messageId })
     } catch (err) {
       console.error(`Send failed for ${r.email}:`, err)
@@ -237,6 +279,13 @@ export default async function handler(req, res) {
           ON CONFLICT (subscriber_id, newsletter_id) DO NOTHING
         `
       } catch {}
+      // Anche il fallimento va a registro (esito='failed'): occupa lo slot
+      // dell'unique, quindi per rimandare si cancella la riga a mano — esplicito.
+      if (await logInvio({
+        email: r.email, nome: r.nome, campagna, oggetto: meta.subject,
+        tipo: 'newsletter', canale: 'blast', esito: 'failed',
+        errore: String(err.message || err).slice(0, 500),
+      }) === 'errore') registroKo.push(r.email)
       results.failed.push({ id: r.id, email: r.email, error: String(err.message || err) })
     }
 
@@ -248,9 +297,14 @@ export default async function handler(req, res) {
     ok: true,
     newsletter_id: newsletterId,
     subject: meta.subject,
+    campagna,
     sent: results.sent.length,
     failed: results.failed.length,
     remaining_after: remainingAfter != null ? Math.max(0, remainingAfter) : null,
+    // Se non e' 0, quelle persone hanno ricevuto la mail ma non risultano a
+    // registro: il prossimo blast le ricontattera'. Vanno loggate a mano.
+    registro_invii_ko: registroKo.length,
+    ...(registroKo.length ? { registro_invii_ko_emails: registroKo } : {}),
     details: results,
   })
 }
