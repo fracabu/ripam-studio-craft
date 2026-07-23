@@ -4,7 +4,12 @@
 
 import { neon } from '@neondatabase/serverless'
 import { sendAnteprimaMail } from '../_lib/anteprima-mail.js'
-import { sendWelcomeNewsletter } from '../_lib/welcome-newsletter.js'
+import {
+  sendWelcomeNewsletter,
+  loadWelcomeMeta,
+  welcomeAlreadySent,
+  registerWelcomeDelivery,
+} from '../_lib/welcome-newsletter.js'
 
 function htmlPage({ title, kicker, headline, body, color = '#c6f432' }) {
   return `<!DOCTYPE html>
@@ -80,47 +85,83 @@ export default async function handler(req, res) {
     if (rows.length > 0) {
       const row = rows[0]
 
-      // Se l'utente si era iscritto richiedendo l'anteprima di una materia,
-      // la consegniamo immediatamente in una mail separata.
-      // L'errore SMTP qui NON deve far fallire la pagina di conferma:
-      // la conferma è già committata sul DB, l'utente vede comunque "Ci sei".
-      // L'errore viene loggato per follow-up manuale.
+      const subscriber = {
+        id: row.id,
+        email: row.email,
+        nome: row.nome,
+        unsubscribe_token: row.unsubscribe_token,
+      }
+
+      // UNA mail sola per chi arriva dalla modale anteprima (dal 2026-07-23).
+      // Prima ne partivano due nello stesso minuto — l'anteprima richiesta e la
+      // welcome newsletter — ed è la raffica d'ingresso che ha prodotto le
+      // disiscrizioni immediate. Ora il contenuto della welcome viaggia DENTRO
+      // la mail dell'anteprima (blocco "in più, perché sei iscritto"), e la
+      // welcome viene solo REGISTRATA come consegnata: così l'idempotenza e il
+      // registro anteprime (anti-doppione del drip) restano quelli di prima.
+      // Chi si iscrive senza chiedere un'anteprima riceve la welcome normale.
       let anteprimaDelivered = null
+      let mailFusaRiuscita = false
+
       if (row.requested_materia) {
+        const welcomeBundle = loadWelcomeMeta()
+        const giaInviata = await welcomeAlreadySent({ sql, subscriberId: row.id })
+        const baseUrl = process.env.PUBLIC_BASE_URL || 'https://ripam-studio-craft.vercel.app'
+        const unsubUrl = `${baseUrl}/api/newsletter/unsubscribe?t=${row.unsubscribe_token}`
+
         try {
           const result = await sendAnteprimaMail({
             email: row.email,
             nome: row.nome,
             slug: row.requested_materia,
+            welcome: (welcomeBundle && !giaInviata)
+              ? { meta: welcomeBundle.meta, unsubUrl }
+              : null,
           })
           anteprimaDelivered = result.delivered
+          // Solo se il blocco benvenuto è finito davvero nella mail la welcome
+          // è "coperta". Se per qualsiasi motivo non c'è (meta senza link Drive,
+          // welcome già inviata in passato), lasciamo decidere sendWelcomeNewsletter:
+          // è idempotente, quindi o la manda o la salta, ma non la perde.
+          mailFusaRiuscita = result.welcomeIncluded
+
+          if (result.welcomeIncluded) {
+            try {
+              await registerWelcomeDelivery({
+                sql,
+                subscriber,
+                meta: welcomeBundle.meta,
+                newsletterId: welcomeBundle.newsletterId,
+              })
+            } catch (regErr) {
+              // La mail è partita: qui rischiamo solo che la welcome risulti
+              // "non inviata" e riparta al prossimo confirm — meglio del contrario.
+              console.error('Welcome registration failed for subscriber', row.id, regErr)
+            }
+          }
         } catch (mailErr) {
           console.error('Anteprima mail send failed for subscriber',
                         row.id, row.requested_materia, mailErr)
-          // Lasciamo anteprimaDelivered = null → messaggio fallback nella pagina
+          // Lasciamo anteprimaDelivered = null → messaggio fallback nella pagina.
+          // mailFusaRiuscita resta false: sotto parte la welcome normale, così
+          // l'iscritto riceve almeno il benvenuto invece di niente.
         }
       }
 
-      // Auto-welcome: spedisce in automatico la newsletter "perenne" indicata
-      // in env WELCOME_NEWSLETTER_ID. Idempotente via ON CONFLICT su
-      // newsletter_send_events: se per qualsiasi motivo l'utente clicca di
-      // nuovo confirm o se il bot ricarica la pagina, la welcome non si duplica.
+      // Welcome come mail a sé: per chi non ha chiesto anteprime, e come rete di
+      // sicurezza se la mail fusa è fallita. Idempotente via ON CONFLICT su
+      // newsletter_send_events: se l'utente riclicca il link di conferma o un bot
+      // ricarica la pagina, non si duplica.
       // Errori NON bloccano la pagina di conferma — la conferma è già committata.
-      try {
-        const welcomeResult = await sendWelcomeNewsletter({
-          sql,
-          subscriber: {
-            id: row.id,
-            email: row.email,
-            nome: row.nome,
-            unsubscribe_token: row.unsubscribe_token,
-          },
-        })
-        if (!welcomeResult.sent && welcomeResult.error) {
-          console.error('Welcome send failed for subscriber', row.id, welcomeResult.error)
+      if (!mailFusaRiuscita) {
+        try {
+          const welcomeResult = await sendWelcomeNewsletter({ sql, subscriber })
+          if (!welcomeResult.sent && welcomeResult.error) {
+            console.error('Welcome send failed for subscriber', row.id, welcomeResult.error)
+          }
+        } catch (welcomeErr) {
+          console.error('Welcome send threw for subscriber', row.id, welcomeErr)
         }
-      } catch (welcomeErr) {
-        console.error('Welcome send threw for subscriber', row.id, welcomeErr)
       }
 
       // Conferma riuscita — pagina HTML adattata se c'era una richiesta anteprima.

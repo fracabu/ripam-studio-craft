@@ -25,6 +25,16 @@
 //   --dry-run            default: stampa il piano senza inviare
 //   --apply              invio reale + logging
 //   --rate <ms>          pausa tra un invio e l'altro (default 1500ms, limiti Gmail)
+//   --min-eta-giorni <n> non scrivere a chi si è iscritto da meno di n giorni
+//                        (default 7; --min-eta-giorni 0 disattiva il filtro)
+//
+// QUARANTENA NUOVI ISCRITTI (dal 2026-07-23): un iscritto appena confermato sta
+// già ricevendo la sequenza d'ingresso (conferma + welcome/anteprima). Se il drip
+// gli arriva sopra, sono 3 mail in poche ore e la reazione è la disiscrizione:
+// dei 3 abbandoni veri della lista, due sono avvenuti così — uno a 2 minuti dal
+// drip, ricevuto il giorno dopo l'iscrizione; l'altro dopo un drip arrivato 2h49
+// dopo l'iscrizione. Il drip serve a riempire i vuoti, non a saturare l'ingresso:
+// chi è dentro da meno di MIN_ETA_GIORNI lo prendiamo al giro successivo.
 //
 // Richiede .env.local: DATABASE_URL/POSTGRES_URL, GMAIL_USER, GMAIL_APP_PASSWORD.
 // Gira a PC acceso.
@@ -126,6 +136,10 @@ function parseArgs(argv) {
 }
 const args = parseArgs(process.argv.slice(2))
 const RATE = Number(args.rate) > 0 ? Number(args.rate) : 1500
+// Quarantena nuovi iscritti: 0 = disattivata (esplicito), default 7 giorni.
+const MIN_ETA_GIORNI = args['min-eta-giorni'] !== undefined && args['min-eta-giorni'] !== true
+  ? Math.max(0, Number(args['min-eta-giorni']) || 0)
+  : 7
 const recipientsPath = typeof args.recipients === 'string'
   ? args.recipients
   : join(ROOT, 'messaggi-clienti', 'drip', '2026-06-05.recipients.json')
@@ -291,7 +305,8 @@ if (typeof args.preview === 'string') {
 const apply = !!args.apply
 const emails = JSON.parse(readFileSync(recipientsPath, 'utf8')).map(e => String(e).toLowerCase().trim())
 console.log(`\n${apply ? '== INVIO REALE ==' : '== DRY-RUN (nessun invio) =='}`)
-console.log(`Invio: ${INVIO_ID} · ${emails.length} destinatari nel file · materie: ${MATERIE.map(m => m.slug).join(', ')}\n`)
+console.log(`Invio: ${INVIO_ID} · ${emails.length} destinatari nel file · materie: ${MATERIE.map(m => m.slug).join(', ')}`)
+console.log(`Quarantena nuovi iscritti: ${MIN_ETA_GIORNI > 0 ? `salto chi è iscritto da meno di ${MIN_ETA_GIORNI} giorni` : 'DISATTIVATA (--min-eta-giorni 0)'}\n`)
 
 const transporter = apply ? makeTransport() : null
 let sent = 0, skipped = 0, errors = 0
@@ -299,11 +314,21 @@ let sent = 0, skipped = 0, errors = 0
 for (const email of emails) {
   // dati iscritto + stato
   const sub = (await sql`
-    SELECT id, nome, unsubscribe_token, confirmed_at, unsubscribed_at
+    SELECT id, nome, unsubscribe_token, confirmed_at, unsubscribed_at, created_at
     FROM newsletter_subscribers WHERE LOWER(email) = ${email} LIMIT 1
   `)[0]
   if (!sub) { console.log(`[skip] ${email} — non in newsletter_subscribers`); skipped++; continue }
   if (!sub.confirmed_at || sub.unsubscribed_at) { console.log(`[skip] ${email} — non confermato o disiscritto`); skipped++; continue }
+
+  // Quarantena: chi è appena entrato sta ancora ricevendo la sequenza di
+  // benvenuto — il drip sopra a quella è la causa nota di disiscrizione.
+  if (MIN_ETA_GIORNI > 0) {
+    const eta = (Date.now() - new Date(sub.created_at).getTime()) / 86_400_000
+    if (eta < MIN_ETA_GIORNI) {
+      console.log(`[skip] ${email} — iscritto da ${eta.toFixed(1)}g (< ${MIN_ETA_GIORNI}g): in sequenza di benvenuto, lo prendo al prossimo drip`)
+      skipped++; continue
+    }
+  }
 
   // materie già ricevute (qualsiasi formato) → escludile
   const got = (await sql`

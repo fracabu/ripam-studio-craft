@@ -65,7 +65,64 @@ export const MATERIA_LABEL = {
   'valutazione-politiche-pubbliche': 'Valutazione Politiche Pubbliche',
 }
 
-function buildDeliveredEmail({ firstName, materiaLabel, viewUrl, downloadUrl }) {
+// --- blocco BENVENUTO fuso nella mail anteprima ------------------------------
+// Perché esiste (2026-07-23): chi arrivava dalla modale anteprima riceveva DUE
+// mail nello stesso minuto — l'anteprima richiesta e la welcome newsletter con
+// le anteprime complete di un'altra materia. Sulle 3 disiscrizioni vere della
+// lista, una è arrivata 16 minuti dopo quella raffica. Il contenuto della
+// welcome non si perde: diventa un blocco di questa mail, che resta UNA.
+//
+// `meta` è il meta.json della welcome (messaggi-clienti/newsletter/<id>.meta.json):
+// da lì prendiamo materia_di_oggi + drive_file_ids_oggi {audio, video, manuale}.
+function driveLinks(fileId) {
+  return {
+    view: `https://drive.google.com/file/d/${fileId}/view`,
+    download: `https://drive.google.com/uc?export=download&id=${fileId}`,
+  }
+}
+
+function buildWelcomeBlock({ meta, unsubUrl }) {
+  const ids = (meta && meta.drive_file_ids_oggi) || {}
+  const slug = meta && meta.materia_di_oggi
+  const label = MATERIA_LABEL[slug] || slug
+  if (!slug || (!ids.audio && !ids.video && !ids.manuale)) return null
+
+  const pill = (href, testo) =>
+    `<a href="${href}" style="display:inline-block;background:#0a0a0a;color:#f5f0e8;text-decoration:none;font-weight:700;font-size:13px;padding:10px 16px;margin:0 6px 8px 0;">${testo} &#x2913;</a>`
+
+  const bottoni = [
+    ids.audio ? pill(driveLinks(ids.audio).view, 'AUDIO EP1') : '',
+    ids.video ? pill(driveLinks(ids.video).view, 'VIDEO EP1') : '',
+    ids.manuale ? pill(driveLinks(ids.manuale).download, 'MANUALE PDF') : '',
+  ].join('')
+
+  const html = `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 18px">
+    <tr><td style="border:2px solid #0a0a0a;padding:18px 20px;">
+      <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;color:#6b6458;margin-bottom:8px">IN PIÙ, PERCHÉ SEI ISCRITTO</div>
+      <p style="margin:0 0 12px;font-size:15px">Le anteprime complete di <strong>${label}</strong> — audio, video e manuale, senza chiedere nulla:</p>
+      ${bottoni}
+    </td></tr>
+  </table>
+  <p style="margin:18px 0;font-size:13px;color:#6b6458">Da qui in avanti ricevi al massimo <strong>2 email al mese</strong>: nuove materie, anteprime e bandi. Niente altro. <a href="${unsubUrl}" style="color:#6b6458;text-decoration:underline">Disiscriviti one-click</a> quando vuoi.</p>`
+
+  const righe = [
+    '',
+    `IN PIÙ, PERCHÉ SEI ISCRITTO — le anteprime complete di ${label}:`,
+  ]
+  if (ids.audio) righe.push(`  Audio EP1   -> ${driveLinks(ids.audio).view}`)
+  if (ids.video) righe.push(`  Video EP1   -> ${driveLinks(ids.video).view}`)
+  if (ids.manuale) righe.push(`  Manuale PDF -> ${driveLinks(ids.manuale).download}`)
+  righe.push(
+    '',
+    'Da qui in avanti ricevi al massimo 2 email al mese: nuove materie, anteprime e bandi.',
+    `Disiscriviti one-click: ${unsubUrl}`,
+  )
+
+  return { html, text: righe.join('\n') }
+}
+
+function buildDeliveredEmail({ firstName, materiaLabel, viewUrl, downloadUrl, welcomeBlock }) {
   const subject = `L'anteprima di ${materiaLabel} è qui — Ripam Studio Craft`
 
   const text = `Ciao ${firstName},
@@ -81,8 +138,8 @@ ${viewUrl}
 Il link di download fa partire il file direttamente. Quello "apri nel browser" mostra il PDF su Google Drive (utile se vuoi leggerlo senza scaricare).
 
 Cosa trovi dentro: l'indice completo del manuale, l'introduzione e i primi due capitoli per intero, in modo che tu possa valutare lo stile e la profondità prima di chiedere il manuale completo.
-
-Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.
+${welcomeBlock ? welcomeBlock.text : `
+Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.`}
 
 Per qualunque cosa, rispondi pure a questa email.
 
@@ -103,14 +160,15 @@ ripamstudiocraft@gmail.com · P.IVA 18528431002
   </p>
   <p style="margin:18px 0;font-size:14px;color:#2a2a2a">Il pulsante avvia il download diretto del PDF — non serve account Google né autorizzazioni. Il link "apri nel browser" mostra il PDF su Drive, utile se preferisci leggerlo online.</p>
   <p style="margin:18px 0;font-size:14px;color:#2a2a2a"><strong>Cosa trovi dentro:</strong> indice completo del manuale, introduzione e primi due capitoli per intero. Così puoi valutare stile e profondità prima di chiedere il manuale completo.</p>
-  <p style="margin:18px 0;font-size:13px;color:#6b6458">Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email. Per qualunque cosa, rispondi pure a questa mail.</p>`
+  ${welcomeBlock ? welcomeBlock.html : `<p style="margin:18px 0;font-size:13px;color:#6b6458">Sei anche ufficialmente iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.</p>`}
+  <p style="margin:18px 0;font-size:13px;color:#6b6458">Per qualunque cosa, rispondi pure a questa mail.</p>`
 
-  const html = emailShell(inner, 'ANTEPRIMA MANUALE')
+  const html = emailShell(inner, welcomeBlock ? 'ANTEPRIMA + BENVENUTO' : 'ANTEPRIMA MANUALE')
 
   return { subject, text, html }
 }
 
-function buildPendingEmail({ firstName, materiaLabel }) {
+function buildPendingEmail({ firstName, materiaLabel, welcomeBlock }) {
   // Caso: utente ha richiesto un'anteprima per cui il fileId non è ancora
   // nel manifest (anteprima in fase di redesign, non ancora caricata su Drive).
   // Non lasciamo l'utente senza risposta — gli diciamo che la riceverà a breve.
@@ -121,8 +179,8 @@ function buildPendingEmail({ firstName, materiaLabel }) {
 grazie per aver richiesto l'anteprima del manuale di ${materiaLabel}.
 
 In questo momento sto rivedendo formattazione e design dei manuali, quindi l'anteprima ti arriverà via email non appena la nuova versione sarà pronta (giorni, non settimane).
-
-Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.
+${welcomeBlock ? welcomeBlock.text : `
+Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.`}
 
 Per qualunque cosa, rispondi pure a questa email.
 
@@ -136,9 +194,9 @@ ripamstudiocraft@gmail.com · P.IVA 18528431002
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 18px;font-size:15px">grazie per aver richiesto l'anteprima del manuale di <strong>${materiaLabel}</strong>.</p>
   <p style="margin:0 0 18px;font-size:15px">In questo momento sto rivedendo formattazione e design dei manuali, quindi l'anteprima ti arriverà via email non appena la nuova versione sarà pronta (giorni, non settimane).</p>
-  <p style="margin:18px 0;font-size:13px;color:#6b6458">Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.</p>`
+  ${welcomeBlock ? welcomeBlock.html : `<p style="margin:18px 0;font-size:13px;color:#6b6458">Nel frattempo sei iscritto alla newsletter: massimo 2 email al mese con anteprime, bandi e novità. Puoi disiscriverti con un click dal footer di ogni email.</p>`}`
 
-  const html = emailShell(inner, 'ANTEPRIMA IN ARRIVO')
+  const html = emailShell(inner, welcomeBlock ? 'ANTEPRIMA IN ARRIVO + BENVENUTO' : 'ANTEPRIMA IN ARRIVO')
 
   return { subject, text, html }
 }
@@ -159,7 +217,14 @@ function buildTransporter({ user, pass }) {
 // Throw se mancano env vars Gmail o se l'invio SMTP fallisce.
 // `canale` finisce nel registro anteprime (welcome | drip | lead | blast | manuale):
 // serve a sapere DA DOVE è arrivata la consegna, non solo che è avvenuta.
-export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome' }) {
+// `welcome` (opzionale) = { meta, unsubUrl }: se presente, il contenuto della
+// welcome newsletter viene FUSO in questa mail invece di partire come seconda
+// mail separata (vedi buildWelcomeBlock). Il chiamante — confirm.js — resta
+// responsabile di registrare la welcome come inviata sul DB.
+// Ritorna { ok, delivered, welcomeIncluded }: `welcomeIncluded` dice se il
+// blocco è finito davvero nella mail, così il chiamante sa se può loggare la
+// materia della welcome nel registro anteprime (se no, il drip la rimanderà).
+export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome', welcome = null }) {
   const user = process.env.GMAIL_USER
   const pass = process.env.GMAIL_APP_PASSWORD
   if (!user || !pass) {
@@ -170,11 +235,25 @@ export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome' 
   const firstName = (nome || '').split(/\s+/)[0] || 'ciao'
   const urls = getAnteprimaDriveUrls(slug)
 
+  const welcomeBlock = welcome && welcome.meta && welcome.unsubUrl
+    ? buildWelcomeBlock({ meta: welcome.meta, unsubUrl: welcome.unsubUrl })
+    : null
+
   const { subject, text, html } = urls
-    ? buildDeliveredEmail({ firstName, materiaLabel, ...urls })
-    : buildPendingEmail({ firstName, materiaLabel })
+    ? buildDeliveredEmail({ firstName, materiaLabel, ...urls, welcomeBlock })
+    : buildPendingEmail({ firstName, materiaLabel, welcomeBlock })
 
   const transporter = buildTransporter({ user, pass })
+
+  // Con il blocco welcome questa è a tutti gli effetti la mail di benvenuto:
+  // deve portare l'unsubscribe one-click negli header, come la welcome che
+  // sostituisce (conta per la deliverability, non solo per la cortesia).
+  const headers = welcomeBlock
+    ? {
+        'List-Unsubscribe': `<${welcome.unsubUrl}>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      }
+    : undefined
 
   await transporter.sendMail({
     from: `"Ripam Studio Craft" <${user}>`,
@@ -184,6 +263,7 @@ export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome' 
     text,
     html,
     attachments: [logoAttachment()],
+    ...(headers ? { headers } : {}),
   })
 
   // Registro anteprime: si logga SOLO la consegna vera (urls presenti). La mail
@@ -193,5 +273,5 @@ export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome' 
     await logAnteprima({ email, nome, materia: slug, formato: 'manuale', canale })
   }
 
-  return { ok: true, delivered: !!urls }
+  return { ok: true, delivered: !!urls, welcomeIncluded: !!welcomeBlock }
 }

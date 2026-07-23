@@ -64,4 +64,12 @@ public/preview/**/manuale-anteprima.pdf
 # materiale social (bozze post Telegram/IG/ecc.) — solo locale, MAI su Git/Vercel
 social/
 
+# knowledge graph generato da graphify: artefatto rigenerabile (`graphify update .`),
+# la cache AST cambierebbe a ogni run sporcando i diff. Resta locale.
+graphify-out/
+
+# presentazioni/seminari derivati dai manuali (PDF+PPTX pesanti): non servono al
+# deploy e gonfierebbero il bundle Vercel. Restano in locale.
+docs/
+
 .vercel

@@ -24,7 +24,7 @@ node scripts/orders_list.mjs --ordini                # tutti gli ordini, riga pe
 node scripts/orders_list.mjs --email <email>         # ordini di un singolo cliente
 
 # Drip anteprime + invio diretto lead — INVIANO mail vere via nodemailer (no bozza). Girano a PC acceso.
-node scripts/send_drip.mjs --dry-run                 # consegna "a goccia" nuove materie agli iscritti (anti-doppione su `anteprime_inviate`)
+node scripts/send_drip.mjs --dry-run                 # consegna "a goccia" nuove materie agli iscritti (anti-doppione su `anteprime_inviate`; salta chi è iscritto da <7 giorni, override con --min-eta-giorni)
 node scripts/send_lead.mjs ...                       # invio diretto mail a un lead (guscio DARK + logo inline); bozza composta da lead-draft.mjs / skill auto-risposte-lead
 node scripts/anteprima_log.mjs ...                   # registra a mano una consegna nel registro `anteprime_inviate`
 node scripts/anteprime_list.mjs                      # elenca chi ha ricevuto quale anteprima
@@ -32,6 +32,7 @@ node scripts/anteprime_list.mjs                      # elenca chi ha ricevuto qu
 # Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
 node scripts/backfill_invii.mjs --apply              # lo riversa su DB (idempotente, ~4 min su 2.6k messaggi)
+node scripts/backfill_invii_newsletter.mjs [<YYYY-MM-DD>] --apply   # riversa le newsletter da newsletter_send_events (fonte DB, non IMAP)
 ```
 
 Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.mjs` sono diagnostiche usa-e-getta (git-ignored).
@@ -61,9 +62,9 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 - `api/contact.js` — `POST` dal form contatti → invia mail a `ripamstudiocraft@gmail.com`. Honeypot `hp`, limiti di lunghezza, sanitizzazione tag.
 - `api/newsletter/` — flusso **doppio opt-in** su DB Neon Postgres:
   - `subscribe.js` — crea/riusa subscriber in stato `pending`, genera `confirm_token`, manda mail di conferma. Rate-limit in-memory per IP. Caso speciale `source='anteprima'`: se l'email è **già confermata**, consegna subito il PDF anteprima (con dedup 5 min) invece di rifare l'opt-in.
-  - `confirm.js` — `GET ?t=<token>`: conferma l'iscrizione, risponde con **pagina HTML statica** (non SPA), e dopo la conferma manda welcome + eventuale anteprima.
+  - `confirm.js` — `GET ?t=<token>`: conferma l'iscrizione, risponde con **pagina HTML statica** (non SPA), e dopo la conferma manda la mail di benvenuto. **Una mail sola, mai due** (dal 23/07/2026): se c'è `requested_materia`, il contenuto della welcome viene *fuso* nella mail dell'anteprima (blocco "in più, perché sei iscritto" con i link Drive di `meta.drive_file_ids_oggi`) e la welcome viene solo **registrata** come consegnata via `registerWelcomeDelivery` — send_events + registro anteprime restano identici, così il drip continua a sapere cosa ha già ricevuto. Senza `requested_materia` parte la welcome normale; se la mail fusa fallisce, la welcome standard fa da rete di sicurezza. Motivo: due mail nello stesso minuto erano la causa delle disiscrizioni immediate.
   - `unsubscribe.js` — disiscrizione one-click via `unsubscribe_token`.
-  - `send.js` — `POST` protetto da header `X-Admin-Secret == ADMIN_SECRET`: spedisce una newsletter draft a tutti i confermati. **Idempotente** via `newsletter_send_events UNIQUE(subscriber_id, newsletter_id)` (anti-join filtra chi ha già ricevuto). Batch con `limit`/`rate_ms` per stare sotto il timeout serverless (10s hobby) e i limiti Gmail (~50 mail/min). Rieseguire l'endpoint per liste lunghe.
+  - `send.js` — `POST` protetto da header `X-Admin-Secret == ADMIN_SECRET`: spedisce una newsletter draft a tutti i confermati. **Idempotente** via `newsletter_send_events UNIQUE(subscriber_id, newsletter_id)` (anti-join filtra chi ha già ricevuto). Batch con `limit`/`rate_ms` per stare sotto il timeout serverless (10s hobby) e i limiti Gmail (~50 mail/min). Rieseguire l'endpoint per liste lunghe. Scrive in **due registri**: `newsletter_send_events` (idempotenza interna, governa chi riceve la prossima chiamata) e `invii_email` via `logInvio` (registro trasversale che i blast futuri interrogano con `giaRicevuto`), con campagna `newsletter-<basename>` — override con `meta.campagna`. La response riporta `registro_invii_ko`: se non è 0, quelle mail sono partite ma non risultano a registro → vanno loggate a mano o il prossimo blast le ricontatta.
 - `api/_lib/` — moduli condivisi (non sono endpoint):
   - `email-shell.js` — guscio email **unico** (header logo brand + footer legale, stili INLINE email-safe) riusato da tutte le mail di sistema. Il logo viaggia come allegato inline `cid:logo.png` (importato da `logo-data.js`/`logo-dark-data.js` come base64) così è sempre visibile anche nei client che bloccano le immagini remote (Libero, Outlook). Se cambia palette/logo/dati legali → si cambia **qui**.
   - `anteprime-manifest.js` — `ANTEPRIME_MANIFEST` mappa `slug → fileId Google Drive` del PDF anteprima manuale (15 pp). `null` = non ancora caricato. **Single source of truth**, importato da `subscribe.js`/`confirm.js` e dalla skill `deliver-anteprima-manuale`.
@@ -86,6 +87,7 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 ### Dati anteprime inviate (registro drip)
 - Schema in `db/schema_anteprime.sql` (stesso DB Neon). Tabella `anteprime_inviate` = **fonte unica di "chi ha ricevuto quale anteprima, quando, con che canale"** (`materia` slug, `formato`, `canale` welcome/drip/lead/blast/manuale, `invio_id`). Solo DDL nel file; le righe si scrivono a runtime con `scripts/anteprima_log.mjs` e dal drip.
 - Serve come **anti-doppione** al drip: `send_drip.mjs` sceglie alcune materie, e a ogni iscritto manda solo quelle non ancora ricevute (check sul registro), poi logga l'invio. Evita di rimandare a un iscritto ciò che ha già avuto da welcome/lead/blast/drip precedente.
+- **Quarantena nuovi iscritti** (dal 23/07/2026): il drip salta chi è iscritto da meno di 7 giorni (`--min-eta-giorni`, `0` per disattivarla). Chi è appena entrato sta ancora ricevendo la sequenza di benvenuto; il drip sopra a quella satura l'ingresso. Su 3 disiscrizioni vere della lista, due sono avvenute così — una a 2 minuti dal drip ricevuto il giorno dopo l'iscrizione, l'altra dopo un drip arrivato 2h49 dopo. Il drip riempie i vuoti, non fa da benvenuto.
 
 ### Dati invii email (registro anti-doppione)
 - Schema in `db/schema_invii.sql` (stesso DB Neon). Tabella `invii_email` = **fonte unica di "a chi ho mandato cosa, quando"**, gemella di `anteprime_inviate` ma per le *comunicazioni* (inviti, campagne, risposte lead) invece che per i materiali. Viste `invii_per_persona` (cosa ha già visto questa persona) e `invii_per_campagna` (cosa è partito e a quanti).

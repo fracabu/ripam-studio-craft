@@ -36,11 +36,76 @@ function buildDateTokens(now = new Date()) {
   return { full, short }
 }
 
+// Id della welcome corrente (env override, come sotto).
+export function welcomeNewsletterId() {
+  return process.env.WELCOME_NEWSLETTER_ID || '2026-05-24'
+}
+
+// Carica SOLO il meta.json della welcome. Serve a chi non manda la welcome come
+// mail a sé stante ma ne riusa il contenuto — oggi api/_lib/anteprima-mail.js,
+// che fonde le anteprime della welcome dentro la mail dell'anteprima richiesta
+// (una mail sola invece di due nello stesso minuto).
+// Ritorna { newsletterId, meta } oppure null se i file non ci sono / meta rotto.
+export function loadWelcomeMeta() {
+  const newsletterId = welcomeNewsletterId()
+  const metaPath = join(process.cwd(), 'messaggi-clienti', 'newsletter', `${newsletterId}.meta.json`)
+  if (!existsSync(metaPath)) return null
+  try {
+    return { newsletterId, meta: JSON.parse(readFileSync(metaPath, 'utf8')) }
+  } catch (err) {
+    console.error('welcome: meta.json illeggibile', newsletterId, err)
+    return null
+  }
+}
+
+// Vero se questo iscritto risulta già aver ricevuto la welcome.
+export async function welcomeAlreadySent({ sql, subscriberId, newsletterId = welcomeNewsletterId() }) {
+  try {
+    const rows = await sql`
+      SELECT id FROM newsletter_send_events
+      WHERE subscriber_id = ${subscriberId} AND newsletter_id = ${newsletterId}
+      LIMIT 1
+    `
+    return rows.length > 0
+  } catch (err) {
+    console.error('welcome: check existing send_events failed', err)
+    return false // in dubbio non blocchiamo: l'ON CONFLICT più a valle protegge
+  }
+}
+
+// Registra la consegna della welcome SENZA inviarla: la usa chi ha già fatto
+// arrivare quel contenuto per un'altra strada (mail fusa anteprima+benvenuto).
+// Scrive le stesse tre cose dell'invio normale — send_events (idempotenza),
+// last_email_sent_at, e il registro anteprime della materia consegnata.
+// `materiaConsegnata=false` salta quest'ultimo: se il blocco welcome non è
+// finito nella mail, loggarlo farebbe credere al drip che la persona ha già
+// quella materia quando non l'ha ricevuta.
+export async function registerWelcomeDelivery({ sql, subscriber, meta, newsletterId = welcomeNewsletterId(), materiaConsegnata = true }) {
+  await sql`
+    INSERT INTO newsletter_send_events (subscriber_id, newsletter_id, status)
+    VALUES (${subscriber.id}, ${newsletterId}, 'sent')
+    ON CONFLICT (subscriber_id, newsletter_id) DO NOTHING
+  `
+  await sql`
+    UPDATE newsletter_subscribers SET last_email_sent_at = now() WHERE id = ${subscriber.id}
+  `
+  if (materiaConsegnata && meta && meta.materia_di_oggi) {
+    await logAnteprima({
+      email: subscriber.email,
+      nome: subscriber.nome,
+      materia: meta.materia_di_oggi,
+      formato: 'completa-avm',
+      canale: 'welcome',
+      invioId: newsletterId,
+    })
+  }
+}
+
 // sql: istanza Neon (passata dal chiamante per non aprire una nuova connessione)
 // subscriber: { id, email, nome, unsubscribe_token }
 // Ritorna { sent: boolean, skipped?: 'already_sent', error?: string }
 export async function sendWelcomeNewsletter({ sql, subscriber }) {
-  const newsletterId = process.env.WELCOME_NEWSLETTER_ID || '2026-05-24'
+  const newsletterId = welcomeNewsletterId()
   const gmailUser = process.env.GMAIL_USER
   const gmailPass = process.env.GMAIL_APP_PASSWORD
   const baseUrl = process.env.PUBLIC_BASE_URL || 'https://ripam-studio-craft.vercel.app'
@@ -54,18 +119,10 @@ export async function sendWelcomeNewsletter({ sql, subscriber }) {
 
   // Idempotenza: se già spedita per questo (subscriber, newsletter), skip.
   // Stessa UNIQUE(subscriber_id, newsletter_id) usata da /api/newsletter/send.
-  try {
-    const existing = await sql`
-      SELECT id FROM newsletter_send_events
-      WHERE subscriber_id = ${subscriber.id} AND newsletter_id = ${newsletterId}
-      LIMIT 1
-    `
-    if (existing.length > 0) {
-      return { sent: false, skipped: 'already_sent' }
-    }
-  } catch (err) {
-    console.error('welcome: check existing send_events failed', err)
-    // proseguiamo comunque, ON CONFLICT più sotto fa da safety net
+  // Copre anche il caso "welcome fusa nella mail anteprima": confirm.js ha già
+  // registrato la consegna, quindi da qui non riparte una seconda mail.
+  if (await welcomeAlreadySent({ sql, subscriberId: subscriber.id, newsletterId })) {
+    return { sent: false, skipped: 'already_sent' }
   }
 
   // Carica template dal disco (Vercel deploya messaggi-clienti/ nel bundle).
@@ -124,32 +181,11 @@ export async function sendWelcomeNewsletter({ sql, subscriber }) {
       },
     })
 
-    // Log idempotente, anche se l'invio è già loggato da un'altra strada.
-    await sql`
-      INSERT INTO newsletter_send_events (subscriber_id, newsletter_id, status)
-      VALUES (${subscriber.id}, ${newsletterId}, 'sent')
-      ON CONFLICT (subscriber_id, newsletter_id) DO NOTHING
-    `
-    await sql`
-      UPDATE newsletter_subscribers
-      SET last_email_sent_at = now()
-      WHERE id = ${subscriber.id}
-    `
-
-    // Registro anteprime: la welcome CONSEGNA una materia (meta.materia_di_oggi,
-    // audio+video+manuale da Drive) → va scritto, altrimenti il drip non sa che
-    // questa persona ce l'ha già e gliela rimanda. Best-effort: un errore qui
-    // non deve toccare l'esito dell'invio, che è già avvenuto.
-    if (meta.materia_di_oggi) {
-      await logAnteprima({
-        email: subscriber.email,
-        nome: subscriber.nome,
-        materia: meta.materia_di_oggi,
-        formato: 'completa-avm',
-        canale: 'welcome',
-        invioId: newsletterId,
-      })
-    }
+    // Log idempotente (send_events + last_email_sent_at) e registro anteprime:
+    // la welcome CONSEGNA una materia (meta.materia_di_oggi, audio+video+manuale
+    // da Drive) → va scritto, altrimenti il drip non sa che questa persona ce
+    // l'ha già e gliela rimanda.
+    await registerWelcomeDelivery({ sql, subscriber, meta, newsletterId })
 
     return { sent: true }
   } catch (err) {
