@@ -70,7 +70,10 @@ export default async function handler(req, res) {
   const { email, nome, source, requested_materia, consent_text, hp } = body
 
   // honeypot: fingi successo, non fare nulla
-  if (hp) return res.status(200).json({ ok: true })
+  if (hp) {
+    console.warn('Honeypot triggered — iscrizione scartata:', { email, hp: String(hp).slice(0, 80) })
+    return res.status(200).json({ ok: true })
+  }
 
   // validazione minima
   if (!email || !consent_text) {

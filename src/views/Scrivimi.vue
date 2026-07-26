@@ -292,7 +292,12 @@ const submit = async (e) => {
           <span>Voglio anche ricevere la <strong>newsletter</strong> (max 1-2 email/mese, disiscrizione one-click). Riceverai una mail di conferma separata.</span>
         </label>
 
-        <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="sv-hp" />
+        <!-- Honeypot. IMPORTANTE: il name NON deve avere semantica riconoscibile
+             (era `website`): password manager e autofill del browser compilano i
+             campi semantici anche con autocomplete="off", il server lo legge come
+             bot e risponde 200 fingendo successo → l'utente vede "Richiesta
+             ricevuta" e non arriva niente. È successo davvero (26/07/2026). -->
+        <input v-model="hp" type="text" name="sv-ref-2" tabindex="-1" autocomplete="off" aria-hidden="true" class="sv-hp" />
 
         <div class="sv-actions">
           <button type="submit" class="btn btn-primary" :disabled="status==='sending' || !privacy || (isRinnovo && !username.trim())">

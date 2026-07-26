@@ -108,8 +108,14 @@ export default async function handler(req, res) {
 
   const { nome, email, concorso, note, hp } = req.body || {}
 
-  // honeypot: se `hp` è compilato, è un bot
-  if (hp) return res.status(200).json({ ok: true }) // fingi successo
+  // honeypot: se `hp` è compilato, è un bot → si finge successo.
+  // Loggato perché è un buco nero silenzioso: se un autofill compila il campo
+  // nascosto, un utente vero vede la conferma e la richiesta non arriva mai.
+  // Il log nei runtime logs Vercel è l'unico modo per accorgersene.
+  if (hp) {
+    console.warn('Honeypot triggered — richiesta scartata:', { email, nome, hp: String(hp).slice(0, 80) })
+    return res.status(200).json({ ok: true })
+  }
 
   // validazione minima
   if (!nome || !email || !concorso || !note) {

@@ -144,7 +144,9 @@ const onModalKeydown = (e) => {
           </label>
 
           <!-- honeypot nascosto: bot lo compilano, umani no -->
-          <input v-model="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
+          <!-- Honeypot: name senza semantica, altrimenti gli autofill lo compilano
+               e la richiesta viene scartata in silenzio. Vedi api/contact.js. -->
+          <input v-model="hp" type="text" name="cf-ref-2" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
 
           <button type="submit" :disabled="status==='sending' || !privacy">
             <span v-if="status==='sending'">Invio in corso...</span>

@@ -211,10 +211,13 @@ const submit = async (e) => {
             </span>
           </label>
 
+          <!-- Honeypot: name senza semantica, altrimenti gli autofill lo
+               compilano e la richiesta viene scartata in silenzio. Vedi
+               Scrivimi.vue / api/contact.js. -->
           <input
             v-model="hp"
             type="text"
-            name="website"
+            name="ant-ref-2"
             tabindex="-1"
             autocomplete="off"
             aria-hidden="true"
