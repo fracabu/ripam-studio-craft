@@ -1,29 +1,49 @@
 <script setup>
 // Pagina vetrina per i REPORT DI STUDIO SU MISURA (bundle di report per un
 // concorso specifico, oggi venduti solo via mail ai lead — vedi
-// api/_lib/report-custom-manifest.js). Dati imbeddati qui: sono solo 2
-// concorsi, non serve un file dati dedicato come materie.js.
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { RouterLink } from 'vue-router'
+// api/_lib/report-custom-manifest.js). Dati in src/data/report-concorsi.js.
+//
+// Due modalità, stesso componente:
+//  - /report-custom            → indice: tutti i concorsi + chip "cerca per concorso"
+//  - /report-custom/:concorso  → pagina dedicata a un solo bando (link da mandare
+//                                a un lead: vede solo i report che lo riguardano)
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { REPORT_CONCORSI, SFOGLIABILI, getConcorso, hasAnteprima } from '../data/report-concorsi.js'
+
+const props = defineProps({ concorso: { type: String, default: '' } })
+const router = useRouter()
+
+// Concorso singolo (rotta dedicata) o null (indice). Slug sconosciuto → indice.
+const single = computed(() => (props.concorso ? getConcorso(props.concorso) : null))
+const lista = computed(() => (single.value ? [single.value] : REPORT_CONCORSI))
+watch(
+  () => props.concorso,
+  (k) => { if (k && !getConcorso(k)) router.replace('/report-custom') },
+  { immediate: true }
+)
+// Titolo del tab: la pagina dedicata è pensata per essere linkata a mano.
+watch(single, (c) => {
+  document.title = c
+    ? `Report di studio · ${c.nome} — Ripam Studio Craft`
+    : 'Report di studio su misura — Ripam Studio Craft'
+}, { immediate: true })
 
 // ── Sfogliatore anteprima ("effetto giornale") ────────────────────────────
 // Le anteprime "sfogliabili" sono set di pagine PNG in
-// public/report-cover/<concorso>/<slug>/p1.png … pN.png.
-// Ogni giorno la vetrina mostra un'anteprima diversa (rotazione deterministica).
-const SFOGLIABILI = [
-  { slug: 'pubblico-impiego', concorsoKey: 'ripam-3997-amm', titolo: 'Pubblico Impiego', pagine: 12 },
-]
-// Rotazione giornaliera: indice = giorno dell'anno % numero anteprime
-const dayIndex = () => {
-  const now = new Date()
-  const start = new Date(now.getFullYear(), 0, 0)
-  const doy = Math.floor((now - start) / 86400000)
-  return doy % SFOGLIABILI.length
-}
-const featured = ref(SFOGLIABILI[0])
-const HERO_PAGES = computed(() => featured.value.pagine)
-const pageBase = computed(() => `/report-cover/${featured.value.concorsoKey}/${featured.value.slug}`)
+// public/report-cover/<concorso>/<slug>/p1.png … pN.png. Nell'indice si mostra
+// quella del concorso di punta; nella pagina dedicata quella del suo concorso,
+// se esiste (altrimenti l'hero usa la cover del primo report, non sfogliabile).
+const heroKey = computed(() => (single.value ? single.value.key : 'ripam-3997-amm'))
+const featured = computed(() => SFOGLIABILI[heroKey.value] || null)
+const HERO_PAGES = computed(() => featured.value?.pagine || 0)
+const pageBase = computed(() => `/report-cover/${heroKey.value}/${featured.value?.slug}`)
 const pageSrc = (n) => `${pageBase.value}/p${n}.png`
+// Fallback quando il concorso non ha un'anteprima sfogliabile: cover del primo report.
+const heroCover = computed(() => {
+  const c = single.value
+  return c ? `/report-cover/${c.key}/${c.reports[0].img}.png` : ''
+})
 
 // stato flipbook
 const flipOpen = ref(false)
@@ -57,82 +77,8 @@ const onKey = (e) => {
   else if (e.key === 'ArrowRight') nextPage()
   else if (e.key === 'ArrowLeft') prevPage()
 }
-onMounted(() => { featured.value = SFOGLIABILI[dayIndex()]; window.addEventListener('keydown', onKey) })
+onMounted(() => window.addEventListener('keydown', onKey))
 onUnmounted(() => window.removeEventListener('keydown', onKey))
-
-const CONCORSI = [
-  {
-    key: 'ripam-3997-amm',
-    cod: 'RIPAM',
-    nome: 'RIPAM 3.997 Assistenti Amministrativi',
-    tag: 'profilo AMM · 14 Amministrazioni · Funzioni Centrali',
-    intro: 'Le 10 materie del programma AMM, ognuna in un report a sé — più il Dossier completo con tutte e 10 in un unico PDF.',
-    reports: [
-      { t: 'Diritto Amministrativo', d: 'Procedimento, provvedimento, invalidità, accesso e processo amministrativo (L. 241/1990).', fileId: '1uf8RHgTVGvw0GwutsyYQdFepBaryzOxM', img: 'diritto-amministrativo' },
-      { t: 'Pubblico Impiego', d: 'Costituzione del rapporto, responsabilità, codice di comportamento, sanzioni disciplinari (D.Lgs. 165/2001).', fileId: '1ZX6VFpaSBN1RAvB3sfSwYT1etNOzV6aA', img: 'pubblico-impiego' },
-      { t: 'Contratti Pubblici', d: 'Soggetti, procedure di affidamento, fasi del contratto (D.Lgs. 36/2023).', fileId: '1AGrmmFR70ay54H8FImQoUepOTGI-u8vP', img: 'contratti-pubblici' },
-      { t: 'Diritto Penale', d: "I reati contro la PA: peculato, corruzione, abuso d'ufficio (artt. 314-360 c.p.).", fileId: null, img: 'diritto-penale' },
-      { t: 'Diritto UE', d: "Fonti, istituzioni, principi e rapporto con l'ordinamento italiano (TUE/TFUE).", fileId: '1Vx96Pv-1rpD08Xadih8GPJA7l6WV_M4C', img: 'diritto-ue' },
-      { t: 'Contabilità di Stato', d: 'Ciclo di bilancio, DEF, rendiconto, controlli (L. 196/2009, art. 81 Cost.).', fileId: '1Nr7vzOJ9LL3EhnL4tU8JMdLNgkP1hoXU', img: 'contabilita-stato' },
-      { t: 'CAD', d: 'Identità digitale, domicilio digitale, firme elettroniche, PDND (D.Lgs. 82/2005).', fileId: '1coPfbJP-kA5s02vYHCR9U6nrEi4NbSLz', img: 'cad' },
-      { t: 'GDPR', d: "Principi, basi giuridiche, diritti dell'interessato, adempimenti del titolare (Reg. UE 2016/679).", fileId: null, img: 'gdpr' },
-      { t: 'Informatica', d: 'Hardware, software, reti e sicurezza informatica di base.', fileId: '16ouxwSREj2Ie67DY4DesbV7uMrWWFki9', img: 'informatica' },
-      { t: 'Ordinamento delle Amministrazioni', d: 'Assetto delle PA centrali, organi costituzionali, D.Lgs. 300/1999.', fileId: '1aTrEAhc0QmTOO5qks0KWX1IpxyYLRF5n', img: 'ordinamento-amministrazioni' },
-    ],
-  },
-  {
-    key: 'inps-1695-pecs',
-    cod: 'INPS',
-    nome: 'INPS 1.695 Funzionari PECS',
-    tag: 'Progettazione, Erogazione e Controllo dei Servizi',
-    intro: 'Il report della preselettiva (Cultura generale), le 5 materie della Sezione A della prova scritta e la Sezione B (prova situazionale, SJT) — ognuna in un report a sé.',
-    reports: [
-      { t: 'Cultura generale', d: 'La preselettiva (60 quesiti): Costituzione e ordinamento dello Stato, UE e organizzazioni internazionali, storia contemporanea, geografia, scienza, letteratura e arte.', fileId: '1zkYbN0hzpU1lmI-HmZYVYm30DnRzcmLW', img: 'cultura-generale' },
-      { t: 'Diritto del lavoro e della previdenza', d: 'Rapporto di lavoro subordinato, sistema previdenziale, pensioni, ammortizzatori sociali, tutela INAIL.', fileId: '1u5EUA8O0Ob8OwXW1gRRq4vVlMixTaqVk', img: 'diritto-lavoro' },
-      { t: 'Legislazione sociale', d: "L'assistenza e il welfare: invalidità civile, ISEE, Assegno Unico, Assegno di Inclusione.", fileId: '1aezvJ_PXauQ9jhKsNeC8WFrYE5TuoRmC', img: 'legislazione-sociale' },
-      { t: 'Organizzazione e funzionamento della PA', d: 'Pubblico impiego, ordinamento INPS, trasparenza, anticorruzione e privacy.', fileId: '1fIT5frKIzMcleRdxGHDx1fPlFXSq3tnA', img: 'organizzazione-pa' },
-      { t: 'Pianificazione e controllo di gestione', d: 'Budget, scostamenti, centri di responsabilità, ROI/EVA e performance nella PA.', fileId: '1WBrDY9zVELhdIO4_9F1Fm2vwkO8qnwhq', img: 'pianificazione-controllo' },
-      { t: 'Competenze informatiche', d: 'Amministrazione digitale (CAD, SPID/PEC, firme, PDND), GDPR e informatica di base.', fileId: '19GtKRXMnSGihOODuxuJCSp4pGzchcEUz', img: 'competenze-informatiche' },
-      { t: 'Sezione B — Prova situazionale (SJT)', d: 'Come ragioni e ti comporti, non cosa sai: metodo, griglia decisionale e 20 scenari commentati con le trappole tipiche.', fileId: '10sumfSmjfLktX4EPcTVFN4NKSVugzHHP', img: 'sezione-b-sjt' },
-    ],
-  },
-  {
-    key: 'ripam-1340-amm',
-    cod: 'RIPAM',
-    nome: 'RIPAM 1.340 Funzionari — profilo AMM',
-    tag: 'profilo Amministrativo · Funzioni Centrali',
-    intro: 'Le 10 materie del programma del profilo Amministrativo (AMM), ognuna in un report a sé.',
-    reports: [
-      { t: 'Diritto Amministrativo', d: 'Atti e provvedimenti, principi, procedimento, accesso, invalidità e autotutela (L. 241/1990).', fileId: '1aqb1pSX-TVJca3IPND25cVAvlyn9teFj', img: 'diritto-amministrativo' },
-      { t: 'Diritto Costituzionale', d: 'Fonti del diritto, organi costituzionali, principi sulla PA (artt. 97-98 Cost.).', fileId: '1vjevz4ncIY-FdcAWKW_WVE9NBZL-qqFv', img: 'diritto-costituzionale' },
-      { t: 'Diritto Civile', d: 'Nozioni essenziali di diritto civile per la Pubblica Amministrazione.', fileId: '1JvSJyTU_0KbqyNY0tXZcPtEa40pISzQr', img: 'diritto-civile' },
-      { t: 'Diritto Penale', d: 'I reati contro la PA: peculato, concussione, corruzione, rifiuto/omissione di atti (artt. 314-360 c.p.).', fileId: '1mQ2sQvOWMPMjFv-J470jH8uLUu95Wtr4', img: 'diritto-penale' },
-      { t: 'Contratti Pubblici', d: 'Principi, soglie, procedure di affidamento e fasi del contratto (D.Lgs. 36/2023).', fileId: '1Wje2nMKfGutRv8W8WyDczfFpGQDHPMw_', img: 'contratti-pubblici' },
-      { t: 'Contabilità Pubblica', d: 'Ciclo di bilancio, art. 81 Cost., Corte dei conti e controlli (L. 196/2009).', fileId: '1J42TtZu16rl1t95X384NKoVGTcIVrd_n', img: 'contabilita-pubblica' },
-      { t: 'Pubblico Impiego', d: 'Indirizzo e gestione, reclutamento, responsabilità e disciplina (TUPI, D.Lgs. 165/2001).', fileId: '1POFnqWZHrlKPDQrCwCbAZ_1JAKSGh8Yy', img: 'pubblico-impiego' },
-      { t: 'Anticorruzione e Trasparenza', d: 'Piani, RPCT, obblighi di pubblicità e whistleblowing (L. 190/2012, D.Lgs. 33/2013, PIAO).', fileId: '17R68tZzQ53Rz8a8EN19yVuU0mBQWHy0E', img: 'anticorruzione-trasparenza' },
-      { t: 'CAD', d: 'Identità digitale, firme elettroniche, documento informatico (D.Lgs. 82/2005).', fileId: '12fbUw9G5Nd2UJ_im0ipyWBnz2N41_aL3', img: 'cad' },
-      { t: 'GDPR e Privacy', d: "Principi (art. 5), basi giuridiche, diritti dell'interessato e data breach (Reg. UE 2016/679).", fileId: '1AvQ29xq028haZxutJobIJO5Eo8WOchIv', img: 'gdpr' },
-    ],
-  },
-  {
-    key: 'ripam-1340-com',
-    cod: 'RIPAM',
-    nome: 'RIPAM 1.340 Funzionari — profilo COM',
-    tag: 'profilo Comunicazione · Funzioni Centrali',
-    intro: 'Gli 8 report del profilo Comunicazione (COM): le materie specialistiche della comunicazione pubblica più il diritto trasversale.',
-    reports: [
-      { t: 'Comunicazione Pubblica', d: 'Portavoce, ufficio stampa, URP, ciclo di programmazione e teoria della comunicazione (L. 150/2000).', fileId: '1c3IwKEWItzKizn0kqZF3xV-EFHSXXCnE', img: 'comunicazione-pubblica' },
-      { t: 'Comunicazione Digitale e Social', d: 'Strategie e strumenti della comunicazione digitale e dei social nella PA.', fileId: '1ennHs5aIiPS_1y-AJuG4Z3cWn201W3pS', img: 'comunicazione-digitale' },
-      { t: 'URP, Ufficio Stampa e Giornalismo PA', d: 'Campagne di comunicazione, comunicazione di crisi e rapporti con i media.', fileId: '1ORCmtazfOOZ5vSWurob-2sOIfwe8Inln', img: 'urp-ufficio-stampa' },
-      { t: 'Diritto Amministrativo', d: 'Atti e provvedimenti, principi, procedimento, accesso (L. 241/1990).', fileId: '1TvhTYQ0MJAAfIewJ0W6TzWnI7iAmrlNz', img: 'diritto-amministrativo' },
-      { t: 'Contratti Pubblici', d: 'Principi, soglie, procedure di affidamento e fasi del contratto (D.Lgs. 36/2023).', fileId: '1whqgm0_1aau9TAQBoonWRaNYIP8RoaFB', img: 'contratti-pubblici' },
-      { t: 'Anticorruzione e Trasparenza', d: 'Piani, RPCT, obblighi di pubblicità e whistleblowing (L. 190/2012, D.Lgs. 33/2013, PIAO).', fileId: '1h7HaZZog0QodzgXCUffUwsb5GmNECAQZ', img: 'anticorruzione-trasparenza' },
-      { t: 'GDPR e Privacy', d: "Principi (art. 5), basi giuridiche, diritti dell'interessato e data breach (Reg. UE 2016/679).", fileId: '1wjWhW9NEmNREYsZCBjxQSliyuVz7w3pc', img: 'gdpr' },
-      { t: 'CAD', d: 'Identità digitale, firme elettroniche, documento informatico (D.Lgs. 82/2005).', fileId: '1OH2xRVQbyF9j4kCmtIJ6aYUIz5UILjmI', img: 'cad' },
-    ],
-  },
-]
 
 // Richiesta anteprima → form /scrivimi precompilato (tipo + concorso + note).
 // NIENTE link diretto Drive: la richiesta arriva via mail e l'anteprima la mando io.
@@ -152,29 +98,60 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
 <template>
   <main id="main" class="rc-page">
     <div class="wrap">
+      <!-- Pagina dedicata: si torna sempre all'indice -->
+      <RouterLink v-if="single" to="/report-custom" class="rc-back">
+        &larr; Tutti i report di studio
+      </RouterLink>
+
       <div class="rc-hero">
         <div class="rc-hero-text">
           <div class="rc-kicker">REPORT DI STUDIO SU MISURA</div>
-          <h1 class="rc-h1">Non un manuale generico. <span class="hl-acid">Il tuo bando, materia per materia.</span></h1>
+          <h1 v-if="single" class="rc-h1 rc-h1-single">
+            <span class="hl-acid">{{ single.nome }}</span>
+          </h1>
+          <h1 v-else class="rc-h1">Non un manuale generico. <span class="hl-acid">Il tuo bando, materia per materia.</span></h1>
+          <p v-if="single" class="rc-hero-tag">{{ single.tag }}</p>
           <p class="rc-lead">
-            Il report è lo strumento perfetto per il ripasso veloce e per fissare i concetti:
-            poco discorsivo, tutto in schemi a due colonne, tabelle e contenuti di sintesi.
-            In genere 30-50 pagine a materia, concentrate sulle domande e sui trabocchetti che
-            trovi davvero all'esame. Ogni report ha un'anteprima gratuita: guardi com'è fatto
-            prima di decidere.
+            <template v-if="single">{{ single.intro }}</template>
+            <template v-else>
+              Il report è lo strumento perfetto per il ripasso veloce e per fissare i concetti:
+              poco discorsivo, tutto in schemi a due colonne, tabelle e contenuti di sintesi.
+              In genere 30-50 pagine a materia, concentrate sulle domande e sui trabocchetti che
+              trovi davvero all'esame. Ogni report ha un'anteprima gratuita: guardi com'è fatto
+              prima di decidere.
+            </template>
+          </p>
+          <p v-if="single" class="rc-lead rc-lead-sub">
+            Poco discorsivo, tutto in schemi a due colonne, tabelle e sintesi: 30-50 pagine a
+            materia, concentrate sulle domande e sui trabocchetti che trovi davvero all'esame.
           </p>
         </div>
 
-        <!-- Teaser cover cliccabile → apre lo sfogliatore -->
+        <!-- Teaser cover: cliccabile se il concorso ha un'anteprima sfogliabile -->
         <div class="rc-cover">
-          <button type="button" class="rc-teaser" @click="openFlip"
+          <button v-if="featured" type="button" class="rc-teaser" @click="openFlip"
                   :aria-label="`Sfoglia l'anteprima del report ${featured.titolo}`">
             <img :src="pageSrc(1)" :alt="`Copertina report ${featured.titolo}`"
                  width="794" height="1123" fetchpriority="high" />
             <span class="rc-teaser-badge">Sfoglia l'anteprima &rarr;</span>
           </button>
+          <div v-else-if="single" class="rc-teaser rc-teaser-static">
+            <img :src="heroCover" :alt="`Copertina report ${single.reports[0].t}`"
+                 width="794" height="1123" fetchpriority="high" />
+          </div>
         </div>
       </div>
+
+      <!-- Cerca per concorso: nell'indice porta alla pagina dedicata,
+           nella pagina dedicata fa da navigazione tra i bandi. -->
+      <nav class="rc-chips" aria-label="Report per concorso">
+        <span class="rc-chips-label">{{ single ? 'Altri concorsi' : 'Cerca per concorso' }}</span>
+        <RouterLink v-for="c in REPORT_CONCORSI" :key="c.key"
+                    :to="`/report-custom/${c.key}`" class="rc-chip"
+                    :class="{ 'is-active': single && single.key === c.key }">
+          {{ c.nome }} <span class="rc-chip-n">{{ c.reports.length }}</span>
+        </RouterLink>
+      </nav>
 
       <!-- MODALE SFOGLIATORE (effetto pagina che gira) -->
       <Teleport to="body">
@@ -200,9 +177,12 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
         </div>
       </Teleport>
 
-      <section v-for="c in CONCORSI" :key="c.key" class="rc-concorso">
-        <div class="rc-concorso-head">
-          <h2 class="rc-concorso-title">{{ c.nome }}</h2>
+      <section v-for="c in lista" :key="c.key" class="rc-concorso">
+        <!-- Nella pagina dedicata nome/tag/intro sono già nell'hero -->
+        <div v-if="!single" class="rc-concorso-head">
+          <h2 class="rc-concorso-title">
+            <RouterLink :to="`/report-custom/${c.key}`" class="rc-concorso-link">{{ c.nome }}</RouterLink>
+          </h2>
           <p class="rc-concorso-tag">{{ c.tag }}</p>
           <p class="rc-concorso-intro">{{ c.intro }}</p>
         </div>
@@ -214,20 +194,25 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
             </div>
             <h3 class="rc-card-title">{{ r.t }}</h3>
             <p class="rc-card-desc">{{ r.d }}</p>
-            <RouterLink v-if="r.fileId" :to="anteprimaFormUrl(c, r.t)" class="rc-card-link">
+            <RouterLink v-if="hasAnteprima(r)" :to="anteprimaFormUrl(c, r.t)" class="rc-card-link">
               Richiedi anteprima &rarr;
             </RouterLink>
             <span v-else class="rc-card-soon">Anteprima in arrivo</span>
           </article>
         </div>
 
-        <RouterLink :to="ctaUrl(c)" class="btn btn-primary rc-cta">
-          Richiedi i report per {{ c.nome }} &rarr;
-        </RouterLink>
+        <div class="rc-actions">
+          <RouterLink :to="ctaUrl(c)" class="btn btn-primary rc-cta">
+            Richiedi i report per {{ c.nome }} &rarr;
+          </RouterLink>
+          <RouterLink v-if="!single" :to="`/report-custom/${c.key}`" class="rc-page-link">
+            Pagina dedicata a questo concorso &rarr;
+          </RouterLink>
+        </div>
       </section>
 
       <div class="rc-footer">
-        <p>Il tuo concorso non è tra questi due?</p>
+        <p>Il tuo concorso non è tra questi?</p>
         <RouterLink to="/scrivimi?tipo=materia" class="btn btn-secondary">Scrivimi e vediamo cosa si può fare &rarr;</RouterLink>
       </div>
     </div>
@@ -376,6 +361,49 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
 }
 
 .rc-cta{ display:inline-block;margin-top:8px; }
+.rc-actions{ display:flex;flex-wrap:wrap;align-items:center;gap:18px; }
+.rc-page-link,.rc-back{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;font-weight:700;
+  color:var(--blue);text-decoration:none;
+}
+.rc-page-link:hover,.rc-back:hover{ text-decoration:underline; }
+.rc-back{ display:inline-block;margin-bottom:20px; }
+.rc-concorso-link{ color:inherit;text-decoration:none; }
+.rc-concorso-link:hover{ text-decoration:underline;text-decoration-color:var(--acid);text-decoration-thickness:3px; }
+
+/* Hero della pagina dedicata */
+.rc-h1-single{ font-size:clamp(30px,4vw,46px);max-width:20ch; }
+.rc-h1-single .hl-acid{ padding:2px 12px; }
+.rc-hero-tag{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:600;
+  letter-spacing:.04em;color:var(--ink);margin:0 0 18px;
+  border-left:3px solid var(--acid);padding-left:12px;
+}
+.rc-lead-sub{ font-size:17px;margin-top:14px; }
+.rc-teaser-static{ cursor:default; }
+
+/* Chip "cerca per concorso" */
+.rc-chips{
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+  padding:18px 0 26px;border-top:2px solid var(--ink);
+}
+.rc-chips-label{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:4px;
+}
+.rc-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  border:2px solid var(--ink);background:var(--bg);color:var(--ink);
+  font-size:13px;font-weight:600;line-height:1;padding:9px 12px;text-decoration:none;
+  box-shadow:var(--shadow-sm);transition:transform .12s ease,background .12s ease;
+}
+.rc-chip:hover{ transform:translateY(-2px);background:var(--acid); }
+.rc-chip.is-active{ background:var(--ink);color:var(--bg);box-shadow:none; }
+.rc-chip-n{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;font-weight:700;
+  background:var(--acid);color:var(--ink);border:1px solid var(--ink);padding:2px 6px;
+}
+.rc-chip.is-active .rc-chip-n{ border-color:var(--bg); }
 
 .rc-footer{
   padding-top:40px;border-top:2px solid var(--ink);

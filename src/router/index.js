@@ -28,6 +28,9 @@ const router = createRouter({
     // Landing iscrizione newsletter (link pulito /newsletter per i post social)
     { path: '/newsletter', name: 'newsletter', component: Iscriviti },
     { path: '/report-custom', name: 'report-custom', component: ReportCustom },
+    // Pagina dedicata a un singolo concorso (link da mandare a un lead: vede
+    // solo i report del suo bando). :concorso = key in src/data/report-concorsi.js
+    { path: '/report-custom/:concorso', name: 'report-concorso', component: ReportCustom, props: true },
     { path: '/privacy', name: 'privacy', component: Legale, props: { slug: 'privacy' }, meta: { slug: 'privacy' } },
     { path: '/cookie-policy', name: 'cookie-policy', component: Legale, props: { slug: 'cookie-policy' }, meta: { slug: 'cookie-policy' } },
     { path: '/termini', name: 'termini', component: Legale, props: { slug: 'termini' }, meta: { slug: 'termini' } },

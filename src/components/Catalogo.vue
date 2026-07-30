@@ -276,7 +276,7 @@ const pickChip = (slug) => openMateria(slug)
         </article>
       </div>
       <p class="cc-rc-link">
-        Fai un concorso specifico? <RouterLink to="/report-custom">Guarda i report su misura per RIPAM 3.997 e INPS 1.695 PECS &rarr;</RouterLink>
+        Fai un concorso specifico? <RouterLink to="/report-custom">Guarda i report su misura, bando per bando &rarr;</RouterLink>
       </p>
     </div>
   </section>
