@@ -38,6 +38,8 @@
 //   --unlabel  Gmail label da RIMUOVERE dal thread dopo l'invio (nomi, separati da virgola)
 //              es. --unlabel "Da rispondere"
 //   --dry-run  stampa a video e NON invia
+//   --out      con --dry-run: salva la mail completa (guscio + logo) in un .html
+//              da aprire nel browser per rivederla prima di dare l'ok all'invio
 //   --demo     invia una mail dimostrativa a fracabu@gmail.com (verifica il logo)
 //
 // Le label NON passano da SMTP: --label/--unlabel agiscono via IMAP (stesse
@@ -52,7 +54,7 @@
 // Richiede .env.local: GMAIL_USER, GMAIL_APP_PASSWORD. Gira a PC acceso.
 // ============================================================================
 
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import nodemailer from 'nodemailer'
@@ -309,6 +311,17 @@ if (args['dry-run']) {
   }
   if (addLabels.length) console.log(`  +label:  ${addLabels.join(', ')}`)
   if (delLabels.length) console.log(`  -label:  ${delLabels.join(', ')}`)
+  // --out <file>: salva la mail COMPLETA (guscio + contenuto) per aprirla nel
+  // browser e rivederla com'è davvero, prima di dare l'ok all'invio. Il logo
+  // viaggia come cid: → qui va sostituito col data URI, altrimenti nel file
+  // locale resta un'immagine rotta.
+  if (typeof args.out === 'string') {
+    const preview = html
+      .replace(/cid:logo-dark\.png/g, `data:image/png;base64,${LOGO_DARK_B64}`)
+      .replace(/cid:logo\.png/g, `data:image/png;base64,${readFileSync(join(ROOT, 'public', 'logo.png')).toString('base64')}`)
+    writeFileSync(args.out, `<!doctype html><meta charset="utf-8"><title>${subject}</title>${preview}`, 'utf8')
+    console.log(`  anteprima salvata: ${args.out}`)
+  }
   process.exit(0)
 }
 
