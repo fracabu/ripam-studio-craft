@@ -64,7 +64,7 @@ export default async function handler(req, res) {
   } catch {
     return res.status(400).json({ error: 'Body JSON non valido' })
   }
-  const { file, dry_run, only_email, limit, rate_ms, require_received } = body
+  const { file, dry_run, only_email, limit, rate_ms, require_received, min_eta_giorni } = body
   if (!file || typeof file !== 'string' || !/^[\w.-]{1,64}$/.test(file)) {
     return res.status(400).json({ error: 'Parametro "file" mancante o non valido' })
   }
@@ -75,6 +75,13 @@ export default async function handler(req, res) {
   const requireReceived = (typeof require_received === 'string' && /^[\w.-]{1,64}$/.test(require_received))
     ? require_received
     : null
+
+  // Quarantena nuovi iscritti: salta chi si e' confermato da meno di N giorni.
+  // Stessa logica di send_drip.mjs — chi e' appena entrato sta ancora ricevendo
+  // la sequenza di benvenuto, e un arretrato sopra a quella satura l'ingresso
+  // (e' la causa documentata delle disiscrizioni immediate). 0 = nessun filtro,
+  // che resta il default: i blast normali non cambiano comportamento.
+  const minEtaGiorni = Math.min(Math.max(parseInt(min_eta_giorni, 10) || 0, 0), 365)
 
   const effLimit = Math.min(Math.max(parseInt(limit || DEFAULT_LIMIT, 10) || DEFAULT_LIMIT, 1), MAX_LIMIT)
   const effRate = Math.max(parseInt(rate_ms || DEFAULT_RATE_MS, 10) || DEFAULT_RATE_MS, MIN_RATE_MS)
@@ -147,6 +154,7 @@ export default async function handler(req, res) {
             SELECT 1 FROM newsletter_send_events e2
             WHERE e2.subscriber_id = s.id AND e2.newsletter_id = ${requireReceived}
           ))
+          AND s.confirmed_at <= now() - (${minEtaGiorni} * INTERVAL '1 day')
         ORDER BY s.confirmed_at ASC
         LIMIT ${effLimit}
       `
