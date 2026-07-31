@@ -20,12 +20,109 @@
 // Per aggiornare: leggere il fileId dei PDF in ANTEPRIME/report-custom/<concorso>/
 // (search_files parentId=<cartella>) e incollarlo qui.
 //
+// ⚠️ SYNC con `src/data/report-concorsi.js` (la vetrina /report-custom/:key).
+// Le chiavi concorso dei 5 bandi in vetrina DEVONO esistere anche qui, con gli
+// STESSI fileId: la vetrina genera il testo del form ("Vorrei l'anteprima del
+// report …"), la skill auto-risposte-lead risponde da qui (categoria RC). Se una
+// chiave manca, la bozza RC fallisce con "concorso sconosciuto". Le altre voci
+// (cpi-sicilia-sac, cerveteri-istruttore-amm) sono storiche e non hanno vetrina.
+// Quando si carica una nuova anteprima su Drive: fileId qui E in report-concorsi.js.
+//
 // Listino report custom (NON in questo file — solo promemoria): nuovi clienti
 // 25 €/report (dal 08/06/2026); clienti grandfathered a tariffa precedente
 // (es. Stefania 19,99 €/report). Il prezzo si passa esplicitamente alla mail
 // (--prezzo), così non si rischia di comunicare la tariffa sbagliata.
 
 export const REPORT_CUSTOM_MANIFEST = {
+  'ripam-3997-amm': {
+    concorso: 'RIPAM — 3.997 Assistenti amministrativi, profilo AMM (14 Amministrazioni, Funzioni Centrali)',
+    concorsoShort: 'concorso RIPAM 3.997 Assistenti · profilo Amministrativo (AMM)',
+    // Vetrina: /report-custom/ripam-3997-amm (10 report = le 10 materie del
+    // programma AMM). Esiste anche il Dossier completo (10 report in un PDF):
+    // tenuto fuori di proposito, non è un report singolo.
+    reports: [
+      {
+        key: 'diritto-amm',
+        label: 'Diritto amministrativo (L. 241/1990 — procedimento, provvedimento, invalidità, accesso)',
+        fileId: '1uf8RHgTVGvw0GwutsyYQdFepBaryzOxM',
+      },
+      {
+        key: 'pubblico-impiego',
+        label: 'Pubblico impiego (D.Lgs. 165/2001 — rapporto di lavoro, responsabilità, codice di comportamento)',
+        fileId: '1ZX6VFpaSBN1RAvB3sfSwYT1etNOzV6aA',
+      },
+      {
+        key: 'contratti-pubblici',
+        label: 'Contratti pubblici (D.Lgs. 36/2023 — soggetti, procedure di affidamento, fasi del contratto)',
+        fileId: '1AGrmmFR70ay54H8FImQoUepOTGI-u8vP',
+      },
+      {
+        key: 'diritto-penale',
+        label: "Diritto penale — reati contro la PA (peculato, corruzione, abuso d'ufficio abrogato, artt. 314-360 c.p.)",
+        fileId: '1kVaSi9ANwxCjbuANhXglx3sPDd832FW-',
+      },
+      {
+        key: 'diritto-ue',
+        label: "Diritto dell'Unione europea (fonti, istituzioni, principi, rapporto con l'ordinamento interno — TUE/TFUE)",
+        fileId: '1Vx96Pv-1rpD08Xadih8GPJA7l6WV_M4C',
+      },
+      {
+        key: 'contabilita-stato',
+        label: 'Contabilità di Stato (L. 196/2009, art. 81 Cost. — ciclo di bilancio, DEF, rendiconto, controlli)',
+        fileId: '1Nr7vzOJ9LL3EhnL4tU8JMdLNgkP1hoXU',
+      },
+      {
+        key: 'cad',
+        label: "CAD — Codice dell'Amministrazione Digitale (identità e domicilio digitale, firme elettroniche, PDND)",
+        fileId: '1coPfbJP-kA5s02vYHCR9U6nrEi4NbSLz',
+      },
+      {
+        key: 'gdpr',
+        label: "GDPR e privacy (principi, basi giuridiche, diritti dell'interessato, adempimenti del titolare)",
+        fileId: '1XWUvu90vmoPOD3O4iqg-ta2Rv5-M2VuH',
+      },
+      {
+        key: 'informatica',
+        label: 'Informatica (hardware, software, reti e sicurezza informatica di base)',
+        fileId: '16ouxwSREj2Ie67DY4DesbV7uMrWWFki9',
+      },
+      {
+        key: 'ordinamento-amministrazioni',
+        label: 'Ordinamento delle Amministrazioni (PA centrali, organi costituzionali, D.Lgs. 300/1999)',
+        fileId: '1aTrEAhc0QmTOO5qks0KWX1IpxyYLRF5n',
+      },
+    ],
+  },
+  'ade-622-gest': {
+    concorso: 'Agenzia delle Entrate — 622 Assistenti gestionali (categorie protette L. 68/1999)',
+    concorsoShort: 'concorso AdE 622 Assistenti gestionali · categorie protette',
+    // Vetrina: /report-custom/ade-622-gest. 4 report ordinati per PESO nella
+    // prova (Ordinamento AdE 40%, Dir. amm. 20%, Pubblico impiego 20%,
+    // Applicazioni informatiche 10%). L'inglese (10%) non ha report per scelta:
+    // si allena coi quiz, non con una dispensa.
+    reports: [
+      {
+        key: 'ordinamento-ade',
+        label: "Ordinamento dell'Agenzia delle Entrate — il 40% della prova (fonti, organi e quorum, uffici periferici, convenzione col MEF)",
+        fileId: '1FgALOO1bRwn7lBYFvSjU1cMg78eOVLDr',
+      },
+      {
+        key: 'diritto-amm',
+        label: 'Elementi di diritto amministrativo (L. 241/1990 — procedimento, vizi e autotutela, silenzio-assenso, SCIA, accesso)',
+        fileId: '1DAgKA2zTzEX2Ac-eHf-ddBFO3MkjuvrR',
+      },
+      {
+        key: 'pubblico-impiego',
+        label: 'Rapporto di pubblico impiego (D.Lgs. 165/2001 — accesso e mansioni, dirigenza, procedimento disciplinare, performance)',
+        fileId: '1c8zaF92LUhg8_jh2rqklkDaZjciZE9gH',
+      },
+      {
+        key: 'applicazioni-informatiche',
+        label: 'Applicazioni informatiche e software diffusi (sistemi operativi, reti e sicurezza + PA digitale: identità, firme, documento informatico)',
+        fileId: '1RxBiIo59KORzQCMttms3gn8NKhck84Nj',
+      },
+    ],
+  },
   'cpi-sicilia-sac': {
     concorso: 'CPI Regione Siciliana — Specialista amministrativo contabile (SAC), 200 posti',
     concorsoShort: 'concorso CPI Sicilia · profilo SAC',

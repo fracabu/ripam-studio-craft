@@ -28,6 +28,7 @@ node scripts/send_drip.mjs --dry-run                 # consegna "a goccia" nuove
 node scripts/send_lead.mjs ...                       # invio diretto mail a un lead (guscio DARK + logo inline); bozza composta da lead-draft.mjs / skill auto-risposte-lead
 node scripts/anteprima_log.mjs ...                   # registra a mano una consegna nel registro `anteprime_inviate`
 node scripts/anteprime_list.mjs                      # elenca chi ha ricevuto quale anteprima
+node scripts/check_lead.mjs <email> [--full]         # cosa ha GIÀ ricevuto una persona (invii+anteprime+ordini+newsletter+profilo) → anti-doppione prima di rispondere
 
 # Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive

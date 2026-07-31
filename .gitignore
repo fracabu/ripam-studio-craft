@@ -51,6 +51,14 @@ messaggi-clienti/*
 # script di test/diagnosi temporanei (vivono solo in locale)
 scripts/_tmp_*
 
+# bozze delle mail ai singoli lead/clienti composte in scripts/ (es.
+# scripts/<nome>-<oggetto>.html|.txt, passate a send_lead.mjs con --html/--text):
+# contengono NOMI e contenuti personali, stessa sostanza di messaggi-clienti/.
+# Restano in locale, MAI su GitHub o Vercel. Gli script veri (.mjs/.js) NON sono
+# toccati da questa regola.
+scripts/*.html
+scripts/*.txt
+
 # anteprime PDF dei manuali: NON pubblicarle dal sito.
 # Vengono consegnate via link Google Drive a chi le richiede esplicitamente
 # (skill deliver-anteprima-manuale - work in progress).

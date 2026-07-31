@@ -78,6 +78,12 @@ const REGOLE = [
   [/benvenut[oa]\.? la tua prima anteprima|benvenut/i, 'newsletter-welcome',        'anteprima'],
   // --- lead / consegne su misura ---
   [/piano di studio/i,                              'piano-studio',                 'lead'],
+  // Risposta a una richiesta dal form: l'oggetto è il "Re:" della notifica
+  // (api/contact.js → "Nuova richiesta — <Concorso> — <Nome>"). Prima finiva in
+  // 'altro-<data>' e il check anti-doppione non la vedeva come lead gestito.
+  // La data DEVE stare nella campagna: la stessa persona può ricevere più
+  // risposte in giorni diversi e l'unique (email, campagna) le collasserebbe.
+  [/^re:\s*nuova richiesta/i,                       (d) => `risposta-lead-${d}`,    'lead'],
   [/anteprim/i,                                     'anteprime-varie',              'anteprima'],
   [/fattura/i,                                      'fattura',                      'fattura'],
   [/newsletter/i,                                   'newsletter-varie',             'newsletter'],

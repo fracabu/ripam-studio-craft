@@ -16,9 +16,13 @@
 //   node scripts/lead-draft.mjs --category=M5 --nome="Petronella" --materia="SIAE" --formats=manuale,audio,video --subject="..."
 //   node scripts/lead-draft.mjs --category=RC --nome="Stefania" --concorso=cpi-sicilia-sac --subject="..."
 //   node scripts/lead-draft.mjs --category=RC --nome="Stefania" --concorso=cpi-sicilia-sac --reports=contabilita-regionale,lr-10-2000 --prezzo="19,99 € a report" --subject="..."
+//   node scripts/lead-draft.mjs --category=CO --nome="Alessandra" --subject="..."
+//   node scripts/lead-draft.mjs --category=CO --nome="Alessandra" --livelli=true --livello=base --subject="..."
+//   node scripts/lead-draft.mjs --category=TL --nome="Michele" --tool="un simulatore quiz per la tua associazione" --subject="..."
+//   node scripts/lead-draft.mjs --list-concorsi          # chiavi RC + report disponibili (JSON)
 //
 // Argomenti:
-//   --category  M1 | M2 | M3 | M4 | M5 | RC  (obbligatorio)
+//   --category  M1 | M2 | M3 | M4 | M5 | RC | CO | TL  (obbligatorio)
 //   --nome      nome del lead                (consigliato; default "ciao")
 //   --slug      slug materia                 (obbligatorio per M2/M3/M4)
 //   --podcast   URL anteprima podcast EP1    (M3; podcast dialogato ≠ audio lezione)
@@ -32,6 +36,12 @@
 //   --concorso  chiave report-custom-manifest (obbligatorio per RC: es. cpi-sicilia-sac)
 //   --reports   sottoinsieme chiavi report   (RC opz.; default: tutte le disponibili)
 //   --prezzo    testo prezzo report completo (RC opz.; es. "25 €" o "19,99 € a report")
+//   --livelli   true → mostra i 3 livelli col listino (CO; default: mail
+//               esplorativa SENZA prezzi, con le 3 domande di qualificazione)
+//   --livello   base | avanzata | pro        (CO opz.; livello consigliato)
+//   --tool      cosa ha chiesto, testo libero (TL opz.; "un simulatore per…")
+//   --range     fascia di prezzo indicativa  (TL opz.; es. "600-1.500 €")
+//   --tempi     tempi indicativi             (TL opz.; es. "2-4 settimane")
 //   --subscribed  true                       (M1; il lead è già iscritto alla newsletter)
 //   --subject   oggetto originale del thread (per generare "Re: ...")
 // ============================================================================
@@ -73,8 +83,27 @@ function parseArgs(argv) {
 
 const args = parseArgs(process.argv.slice(2))
 
+// --list-concorsi: elenca le chiavi RC col relativo bundle di anteprime
+// disponibili (chiave report + label). Serve alla skill auto-risposte-lead per
+// mappare "Vorrei l'anteprima del report X (Concorso Y)" su --concorso/--reports
+// senza doversi ricordare il manifest a memoria.
+if (args['list-concorsi']) {
+  const manUrl = pathToFileURL(join(ROOT, 'api', '_lib', 'report-custom-manifest.js')).href
+  const { REPORT_CUSTOM_MANIFEST, getReportCustomBundle } = await import(manUrl)
+  const out = Object.keys(REPORT_CUSTOM_MANIFEST).map((key) => {
+    const b = getReportCustomBundle(key)
+    return {
+      concorso: key,
+      nome: b.concorso,
+      reports: b.reports.map((r) => ({ key: r.key, label: r.label })),
+    }
+  })
+  process.stdout.write(JSON.stringify(out, null, 2))
+  process.exit(0)
+}
+
 if (!args.category) {
-  console.error('Errore: --category obbligatorio (M1|M2|M3|M4|M5)')
+  console.error('Errore: --category obbligatorio (M1|M2|M3|M4|M5|RC|CO|TL)')
   process.exit(1)
 }
 
@@ -97,6 +126,11 @@ try {
     concorso: args.concorso,
     reports: args.reports,
     prezzo: args.prezzo,
+    livelli: args.livelli,
+    livello: args.livello,
+    tool: args.tool,
+    range: args.range,
+    tempi: args.tempi,
     subscribed: args.subscribed,
     originalSubject: args.subject,
   })

@@ -338,36 +338,67 @@ ${sigText()}`
 function buildRC({ firstName, bundle, prezzo }) {
   const { concorso, reports } = bundle
   const multi = reports.length > 1
-  const introNoun = multi ? 'le anteprime dei report di studio' : "l'anteprima del report di studio"
+  const introNoun = multi ? "ecco le anteprime dei report" : "ecco l'anteprima del report"
 
-  // Cosa contiene un Report Studio Custom completo (vale per tutti).
-  const cosaText = multi
-    ? `Ognuna è un estratto (copertina, indice e prime sezioni) così vedi com'è fatto. Il report completo è la dispensa integrale cucita sul bando: tutte le sezioni, i "trabocchetti" più insidiosi e i quiz commentati.`
-    : `È un estratto (copertina, indice e prime sezioni) così vedi com'è fatto. Il report completo è la dispensa integrale cucita sul bando: tutte le sezioni, i "trabocchetti" più insidiosi e i quiz commentati.`
-  const cosaHtml = `<p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">${cosaText}</p>`
+  const estrattoText = multi
+    ? 'Di ognuno sono le prime pagine — copertina, indice e l\'inizio delle sezioni — così vedi come ragiona il materiale prima di decidere.'
+    : 'Sono le prime pagine — copertina, indice e l\'inizio delle sezioni — così vedi come ragiona il materiale prima di decidere.'
 
+  // Credibilità: da dove viene il contenuto. L'architettura delle fonti si
+  // COMUNICA, non si spiega (niente "wiki"/"LLM": a un candidato non dicono
+  // nulla). Il contrasto "base costruita sulle fonti" vs "appunti raccolti in
+  // giro" fa il lavoro. "mi ci attengo" = strictly bando, che è anche il
+  // posizionamento del brand (studia solo quello che serve).
+  const metodoText = `Come nasce un report: sotto c'è una base di conoscenza costruita solo su fonti ufficiali, tenute collegate tra loro e aggiornate; sopra ci metto il programma del bando e mi ci attengo — dentro c'è quello che il bando chiede, niente capitoli in più per fare volume. Dove esiste una banca dati ufficiale guardo anche le domande già uscite nelle prove.`
+
+  const completoText = `Il report completo è la dispensa integrale: tutte le sezioni, i punti dove si sbaglia più spesso e i quiz commentati. E sulle stesse materie il PDF non è l'unica strada: ci sono audio lezioni e podcast per studiare mentre ti muovi, video lezioni, i manuali completi e il simulatore di quiz.`
+
+  // Il PIANO viene prima del prodotto: è l'offerta a più alto valore percepito
+  // e a costo zero per il lead. Le 3 domande sono il "prezzo" da pagare, ed è
+  // ciò che qualifica davvero il contatto (data prova, materie deboli, base di
+  // partenza). Regola commerciale 30/07/2026: prezzi solo se li chiede.
+  const pianoText = `Ma prima del materiale viene una cosa che conta di più: il piano. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — e quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.
+
+Se mi rispondi con tre informazioni:
+
+1) quando hai la prova e quante ore al giorno riesci davvero a metterci;
+2) le due o tre materie che senti più scoperte;
+3) che formazione hai alle spalle (una riga basta);
+
+ti preparo un piano di studio cucito sul tuo concorso e sul tuo tempo reale: quali materie in che ordine, quanto dedicare a ciascuna, dove conviene stringere e dove no. Te lo mando gratis.
+
+E serve anche a un'altra cosa: capire cosa vale la pena comprare e cosa no. Dal piano si vede dove te la cavi da sola/o — e lì non ti serve niente di mio — e dove invece un materiale fatto bene ti fa risparmiare settimane. Capita spesso che a qualcuno servano due report, non dieci: meglio saperlo prima di spendere.
+
+Se poi preferisci un formato diverso dal PDF, scrivimelo nella stessa risposta e ti mando l'anteprima anche di quello.`
+
+  // Il prezzo si mostra SOLO se passato esplicitamente (--prezzo): tariffe
+  // client-specific, meglio nessun numero che quello sbagliato.
   let prezzoText = ''
   let prezzoHtml = ''
+  let chiusuraPrezzoText = ''
+  let chiusuraPrezzoHtml = ''
   if (prezzo) {
-    prezzoText = `Report completo: ${prezzo}.`
+    prezzoText = `\nReport completo: ${prezzo}.\n`
     prezzoHtml = `<p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:18px 0">Report completo: ${prezzo}</p>`
+    chiusuraPrezzoText = `\nE se vuoi procedere subito, rispondi e ti mando le istruzioni per il pagamento.\n`
+    chiusuraPrezzoHtml = `<p style="margin:16px 0 0;font-size:15px">E se vuoi procedere subito, rispondi e ti mando le istruzioni per il pagamento.</p>`
   }
-
-  const closing = prezzo
-    ? 'Se ti convince, procediamo: te lo preparo e ti mando le istruzioni per il pagamento.'
-    : 'Se ti convince, rispondi a questa mail e ti mando subito le condizioni per i report completi.'
 
   const textLinks = reports.map((r) => `📄 ${r.label}:\n${r.viewUrl}`).join('\n\n')
   const text = `Ciao ${firstName},
 
-ecco ${introNoun} che ho preparato su misura per il ${concorso}, così vedi com'è il materiale:
+${introNoun} che ho preparato su misura per il tuo concorso, ${concorso}:
 
 ${textLinks}
 
-${cosaText}
-${prezzoText ? '\n' + prezzoText + '\n' : ''}
-${closing}
+${estrattoText}
 
+${metodoText}
+
+${completoText}
+${prezzoText}
+${pianoText}
+${chiusuraPrezzoText}
 ${sigText()}`
 
   const htmlBlocks = reports
@@ -375,13 +406,224 @@ ${sigText()}`
   <p style="margin:0 0 8px;font-size:14px;color:#2a2a2a">📄 <strong>${r.label}</strong></p>
   <p style="margin:0 0 20px;text-align:center">${emailButton(r.viewUrl, "📄 APRI L'ANTEPRIMA")}</p>`)
     .join('')
+
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
-  <p style="margin:0 0 18px;font-size:15px">ecco ${introNoun} che ho preparato su misura per il <strong>${concorso}</strong>, così vedi com'è il materiale:</p>${htmlBlocks}${cosaHtml}${prezzoHtml}
-  <p style="margin:6px 0 0;font-size:15px">${closing}</p>
+  <p style="margin:0 0 18px;font-size:15px">${introNoun} che ho preparato su misura per il tuo concorso, <strong>${concorso}</strong>:</p>${htmlBlocks}
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">${estrattoText}</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Come nasce un report: sotto c'è una <strong>base di conoscenza costruita solo su fonti ufficiali</strong>, tenute collegate tra loro e aggiornate; sopra ci metto il <strong>programma del bando e mi ci attengo</strong> — dentro c'è quello che il bando chiede, niente capitoli in più per fare volume. Dove esiste una banca dati ufficiale guardo anche le domande già uscite nelle prove.</p>
+  <p style="margin:0 0 14px;font-size:15px">Il <strong>report completo</strong> è la dispensa integrale: tutte le sezioni, i punti dove si sbaglia più spesso e i quiz commentati. E sulle stesse materie il PDF non è l'unica strada: ci sono <strong>audio lezioni e podcast</strong> per studiare mentre ti muovi, <strong>video lezioni</strong>, i <strong>manuali completi</strong> e il <strong>simulatore di quiz</strong>.</p>${prezzoHtml}
+  <p style="margin:18px 0 14px;font-size:15px">Ma prima del materiale viene una cosa che conta di più: <strong>il piano</strong>. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — e quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.</p>
+  <p style="margin:0 0 10px;font-size:15px">Se mi rispondi con <strong>tre informazioni</strong>:</p>
+  <ol style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.7">
+    <li style="margin:0 0 8px"><strong>quando hai la prova</strong> e quante ore al giorno riesci davvero a metterci;</li>
+    <li style="margin:0 0 8px">le <strong>due o tre materie</strong> che senti più scoperte;</li>
+    <li>che <strong>formazione</strong> hai alle spalle (una riga basta).</li>
+  </ol>
+  <p style="margin:0 0 14px;font-size:15px">ti preparo un <strong>piano di studio cucito sul tuo concorso e sul tuo tempo reale</strong>: quali materie in che ordine, quanto dedicare a ciascuna, dove conviene stringere e dove no. <strong>Te lo mando gratis.</strong></p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">E serve anche a un'altra cosa: <strong>capire cosa vale la pena comprare e cosa no</strong>. Dal piano si vede dove te la cavi da sola/o — e lì non ti serve niente di mio — e dove invece un materiale fatto bene ti fa risparmiare settimane. Capita spesso che a qualcuno servano due report, non dieci: meglio saperlo prima di spendere.</p>
+  <p style="margin:0 0 4px;font-size:15px">Se poi preferisci un formato diverso dal PDF, scrivimelo nella stessa risposta e ti mando l'anteprima anche di quello.</p>${chiusuraPrezzoHtml}
   ${sigHtml()}`
 
   return { inner, text, kicker: 'REPORT SU MISURA' }
+}
+
+// ---------------------------------------------------------------------------
+// CO — COACHING NOTEBOOKLM (form /scrivimi → "Cosa serve: Coaching NotebookLM")
+// ---------------------------------------------------------------------------
+// Due varianti, in ordine di conversazione:
+//   1) DEFAULT (esplorativa, NIENTE prezzi) — è la prima risposta: si spiega
+//      cos'è la sessione e si chiedono le 3 info che servono a tarare il
+//      livello (punto di partenza, dispositivo, disponibilità). Regola
+//      commerciale: i prezzi si danno solo quando il lead li chiede o quando
+//      si è capito da dove parte.
+//   2) livelli=true — l'offerta vera: i 3 livelli col listino (39/39/59,
+//      percorso 99 invece di 137) e la proposta di fissare la sessione.
+//      `livello` (base|avanzata|pro) = quello consigliato, va in grassetto.
+// Fonte dei contenuti: messaggi-clienti/coaching-notebooklm-livelli.md.
+const COACHING_PREZZI = { base: '39 €', avanzata: '39 €', pro: '59 €', percorso: '99 €', percorsoPieno: '137 €' }
+const COACHING_LIVELLI = [
+  {
+    k: 'base',
+    breve: 'Base',
+    emoji: '🟢',
+    nome: 'BASE — «Da zero a operativa»',
+    perChi: 'parti da zero con NotebookLM (o l\'hai aperto una volta e chiuso subito)',
+    cosa: 'giro completo dell\'ambiente, carichi la tua prima fonte (manuale, dispensa, normativa), impari a interrogarla con le risposte ancorate al documento, generi i primi materiali di studio (riassunti, guida, FAQ, audio ripasso) e li scarichi',
+    esci: 'un notebook funzionante sulla tua materia + i primi materiali pronti',
+  },
+  {
+    k: 'avanzata',
+    breve: 'Avanzata',
+    emoji: '🟡',
+    nome: 'AVANZATA — «Da utente a power user»',
+    perChi: 'hai già le basi e vuoi il salto di qualità',
+    cosa: 'Deep Research come fonte alternativa, personalizzazione degli output prima di generarli, il ciclo report → fonte (il notebook migliora a ogni giro), lavoro multi-fonte (bando + normativa + appunti)',
+    esci: 'un notebook che si auto-migliora e output tagliati sul tuo concorso',
+  },
+  {
+    k: 'pro',
+    breve: 'Pro',
+    emoji: '🔴',
+    nome: 'PRO — «Il sistema replicabile»',
+    perChi: 'vuoi il metodo completo, quello con cui preparo i materiali per i miei clienti',
+    cosa: 'la pipeline da concorso (bando e quiz storici come fonti → contenuti per ogni materia), l\'organizzazione del sistema e il Prompt Pack usato dal vivo sulla tua materia',
+    esci: 'un metodo che si replica su tutte le materie — incluso il Prompt Pack (10-15 prompt commentati) e un mini follow-up dopo una settimana',
+  },
+]
+
+function buildCO({ firstName, livelli, livello }) {
+  // --- variante 1: esplorativa, niente prezzi ---
+  if (!livelli) {
+    const text = `Ciao ${firstName},
+
+grazie per l'interesse sulla coaching NotebookLM: te la spiego in due righe, poi ti chiedo tre cose per tararla su di te.
+
+È una sessione 1:1 online di un'ora, in videochiamata con condivisione schermo. Non è una lezione teorica: si lavora sulla TUA materia di concorso, e alla fine ti porti a casa un notebook funzionante e materiali di studio veri, subito usabili. L'obiettivo è che poi tu sappia rifartelo da sola/o su qualsiasi fonte.
+
+Per capire da dove partire, dimmi:
+
+1) NotebookLM: parti da zero, hai già le basi, o lo usi già e vuoi il salto di qualità?
+2) Da che dispositivo lavori di solito? (nota onesta: NotebookLM dà il meglio da computer, col browser — da tablet diverse funzioni sono limitate. Se hai solo il tablet la facciamo lo stesso, tarata su quello.)
+3) Che giorni e che fasce orarie ti sono comode?
+
+Con queste tre risposte ti dico esattamente da quale livello conviene partire e ti propongo un paio di date.
+
+${sigText()}`
+
+    const inner = `
+  <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
+  <p style="margin:0 0 14px;font-size:15px">grazie per l'interesse sulla <strong>coaching NotebookLM</strong>: te la spiego in due righe, poi ti chiedo tre cose per tararla su di te.</p>
+  <p style="margin:0 0 14px;font-size:15px">È una <strong>sessione 1:1 online di un'ora</strong>, in videochiamata con condivisione schermo. Non è una lezione teorica: si lavora sulla <strong>tua materia di concorso</strong>, e alla fine ti porti a casa un notebook funzionante e materiali di studio veri, subito usabili. L'obiettivo è che poi tu sappia rifartelo da sola/o su qualsiasi fonte.</p>
+  <p style="margin:0 0 10px;font-size:15px">Per capire da dove partire, dimmi:</p>
+  <ol style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.7">
+    <li style="margin:0 0 8px"><strong>NotebookLM</strong>: parti da zero, hai già le basi, o lo usi già e vuoi il salto di qualità?</li>
+    <li style="margin:0 0 8px">Da che <strong>dispositivo</strong> lavori di solito? <span style="color:#2a2a2a">(nota onesta: NotebookLM dà il meglio da computer, col browser — da tablet diverse funzioni sono limitate. Se hai solo il tablet la facciamo lo stesso, tarata su quello.)</span></li>
+    <li>Che <strong>giorni e fasce orarie</strong> ti sono comode?</li>
+  </ol>
+  <p style="margin:0 0 4px;font-size:15px">Con queste tre risposte ti dico esattamente da quale livello conviene partire e ti propongo un paio di date.</p>
+  ${sigHtml()}`
+
+    return { inner, text, kicker: 'COACHING' }
+  }
+
+  // --- variante 2: offerta coi 3 livelli e il listino ---
+  const cons = COACHING_LIVELLI.find((l) => l.k === livello) || null
+  const consText = cons
+    ? `\nNel tuo caso partirei dalla ${cons.breve}: ${cons.perChi}.\n`
+    : ''
+  const consHtml = cons
+    ? `<p style="margin:0 0 14px;font-size:15px">Nel tuo caso partirei dalla <strong>${cons.breve}</strong>: ${cons.perChi}.</p>`
+    : ''
+
+  const livText = COACHING_LIVELLI.map((l) => `${l.emoji} ${l.nome} — ${COACHING_PREZZI[l.k]} (1 ora)
+Per chi è: ${l.perChi}.
+Cosa facciamo: ${l.cosa}.
+Te ne esci con: ${l.esci}.`).join('\n\n')
+
+  const livHtml = COACHING_LIVELLI.map((l) => `
+  <div style="border:2px solid ${BRAND.ink};padding:14px 16px;margin:0 0 14px">
+    <p style="margin:0 0 8px;font-size:16px;font-weight:700">${l.emoji} ${l.nome} — ${COACHING_PREZZI[l.k]}</p>
+    <p style="margin:0 0 6px;font-size:14px;color:#2a2a2a"><strong>Per chi è:</strong> ${l.perChi}.</p>
+    <p style="margin:0 0 6px;font-size:14px;color:#2a2a2a"><strong>Cosa facciamo:</strong> ${l.cosa}.</p>
+    <p style="margin:0;font-size:14px;color:#2a2a2a"><strong>Te ne esci con:</strong> ${l.esci}.</p>
+  </div>`).join('')
+
+  const text = `Ciao ${firstName},
+
+ecco come è organizzata la coaching NotebookLM. Tre livelli da un'ora, ognuno completo in sé: puoi fare solo il primo, fermarti quando vuoi, o partire direttamente da quello che ti serve.
+
+${livText}
+${consText}
+Percorso completo (tutti e 3 i livelli, 3 ore + materiali): ${COACHING_PREZZI.percorso} invece di ${COACHING_PREZZI.percorsoPieno} — la Base è come se fosse in omaggio.
+
+Si fa su Google Meet con condivisione schermo, e si lavora sul tuo concorso e sulla tua materia, non su esempi finti.
+
+Se ti va, dimmi il livello e due o tre fasce orarie che ti tornano: ti mando il link della videochiamata.
+
+${sigText()}`
+
+  const inner = `
+  <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
+  <p style="margin:0 0 18px;font-size:15px">ecco come è organizzata la <strong>coaching NotebookLM</strong>. Tre livelli da un'ora, ognuno completo in sé: puoi fare solo il primo, fermarti quando vuoi, o <strong>partire direttamente da quello che ti serve</strong>.</p>
+  ${livHtml}
+  ${consHtml}
+  <p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:18px 0">Percorso completo (3 livelli, 3 ore + materiali): ${COACHING_PREZZI.percorso} invece di ${COACHING_PREZZI.percorsoPieno}</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Si fa su <strong>Google Meet</strong> con condivisione schermo, e si lavora sul tuo concorso e sulla tua materia, non su esempi finti.</p>
+  <p style="margin:0 0 4px;font-size:15px">Se ti va, dimmi il <strong>livello</strong> e due o tre <strong>fasce orarie</strong> che ti tornano: ti mando il link della videochiamata.</p>
+  ${sigHtml()}`
+
+  return { inner, text, kicker: 'COACHING' }
+}
+
+// ---------------------------------------------------------------------------
+// TL — TOOL SU MISURA (form /scrivimi → "Cosa serve: Tool su misura")
+// ---------------------------------------------------------------------------
+// Qui NON esiste un listino: serve un preventivo vero. La prima mail QUALIFICA
+// — spiega le fasi (la Fase 1 è gratuita) e chiede i 4 punti senza i quali un
+// preventivo è aria fritta. `range` e `tempi` (testo libero) sono OPZIONALI: si
+// passano solo quando lo scope è già chiaro e si vuole dare una fascia
+// indicativa. Regola dal template 04: mai un prezzo "tutto compreso al buio".
+function buildTL({ firstName, tool, range, tempi }) {
+  const cosa = tool
+    ? `Ho capito che ti serve ${tool}. Se ho frainteso dimmelo subito, così aggiusto il tiro prima di andare avanti.`
+    : `Prima di parlare di numeri voglio capire bene cosa ti serve: un preventivo fatto al buio è un pessimo affare per entrambi.`
+
+  const fasciaText = range
+    ? `\nPer un lavoro di questo tipo la fascia indicativa è ${range}${tempi ? `, con tempi di ${tempi}` : ''}. Il numero preciso lo fissiamo alla fine della Fase 1, quando sappiamo esattamente cosa include e cosa no: fino a quel punto non ti chiedo nulla.\n`
+    : `\nIl prezzo lo fissiamo alla fine della Fase 1, quando sappiamo esattamente cosa include e cosa no: fino a quel punto non ti chiedo nulla.\n`
+  const fasciaHtml = range
+    ? `<p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:18px 0">Fascia indicativa: ${range}${tempi ? ` · tempi ${tempi}` : ''}</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Il numero preciso lo fissiamo alla fine della Fase 1, quando sappiamo esattamente cosa include e cosa no: fino a quel punto non ti chiedo nulla.</p>`
+    : `<p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Il prezzo lo fissiamo alla fine della <strong>Fase 1</strong>, quando sappiamo esattamente cosa include e cosa no: fino a quel punto non ti chiedo nulla.</p>`
+
+  const text = `Ciao ${firstName},
+
+grazie per avermi scritto per un tool su misura.
+
+${cosa}
+
+Come lavoro, per fasi:
+
+1) Scope definitivo — GRATIS. Mettiamo nero su bianco cosa è incluso e cosa no, i dati di partenza e dove va pubblicato.
+2) Prototipo navigabile — ti mando un link con la prima versione funzionante: ci clicchi dentro e vedi se la direzione è giusta. Qui le modifiche "forti" non costano.
+3) Sviluppo completo — tutte le funzioni concordate, contenuti veri, test su mobile e desktop.
+4) Consegna e supporto — link pubblico o pacchetto con le istruzioni, e un mese di supporto incluso.
+${fasciaText}
+Per prepararti la Fase 1 mi servono quattro risposte:
+
+1) Cosa deve fare il tool e a chi serve (una o due righe bastano).
+2) Web o da usare offline? E lo pubblichi tu o me ne occupo io?
+3) I contenuti (domande, testi, materiali) li hai già o vanno prodotti?
+4) Ci sono scadenze vincolanti — una data di prova, un evento, una consegna?
+
+Rispondi anche solo a queste quattro e ti mando una proposta concreta, con fasi e costi.
+
+${sigText()}`
+
+  const inner = `
+  <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
+  <p style="margin:0 0 14px;font-size:15px">grazie per avermi scritto per un <strong>tool su misura</strong>.</p>
+  <p style="margin:0 0 16px;font-size:15px">${cosa}</p>
+  <p style="margin:0 0 10px;font-size:15px"><strong>Come lavoro, per fasi:</strong></p>
+  <ol style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.7">
+    <li style="margin:0 0 8px"><strong>Scope definitivo — gratis.</strong> Mettiamo nero su bianco cosa è incluso e cosa no, i dati di partenza e dove va pubblicato.</li>
+    <li style="margin:0 0 8px"><strong>Prototipo navigabile.</strong> Ti mando un link con la prima versione funzionante: ci clicchi dentro e vedi se la direzione è giusta. Qui le modifiche «forti» non costano.</li>
+    <li style="margin:0 0 8px"><strong>Sviluppo completo.</strong> Tutte le funzioni concordate, contenuti veri, test su mobile e desktop.</li>
+    <li><strong>Consegna e supporto.</strong> Link pubblico o pacchetto con le istruzioni, e <strong>un mese di supporto incluso</strong>.</li>
+  </ol>
+  ${fasciaHtml}
+  <p style="margin:0 0 10px;font-size:15px"><strong>Per prepararti la Fase 1 mi servono quattro risposte:</strong></p>
+  <ol style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.7">
+    <li style="margin:0 0 8px">Cosa deve <strong>fare</strong> il tool e <strong>a chi serve</strong> (una o due righe bastano).</li>
+    <li style="margin:0 0 8px"><strong>Web o offline</strong>? E lo pubblichi tu o me ne occupo io?</li>
+    <li style="margin:0 0 8px">I <strong>contenuti</strong> (domande, testi, materiali) li hai già o vanno prodotti?</li>
+    <li>Ci sono <strong>scadenze vincolanti</strong> — una data di prova, un evento, una consegna?</li>
+  </ol>
+  <p style="margin:0 0 4px;font-size:15px">Rispondi anche solo a queste quattro e ti mando una proposta concreta, con fasi e costi.</p>
+  ${sigHtml()}`
+
+  return { inner, text, kicker: 'TOOL SU MISURA' }
 }
 
 // NL — nurture per chi ha chiesto SOLO le credenziali Quiz Pro: invito alla
@@ -416,7 +658,7 @@ Telegram: @fcapurso`
   return { inner, text, kicker: '' }
 }
 
-// Dispatcher. `category` ∈ {M1,M2,M3,M4,M5,RC,NL}.
+// Dispatcher. `category` ∈ {M1,M2,M3,M4,M5,RC,CO,TL,NL}.
 //   M1                 → nessun dato extra
 //   M2/M3/M4           → slug (per materiaLabel)
 //   M3                 → podcast/audio/video/manuale/report (URL anteprime
@@ -433,8 +675,15 @@ Telegram: @fcapurso`
 //                        sottoinsieme di chiavi report da includere (default:
 //                        tutte le disponibili). `prezzo` (opzionale, testo) →
 //                        mostra il prezzo del report completo. Niente slug.
+//   CO                 → coaching NotebookLM. Default = mail esplorativa senza
+//                        prezzi (3 domande di qualificazione). `livelli=true` →
+//                        offerta coi 3 livelli e il listino; `livello`
+//                        (base|avanzata|pro) = quello consigliato.
+//   TL                 → tool su misura: qualificazione a 4 domande + fasi.
+//                        `tool` (testo libero) = cosa ha chiesto; `range` e
+//                        `tempi` (testo libero, opzionali) = fascia indicativa.
 // Ritorna { subject, text, html }. Throw se mancano dati obbligatori.
-export function buildLeadEmail({ category, nome, slug, link, podcast, audio, video, manuale, report, materia, formats, concorso, reports, prezzo, subscribed, originalSubject }) {
+export function buildLeadEmail({ category, nome, slug, link, podcast, audio, video, manuale, report, materia, formats, concorso, reports, prezzo, livelli, livello, tool, range, tempi, subscribed, originalSubject }) {
   const rawFirst = (nome || '').trim().split(/\s+/)[0] || 'ciao'
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1).toLowerCase()
   const materiaLabel = slug ? (MATERIA_LABEL[slug] || slug) : ''
@@ -469,6 +718,10 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
   } else if (category === 'RC' && !originalSubject) {
     const uno = rcBundle.reports.length === 1
     subject = `${uno ? "L'anteprima del report" : 'Le anteprime dei report'} — ${rcBundle.concorsoShort} — Ripam Studio Craft`
+  } else if (category === 'CO' && !originalSubject) {
+    subject = 'La tua coaching su NotebookLM — Ripam Studio Craft'
+  } else if (category === 'TL' && !originalSubject) {
+    subject = 'Il tuo tool su misura — Ripam Studio Craft'
   } else {
     subject = replySubject(originalSubject)
   }
@@ -517,8 +770,19 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
     case 'RC':
       built = buildRC({ firstName, bundle: rcBundle, prezzo: prezzo || null })
       break
+    case 'CO': {
+      const liv = (livello || '').trim().toLowerCase()
+      if (liv && !COACHING_LIVELLI.some((l) => l.k === liv)) {
+        throw new Error(`CO: livello sconosciuto "${liv}" (attesi base|avanzata|pro)`)
+      }
+      built = buildCO({ firstName, livelli: livelli === true || livelli === 'true', livello: liv || null })
+      break
+    }
+    case 'TL':
+      built = buildTL({ firstName, tool: tool || null, range: range || null, tempi: tempi || null })
+      break
     default:
-      throw new Error(`Categoria sconosciuta: ${category} (attese M1|M2|M3|M4|M5|RC|NL)`)
+      throw new Error(`Categoria sconosciuta: ${category} (attese M1|M2|M3|M4|M5|RC|CO|TL|NL)`)
   }
 
   return { subject, text: built.text, html: emailShell(built.inner, built.kicker) }
