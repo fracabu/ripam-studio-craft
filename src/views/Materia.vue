@@ -81,7 +81,7 @@ const tabEnabled = (k) => k === 'rep'
   : !!contenuti.value?.[k]
 
 const tabIcon = { pod:'🎙️', aul:'🎧', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
-const tabLabel = { pod:'Podcast', aul:'Audio Lezioni', vid:'Video', rep:'Report', man:'Manuale', sim:'Simulatore' }
+const tabLabel = { pod:'Podcast', vid:'Audio + Visivo', rep:'Report', man:'Manuale', sim:'Simulatore' }
 
 const activeFormato = computed(() => FORMATI.find(f => f.k === activeTab.value))
 

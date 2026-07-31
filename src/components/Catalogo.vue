@@ -41,12 +41,13 @@ const STATO = {
 }
 
 // Icona per chiave formato
-const ICO = { pod:'🎙️', aul:'🎧', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
-const LBL = { pod:'PODCAST', aul:'AUDIO', vid:'VIDEO', rep:'REPORT', man:'MANUALE', sim:'SIM' }
+const ICO = { pod:'🎙️', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
+const LBL = { pod:'PODCAST', vid:'AUDIO+VISIVO', rep:'REPORT', man:'MANUALE', sim:'SIM' }
 
+// 'aul' (audio lezioni monovoce) è fuori catalogo dal 31/07/2026: niente badge.
 const formatPills = (m) => {
   const out = []
-  for (const k of ['pod','aul','vid','rep','man','sim']) {
+  for (const k of ['pod','vid','rep','man','sim']) {
     const stato = m.avail?.[k]
     if (!stato || !STATO[stato]) continue
     out.push({ k, ico: ICO[k], lbl: LBL[k], stato: STATO[stato].l, cls: STATO[stato].cls })

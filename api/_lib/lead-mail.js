@@ -21,11 +21,31 @@ const TELEGRAM_URL = 'https://t.me/fcapurso'
 // misura). Deciso 2026-06-01. ⚠️ NON è speculare a src/data/formati.js (quelli
 // sono i prezzi "da" del sito, più bassi e NON mostrati pubblicamente): questi
 // sono i prezzi di vendita reali comunicati ai lead via email.
-const PREZZI = { manuale: '24,99 €', audio: '34,99 €', video: '39,99 €', report: '9,99 €', podcast: '19,99 €' }
+// ⚠️ Listino rivisto il 2026-07-31. Due cose sono cambiate insieme:
+//  1) POTATURA. Fuori catalogo le "audio lezioni" monovoce e i report generati
+//     con NotebookLM (erano 9,99 € mentre i report veri si vendono a 29-30 €).
+//     Le ex "video lezioni" si chiamano ora AUDIO LEZIONI CON SUPPORTO VISIVO:
+//     è quello che sono sempre state. Chiave interna invariata (`video`).
+//  2) PREZZI PER MATERIA (serie completa = 8 episodi), allineati al praticato
+//     reale sulle fatture, non ai vecchi "prezzi da" del sito.
+const PREZZI = { podcast: '29 €', video: '35 €', manuale: '39 €', report: '29 €' }
+
+// Bundle. NON vanno mai nella prima mail: servono al secondo giro, quando il
+// lead ha visto le anteprime e chiede le condizioni. Curva: -20% a 3 materie,
+// -35% a 5, -60% su tutte (~10). I valori a 3 e 5 report cadono esatti sul
+// listino già praticato (69 € e 99 €).
+export const BUNDLE = {
+  materiaCompleta: '119 €', // podcast + audio/visivo + report + manuale (da 132 €)
+  podcast: { 3: '69 €', 5: '95 €', tutte: '115 €' },
+  video: { 3: '85 €', 5: '115 €', tutte: '139 €' },
+  manuale: { 3: '95 €', 5: '129 €', tutte: '159 €' },
+  report: { 3: '69 €', 5: '99 €', tutte: '149 €' },
+  completo: { 3: '299 €', 5: '399 €', tutte: '549 €' },
+}
+
 const COMPLETO_LABEL = {
   manuale: 'Il Manuale completo',
-  audio: 'Le Audio Lezioni complete',
-  video: 'Le Video Lezioni complete',
+  video: 'Le Audio Lezioni con supporto visivo (serie completa)',
   report: 'Il Report completo',
   podcast: 'La Serie Podcast completa',
 }
@@ -62,11 +82,13 @@ function buildM1({ firstName, subscribed }) {
 
 ci sta non avere ancora le idee chiare: è proprio il momento in cui posso esserti più utile.
 
-In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI su fonti ufficiali — audio lezioni, video lezioni, podcast, report e manuali. Così studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.`
+In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI su fonti ufficiali — podcast, audio lezioni con supporto visivo, report e manuali. Così studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.
+
+${bloccoGratisText()}`
   const greetHtml = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong> 👋</p>
   <p style="margin:0 0 14px;font-size:15px">ci sta non avere ancora le idee chiare: è proprio il momento in cui posso esserti <strong>più utile</strong>.</p>
-  <p style="margin:0 0 14px;font-size:15px">In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI <strong>su fonti ufficiali</strong> — audio lezioni, video lezioni, podcast, report e manuali. Studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.</p>`
+  <p style="margin:0 0 14px;font-size:15px">In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI <strong>su fonti ufficiali</strong> — podcast, audio lezioni con supporto visivo, report e manuali. Studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.</p>${bloccoGratisHtml()}`
 
   const closeText = `E se mi dici quale concorso prepari (o anche solo la materia che ti preoccupa di più), ti rispondo con un consiglio mirato su da dove partire.`
   const closeHtml = `<p style="margin:0 0 4px;font-size:15px">E se mi dici <strong>quale concorso</strong> prepari (o anche solo la materia che ti preoccupa di più), ti rispondo con un consiglio mirato su <strong>da dove partire</strong>.</p>`
@@ -74,13 +96,13 @@ In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materi
   if (subscribed) {
     const text = `${greetText}
 
-Visto che sei già iscritto alla newsletter, le anteprime — audio + video + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.
+Visto che sei già iscritto alla newsletter, le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.
 
 ${closeText}
 
 ${sigText()}`
     const inner = `${greetHtml}
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Visto che sei <strong>già iscritto alla newsletter</strong>, le anteprime — audio + video + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Visto che sei <strong>già iscritto alla newsletter</strong>, le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.</p>
   ${closeHtml}
   ${sigHtml()}`
     return { inner, text, kicker: '' }
@@ -88,7 +110,7 @@ ${sigText()}`
 
   const text = `${greetText}
 
-Il modo più veloce per capire se fanno per te: iscriviti alla newsletter dal sito (spunta la casella della privacy) e ricevi GRATIS le anteprime — audio + video + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.
+Il modo più veloce per capire se fanno per te: iscriviti alla newsletter dal sito (spunta la casella della privacy) e ricevi GRATIS le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.
 
 👉 ${site}
 
@@ -96,7 +118,7 @@ ${closeText}
 
 ${sigText()}`
   const inner = `${greetHtml}
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Il modo più veloce per capire se fanno per te: iscriviti alla <strong>newsletter</strong> (spunta la casella della privacy) e ricevi <strong>gratis le anteprime</strong> — audio + video + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Il modo più veloce per capire se fanno per te: iscriviti alla <strong>newsletter</strong> (spunta la casella della privacy) e ricevi <strong>gratis le anteprime</strong> — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.</p>
   <p style="margin:22px 0;text-align:center">${emailButton(site, 'RICEVI LE ANTEPRIME GRATIS')}</p>
   ${closeHtml}
   ${sigHtml()}`
@@ -107,29 +129,36 @@ ${sigText()}`
 function buildM2({ firstName, materiaLabel }) {
   const text = `Ciao ${firstName},
 
-perfetto, ${materiaLabel}. Per prepararti la cosa giusta, fammi sapere in che formato preferisci studiare:
+perfetto, ${materiaLabel}. Prima di prepararti qualcosa ti do quello che puoi già usare oggi.
 
-- 🎙️ Podcast — due voci che discutono la materia, da ascoltare in auto/palestra
-- 🎧 Audio lezioni — lettura integrale, studio strutturato
-- 🎥 Video lezioni — le stesse lezioni in formato visivo
-- 📄 Report — sintesi PDF per ripasso veloce
+${bloccoGratisText()}
+
+Poi, per mandarti l'anteprima giusta, fammi sapere in che formato preferisci studiare:
+
+- 🎙️ Podcast — due voci che discutono la materia, da ascoltare in auto o in palestra
+- 🎥 Audio lezioni con supporto visivo — la lezione letta per intero, con i punti chiave a schermo
+- 📄 Report — la dispensa sul programma del tuo bando
 - 📚 Manuale completo — manuale editoriale 200-300 pp
 
-Dimmi quale ti serve e ti mando un'anteprima + la serie completa della materia.
+${bloccoPianoText()}
+
+${bloccoCanaliText()}
+
+Dimmi il formato e ti mando subito l'anteprima.
 
 ${sigText()}`
 
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
-  <p style="margin:0 0 14px;font-size:15px">perfetto, <strong>${materiaLabel}</strong>. Per prepararti la cosa giusta, fammi sapere <strong>in che formato</strong> preferisci studiare:</p>
+  <p style="margin:0 0 14px;font-size:15px">perfetto, <strong>${materiaLabel}</strong>. Prima di prepararti qualcosa ti do quello che puoi già usare oggi.</p>${bloccoGratisHtml()}
+  <p style="margin:0 0 10px;font-size:15px">Poi, per mandarti l'anteprima giusta, fammi sapere <strong>in che formato</strong> preferisci studiare:</p>
   <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;color:#2a2a2a;line-height:1.7;list-style:none">
-    <li>🎙️ <strong>Podcast</strong> — due voci che discutono la materia, da ascoltare in auto/palestra</li>
-    <li>🎧 <strong>Audio lezioni</strong> — lettura integrale, studio strutturato</li>
-    <li>🎥 <strong>Video lezioni</strong> — le stesse lezioni in formato visivo</li>
-    <li>📄 <strong>Report</strong> — sintesi PDF per ripasso veloce</li>
+    <li>🎙️ <strong>Podcast</strong> — due voci che discutono la materia, da ascoltare in auto o in palestra</li>
+    <li>🎥 <strong>Audio lezioni con supporto visivo</strong> — la lezione letta per intero, con i punti chiave a schermo</li>
+    <li>📄 <strong>Report</strong> — la dispensa sul programma del tuo bando</li>
     <li>📚 <strong>Manuale completo</strong> — manuale editoriale 200-300 pp</li>
-  </ul>
-  <p style="margin:0 0 4px;font-size:15px">Dimmi quale ti serve e ti mando un'anteprima + la serie completa della materia.</p>
+  </ul>${bloccoPianoHtml()}${bloccoCanaliHtml()}
+  <p style="margin:0 0 4px;font-size:15px">Dimmi il formato e ti mando subito l'anteprima.</p>
   ${sigHtml()}`
 
   return { inner, text, kicker: '' }
@@ -137,10 +166,80 @@ ${sigText()}`
 
 // Metadati per formato anteprima usati da M3 (label + CTA). `generic` è il
 // fallback quando arriva un solo `link` non tipizzato (retrocompat).
+// ============================================================================
+// BLOCCHI DELLA SCALA (2026-07-31). L'ordine con cui si offre qualcosa a un
+// lead è fisso: prima tutto il gratis da consumare, poi il piano di studio e i
+// canali, poi le anteprime della newsletter — e solo se serve davvero si compra.
+// I prezzi NON escono mai nella prima mail: si mandano quando il lead risponde
+// e li chiede. Questi blocchi si montano dentro M3/M4/M5 invece di riscriverli.
+// ============================================================================
+const GRATIS = [
+  ['https://www.ripamstudio.it/', 'simulatori, riassunti, report di studio, decaloghi e flashcard'],
+  ['https://ripam-studio-quiz-pro.vercel.app/', "quiz generati dall'AI direttamente dagli articoli di legge (5.500+ articoli, 26 leggi); le credenziali le chiedi dal sito, gratis"],
+  ['https://ripam-studio-logica.vercel.app/', 'simulazioni di logica e ragionamento'],
+]
+const SOCIAL = { telegram: 'https://t.me/ripam3997studio', facebook: 'https://www.facebook.com/profile.php?id=61586971824622' }
+
+function bloccoGratisText() {
+  return `Prima però ti segnalo una cosa che quasi nessuno sfrutta: buona parte di quello che faccio è gratis, e non devi chiedermela.
+
+${GRATIS.map(([url, d]) => `- ${url}\n  ${d}`).join('\n')}
+
+Comincia da lì. Se ti basta quello, hai risolto senza spendere un euro — ed è un esito che mi va benissimo.`
+}
+function bloccoGratisHtml() {
+  return `
+  <p style="margin:18px 0 8px;font-size:15px">Prima però ti segnalo una cosa che quasi nessuno sfrutta: <strong>buona parte di quello che faccio è gratis</strong>, e non devi chiedermela.</p>
+  <ul style="margin:0 0 14px;padding-left:18px;font-size:14px;line-height:1.6;list-style:none">${GRATIS.map(([url, d]) => `<li style="margin:0 0 8px">▸ <a href="${url}" style="color:${BRAND.ink};font-weight:700">${url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a><br><span style="color:#2a2a2a">${d}</span></li>`).join('')}</ul>
+  <p style="margin:0 0 16px;font-size:15px">Comincia da lì. Se ti basta quello, <strong>hai risolto senza spendere un euro</strong> — ed è un esito che mi va benissimo.</p>`
+}
+
+function bloccoPianoText() {
+  return `Poi, prima del materiale, viene il piano. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.
+
+Se mi rispondi con tre informazioni:
+
+1) quando hai la prova e quante ore al giorno riesci davvero a metterci;
+2) le due o tre materie che senti più scoperte;
+3) che formazione hai alle spalle (una riga basta);
+
+ti preparo un piano di studio cucito sul tuo concorso e sul tuo tempo reale, e te lo mando gratis. Serve anche a capire cosa vale la pena comprare e cosa no: capita spesso che a qualcuno servano due report, non dieci. Meglio saperlo prima.`
+}
+function bloccoPianoHtml() {
+  return `
+  <p style="margin:0 0 12px;font-size:15px">Poi, prima del materiale, viene <strong>il piano</strong>. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.</p>
+  <p style="margin:0 0 8px;font-size:15px">Se mi rispondi con tre informazioni:</p>
+  <ol style="margin:0 0 14px;padding-left:20px;font-size:15px;line-height:1.6">
+    <li>quando hai la prova e quante ore al giorno riesci davvero a metterci;</li>
+    <li>le due o tre materie che senti più scoperte;</li>
+    <li>che formazione hai alle spalle (una riga basta);</li>
+  </ol>
+  <p style="margin:0 0 16px;font-size:15px">ti preparo un <strong>piano di studio</strong> cucito sul tuo concorso e sul tuo tempo reale, e te lo mando <strong>gratis</strong>. Serve anche a capire cosa vale la pena comprare e cosa no: capita spesso che a qualcuno servano <em>due</em> report, non dieci. Meglio saperlo prima.</p>`
+}
+
+function bloccoCanaliText() {
+  return `Le cose nuove le pubblico qui, se vuoi restare aggiornata/o senza pensarci:
+- Telegram: ${SOCIAL.telegram}
+- Facebook: ${SOCIAL.facebook}
+- Newsletter dal sito: anteprime complete delle materie pronte, gratis per gli iscritti`
+}
+function bloccoCanaliHtml() {
+  return `
+  <p style="margin:0 0 6px;font-size:14px;color:#2a2a2a">Le cose nuove le pubblico qui, se vuoi restare aggiornata/o senza pensarci:</p>
+  <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.6;list-style:none">
+    <li>▸ Telegram: <a href="${SOCIAL.telegram}" style="color:${BRAND.ink}">${SOCIAL.telegram.replace('https://', '')}</a></li>
+    <li>▸ Facebook: <a href="${SOCIAL.facebook}" style="color:${BRAND.ink}">la pagina di Ripam Studio</a></li>
+    <li>▸ Newsletter dal sito: anteprime complete delle materie pronte, gratis per gli iscritti</li>
+  </ul>`
+}
+
 const M3_KINDS = {
   podcast: { emoji: '🎙️', noun: 'podcast', detail: '(episodio 1)', btn: "🎙️ ASCOLTA IL PODCAST", price: PREZZI.podcast, completo: COMPLETO_LABEL.podcast },
-  audio: { emoji: '🎧', noun: 'audio', detail: '(episodio 1)', btn: "🎧 ASCOLTA L'ANTEPRIMA", price: PREZZI.audio, completo: COMPLETO_LABEL.audio },
-  video: { emoji: '🎥', noun: 'video', detail: '(episodio 1)', btn: "🎥 GUARDA L'ANTEPRIMA", price: PREZZI.video, completo: COMPLETO_LABEL.video },
+  // `audio` = audio lezione monovoce: FUORI CATALOGO dal 31/07/2026. Il kind
+  // resta perché su Drive quei file esistono ancora e possono essere mandati
+  // come anteprima, ma non ha più un prezzo: non è più un prodotto in vendita.
+  audio: { emoji: '🎧', noun: 'audio', detail: '(episodio 1)', btn: "🎧 ASCOLTA L'ANTEPRIMA" },
+  video: { emoji: '🎥', noun: 'audio lezione con supporto visivo', detail: '(episodio 1)', btn: "🎥 GUARDA L'ANTEPRIMA", price: PREZZI.video, completo: COMPLETO_LABEL.video },
   manuale: { emoji: '📚', noun: 'manuale', detail: '(15 pagine, PDF)', btn: '📚 APRI IL MANUALE', price: PREZZI.manuale, completo: COMPLETO_LABEL.manuale },
   report: { emoji: '📄', noun: 'report', detail: '(PDF)', btn: "📄 APRI L'ANTEPRIMA", price: PREZZI.report, completo: COMPLETO_LABEL.report },
   generic: { emoji: '▶', noun: '', detail: '', btn: "▶ APRI L'ANTEPRIMA" },
@@ -164,34 +263,23 @@ function buildM3({ firstName, materiaLabel, links }) {
     return `${m.emoji} <strong>Anteprima${m.noun ? ' ' + m.noun : ''}</strong>${m.detail ? ' ' + m.detail : ''}`
   }
 
-  // Blocco prezzi: solo per i formati con listino (audio/video/manuale, non il
-  // link generico). Singolo → riga evidenziata; più formati → elenco.
-  const priced = links.filter((k) => meta(k).price)
-  let prezziText = ''
-  let prezziHtml = ''
-  if (priced.length === 1) {
-    const m = meta(priced[0])
-    prezziText = `${m.completo}: ${m.price}.`
-    prezziHtml = `<p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:18px 0">${m.completo}: ${m.price}</p>`
-  } else if (priced.length > 1) {
-    prezziText = 'Le versioni complete:\n' + priced.map((k) => `- ${meta(k).completo}: ${meta(k).price}`).join('\n')
-    prezziHtml = `<p style="margin:18px 0 6px;font-size:15px"><strong>Le versioni complete:</strong></p>
-  <ul style="margin:0 0 16px;padding-left:18px;font-size:15px;line-height:1.7;list-style:none">${priced.map((k) => `<li>📦 ${meta(k).completo}: <strong>${meta(k).price}</strong></li>`).join('')}</ul>`
-  }
-
-  const closing = priced.length
-    ? 'Se ti convince, procediamo: te la preparo e ti mando le istruzioni per il pagamento.'
-    : (multi
-        ? 'Se ti convincono, ti preparo la serie completa della materia nel formato che preferisci. Fammi sapere e procediamo.'
-        : 'Se ti convince, ti preparo la serie completa della materia nel formato che mi hai chiesto. Fammi sapere e procediamo.')
+  // NIENTE PREZZI QUI (2026-07-31). Prima si consuma il gratis, poi il piano,
+  // poi i canali: le condizioni si mandano solo se il lead risponde e le chiede.
+  const closing = `E se dopo aver visto tutto questo il materiale completo di ${materiaLabel} ti serve davvero, dimmelo e ti mando condizioni e modalità. Nessuna fretta: preferisco non buttarti lì un prezzo prima che tu abbia capito se il materiale ti piace.`
 
   const textLinks = links.map((k) => `${textLabel(k)}:\n${k.url}`).join('\n\n')
   const text = `Ciao ${firstName},
 
-perfetto, ${materiaLabel}. Intanto ti mando ${introNoun} così vedi com'è fatto il materiale:
+perfetto, ${materiaLabel}. Ecco ${introNoun}, così vedi com'è fatto il materiale prima di qualunque altro discorso:
 
 ${textLinks}
-${prezziText ? '\n' + prezziText + '\n' : ''}
+
+${bloccoGratisText()}
+
+${bloccoPianoText()}
+
+${bloccoCanaliText()}
+
 ${closing}
 
 ${sigText()}`
@@ -203,7 +291,7 @@ ${sigText()}`
     .join('')
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
-  <p style="margin:0 0 18px;font-size:15px">perfetto, <strong>${materiaLabel}</strong>. Intanto ti mando ${introNoun} così vedi com'è fatto il materiale:</p>${htmlBlocks}${prezziHtml}
+  <p style="margin:0 0 18px;font-size:15px">perfetto, <strong>${materiaLabel}</strong>. Ecco ${introNoun}, così vedi com'è fatto il materiale prima di qualunque altro discorso:</p>${htmlBlocks}${bloccoGratisHtml()}${bloccoPianoHtml()}${bloccoCanaliHtml()}
   <p style="margin:6px 0 0;font-size:15px">${closing}</p>
   ${sigHtml()}`
 
@@ -236,23 +324,28 @@ ${sigText()}`
 
 // M4 — richiesta esplicita anteprima MANUALE (15 pp). (lead Hot)
 function buildM4({ firstName, materiaLabel, link }) {
+  // Niente prezzo del manuale qui: vale la stessa scala di M3 (2026-07-31).
   const text = `Ciao ${firstName},
 
 ecco l'anteprima del manuale di ${materiaLabel} (15 pagine, PDF): copertina, termini d'uso e l'indice completo dei capitoli, così vedi com'è strutturato.
 
 👉 Apri l'anteprima: ${link}
 
-Il manuale completo è 200-300 pagine con tabelle, FAQ e quiz per capitolo: ${PREZZI.manuale}. Se ti interessa proseguire, scrivimi pure e ti mando le istruzioni per il pagamento.
+${bloccoGratisText()}
+
+${bloccoPianoText()}
+
+${bloccoCanaliText()}
+
+Il manuale completo è 200-300 pagine con tabelle, FAQ e quiz per capitolo. Se dopo tutto il resto ti serve davvero, scrivimi e ti mando le condizioni.
 
 ${sigText()}`
 
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 18px;font-size:15px">ecco l'anteprima del <strong>manuale di ${materiaLabel}</strong> (15 pagine, PDF): copertina, termini d'uso e l'indice completo dei capitoli, così vedi com'è strutturato.</p>
-  <p style="margin:24px 0;text-align:center">${emailButton(link, "👁 APRI L'ANTEPRIMA")}</p>
-  <p style="margin:18px 0 8px;font-size:15px">Il manuale completo è 200-300 pagine con tabelle, FAQ e quiz per capitolo.</p>
-  <p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:12px 16px;font-size:16px;font-weight:700;margin:0 0 16px">Manuale completo: ${PREZZI.manuale}</p>
-  <p style="margin:0 0 4px;font-size:15px">Se ti interessa proseguire, scrivimi pure e ti mando le istruzioni per il pagamento.</p>
+  <p style="margin:24px 0;text-align:center">${emailButton(link, "👁 APRI L'ANTEPRIMA")}</p>${bloccoGratisHtml()}${bloccoPianoHtml()}${bloccoCanaliHtml()}
+  <p style="margin:0 0 4px;font-size:15px">Il manuale completo è 200-300 pagine con tabelle, FAQ e quiz per capitolo. Se dopo tutto il resto ti serve davvero, scrivimi e ti mando le condizioni.</p>
   ${sigHtml()}`
 
   return { inner, text, kicker: 'ANTEPRIMA MANUALE' }
@@ -264,24 +357,26 @@ ${sigText()}`
 // calibrare la profondità e offro un'anteprima entro 1-2 giorni. `materia` è
 // TESTO LIBERO (niente slug: non è in materie.js). `formats` = sottoinsieme di
 // ['manuale','audio','video']; se vuoto → solo manuale (default). (lead Hot)
-const PROD_ORDER = ['manuale', 'audio', 'video', 'report']
-const PROD_LABEL = { manuale: 'Manuale completo', audio: 'Audio lezioni', video: 'Video lezioni', report: 'Report di studio' }
-const PROD_LABEL_SU = { manuale: 'Il manuale completo', audio: 'Le audio lezioni complete', video: 'Le video lezioni complete', report: 'Il report completo' }
+// Ordine di risalita: dal più leggero al più impegnativo (podcast → audio con
+// supporto visivo → report → manuale). L'audio lezione monovoce non c'è più.
+const PROD_ORDER = ['podcast', 'video', 'report', 'manuale']
+const PROD_LABEL = { podcast: 'Serie podcast', video: 'Audio lezioni con supporto visivo', report: 'Report di studio', manuale: 'Manuale completo' }
 function buildM5({ firstName, materia, formats }) {
   const sel = PROD_ORDER.filter((f) => (formats || []).includes(f))
   const list = sel.length ? sel : ['manuale']
   const multi = list.length > 1
   const hasManuale = list.includes('manuale')
 
+  // Cosa posso prepararti — SENZA prezzi (2026-07-31): le condizioni arrivano
+  // quando il lead risponde col bando, non prima.
   let prezziText, prezziHtml
   if (!multi) {
-    const f = list[0]
-    prezziText = `${PROD_LABEL_SU[f]} su ${materia}: ${PREZZI[f]}.`
-    prezziHtml = `<p style="background:${BRAND.acid};border:2px solid ${BRAND.ink};padding:14px 18px;font-size:17px;font-weight:700;margin:20px 0">${PROD_LABEL_SU[f]} su ${materia}: ${PREZZI[f]}</p>`
+    prezziText = `Su ${materia} ti preparerei il ${PROD_LABEL[list[0]].toLowerCase()}.`
+    prezziHtml = `<p style="margin:0 0 14px;font-size:15px">Su <strong>${materia}</strong> ti preparerei il <strong>${PROD_LABEL[list[0]].toLowerCase()}</strong>.</p>`
   } else {
-    prezziText = `Ecco cosa posso prepararti su ${materia}:\n` + list.map((f) => `- ${PROD_LABEL[f]} — ${PREZZI[f]}`).join('\n')
+    prezziText = `Ecco cosa posso prepararti su ${materia}:\n` + list.map((f) => `- ${PROD_LABEL[f]}`).join('\n')
     prezziHtml = `<p style="margin:18px 0 6px;font-size:15px">Ecco cosa posso prepararti su <strong>${materia}</strong>:</p>
-  <ul style="margin:0 0 16px;padding-left:18px;font-size:16px;line-height:1.8;list-style:none">${list.map((f) => `<li>📦 <strong>${PROD_LABEL[f]}</strong> — ${PREZZI[f]}</li>`).join('')}</ul>`
+  <ul style="margin:0 0 16px;padding-left:18px;font-size:16px;line-height:1.8;list-style:none">${list.map((f) => `<li>📦 <strong>${PROD_LABEL[f]}</strong></li>`).join('')}</ul>`
   }
 
   const anteprima = hasManuale ? "un'anteprima di una ventina di pagine del manuale" : 'un breve estratto di prova'
@@ -300,11 +395,13 @@ Due cose che voglio tu sappia, perché sono il cuore del mio lavoro:
 
 Per calibrare bene il livello di profondità, mi faresti un grande favore se mi mandassi il bando del concorso specifico in cui chiedono questa materia: così capisco esattamente quanto andare a fondo.
 
-Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (audio, video e manuale) sono lo stesso identico formato che avrai anche tu.
+Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (podcast, audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.
 
 ${prezziText}
 
-E per non farti decidere "al buio": se sei interessata/o, entro un giorno o due ti preparo ${anteprima}, così vedi com'è prima di acquistare. Nessun impegno.
+${bloccoGratisText()}
+
+E per non farti decidere "al buio": se sei interessata/o, entro un giorno o due ti preparo ${anteprima}, così vedi com'è prima di decidere. Nessun impegno, e le condizioni te le mando solo se a quel punto ti serve davvero.
 
 Se ti va, rispondi a questa mail con il bando (o il nome del concorso) e parto subito.
 
@@ -320,9 +417,9 @@ ${sigText()}`
     <li><strong>Lavoro sui dati delle prove ufficiali.</strong> Ho un database di banche dati pubbliche (le domande ufficiali storiche dei concorsi): se per ${materia} esiste una banca dati ufficiale, costruisco il materiale <strong>guidandolo sull'analisi di quelle domande</strong>, così studi mirato su ciò che davvero viene chiesto in sede d'esame.</li>
   </ol>
   <p style="margin:0 0 14px;font-size:15px">Per calibrare bene il <strong>livello di profondità</strong>, mi faresti un grande favore se mi mandassi il <strong>bando del concorso specifico</strong>: così capisco esattamente quanto andare a fondo.</p>
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (audio, video e manuale) sono lo stesso identico formato che avrai anche tu.</p>
-  ${prezziHtml}
-  <p style="margin:0 0 4px;font-size:15px">E per non farti decidere «al buio»: se sei interessata/o, <strong>entro un giorno o due ti preparo ${anteprima}</strong>, così vedi com'è prima di acquistare. Nessun impegno. Rispondi con il <strong>bando</strong> (o il nome del concorso) e parto subito.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (podcast, audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.</p>
+  ${prezziHtml}${bloccoGratisHtml()}
+  <p style="margin:0 0 4px;font-size:15px">E per non farti decidere «al buio»: se sei interessata/o, <strong>entro un giorno o due ti preparo ${anteprima}</strong>, così vedi com'è prima di decidere. Nessun impegno, e le condizioni te le mando solo se a quel punto ti serve davvero. Rispondi con il <strong>bando</strong> (o il nome del concorso) e parto subito.</p>
   ${sigHtml()}`
 
   return { inner, text, kicker: 'PRODUZIONE SU MISURA' }
@@ -636,7 +733,7 @@ hai richiesto le credenziali di RIPAM Studio Quiz Pro — spero ti stiano tornan
 
 Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: podcast, audio e video lezioni, report e manuali sulle materie dei concorsi.
 
-Per non perderti le novità, iscriviti alla newsletter dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le anteprime (audio + video + manuale) delle materie disponibili.
+Per non perderti le novità, iscriviti alla newsletter dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le anteprime (podcast + audio con supporto visivo + manuale) delle materie disponibili.
 
 Iscriviti qui: ${site}
 
@@ -650,7 +747,7 @@ Telegram: @fcapurso`
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 14px;font-size:15px">hai richiesto le credenziali di <strong>RIPAM Studio Quiz Pro</strong> — spero ti stiano tornando utili per allenarti con i quiz!</p>
   <p style="margin:0 0 14px;font-size:15px">Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: <strong>podcast, audio e video lezioni, report e manuali</strong> sulle materie dei concorsi.</p>
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per non perderti le novità, iscriviti alla <strong>newsletter</strong> dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le <strong>anteprime</strong> (audio + video + manuale) delle materie disponibili.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per non perderti le novità, iscriviti alla <strong>newsletter</strong> dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le <strong>anteprime</strong> (podcast + audio con supporto visivo + manuale) delle materie disponibili.</p>
   <p style="margin:22px 0;text-align:center">${emailButton(site, 'ISCRIVITI ALLA NEWSLETTER')}</p>
   <p style="margin:0 0 4px;font-size:15px">E se c'è una materia di cui vuoi subito un'anteprima, <strong>rispondi a questa email</strong> e te la mando.</p>
   ${sigHtml()}`

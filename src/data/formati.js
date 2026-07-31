@@ -4,35 +4,31 @@ export const FORMATI = [
     t:'Serie Podcast',
     short:'Podcast dialogato, 8 episodi',
     desc:'Serie podcast in stile NotebookLM: due voci che discutono la materia in modo accessibile. ~3 ore totali, con trascrizioni. Per ascolto rilassato in auto, palestra, passeggiata.',
-    fmt:'MP3 + TXT', label:'Podcast', price:19
+    fmt:'MP3 + TXT', label:'Podcast', price:29
   },
   {
-    k:'aul', ico:'🎧',
-    t:'Audio Lezioni',
-    short:'Lezioni audio, 8 episodi',
-    desc:'Lettura integrale degli episodi testuali (~30.000 parole a episodio). Monovoce didattica, ~4-5 ore totali, con trascrizioni. Per studio strutturato e ripasso.',
-    fmt:'MP3 + TXT', label:'Audio Lezioni', price:22
-  },
-  {
+    // NB: la chiave resta 'vid' (è usata come chiave di `avail` in materie.js e
+    // dei blocchi in contenuti.js). Cambia solo il nome pubblico: non erano
+    // "video lezioni", sono audio lezioni con supporto visivo.
     k:'vid', ico:'🎥',
-    t:'Serie Video',
-    short:'Video lezioni, 8 episodi',
-    desc:'Le stesse lezioni in formato visivo, con sottotitoli SRT. Per un ripasso rapido.',
-    fmt:'MP4 + SRT', label:'Video', price:19
+    t:'Audio Lezioni con Supporto Visivo',
+    short:'8 episodi audio + visivo',
+    desc:'Gli 8 episodi della materia letti per intero, con il supporto visivo che accompagna l\'ascolto (slide dei punti chiave, riferimenti normativi a schermo) e i sottotitoli SRT. Per studiare guardando, non solo ascoltando.',
+    fmt:'MP4 + SRT', label:'Audio Lezioni con Supporto Visivo', price:35
   },
   {
     k:'rep', ico:'📄',
     t:'Report di Studio',
-    short:'Dispensa PDF sintetica',
-    desc:'La sintesi essenziale in PDF: punti chiave, trabocchetti, tavole riassuntive. Ripasso veloce.',
-    fmt:'PDF', label:'Report', price:9
+    short:'Dispensa PDF sul tuo concorso',
+    desc:'La dispensa costruita sul programma del tuo bando: sezioni, punti dove si sbaglia più spesso, quiz commentati. Nasce da una base di conoscenza su fonti ufficiali e, dove esiste una banca dati, dalle domande già uscite nelle prove.',
+    fmt:'PDF', label:'Report', price:29
   },
   {
     k:'man', ico:'📚',
     t:'Manuale Completo',
     short:'Manuale editoriale premium',
     desc:'Un manuale editoriale 200-300 pagine. Tabelle, FAQ, quiz per capitolo. Livello libreria.',
-    fmt:'PDF + HTML', label:'Manuale Completo', price:22
+    fmt:'PDF + HTML', label:'Manuale Completo', price:39
   },
   {
     k:'sim', ico:'🎯',
@@ -72,7 +68,7 @@ export const PILASTRI = [
     ico:'📚',
     t:'Formazione',
     lead:'Materiali didattici multicanale',
-    desc:'Podcast, video, report e simulatori costruiti con AI su normativa ufficiale. Per ogni materia, ogni concorso, ogni esigenza.',
+    desc:'Podcast, audio lezioni con supporto visivo, report, manuali e simulatori costruiti con AI su normativa ufficiale. Per ogni materia, ogni concorso, ogni esigenza.',
     anchor:'#materie',
     cta:'Vedi le materie →',
     accent:'acid'
@@ -129,8 +125,8 @@ export const BUNDLES = [
   {
     slug:'materia-completa',
     tag:'MATERIA COMPLETA',
-    title:'I 5 formati di una materia',
-    desc:'Podcast + Audio Lezioni + Video + Report + Simulatore, integrati sulla stessa materia. Il percorso di studio totale su un argomento.',
+    title:'I 4 formati di una materia',
+    desc:'Podcast + Audio Lezioni con Supporto Visivo + Report + Manuale, integrati sulla stessa materia. Il percorso di studio totale su un argomento.',
     note:'modulabile sul taglio che preferisci',
     accent:'acid'
   },
