@@ -433,9 +433,21 @@ ${sigText()}`
 // condizioni" (i report custom hanno listino client-specific: meglio non
 // inchiodare una tariffa di default e rischiare di sbagliarla). (lead Hot)
 function buildRC({ firstName, bundle, prezzo }) {
-  const { concorso, reports } = bundle
+  const { concorso, reports, gruppi } = bundle
+  // multiBandi: il lead ha chiesto report di PIÙ concorsi (tipico di chi clicca
+  // più card della vetrina). Si risponde con UNA mail sola, con i link raggruppati
+  // per bando — mandarne una per bando satura la casella ed è la via più rapida
+  // alla disiscrizione.
+  const multiBandi = Array.isArray(gruppi) && gruppi.length > 1
+  const gruppiEff = multiBandi ? gruppi : [{ concorso, reports }]
   const multi = reports.length > 1
   const introNoun = multi ? "ecco le anteprime dei report" : "ecco l'anteprima del report"
+  const introText = multiBandi
+    ? `${introNoun} che ho preparato su misura, divisi per i concorsi che hai guardato:`
+    : `${introNoun} che ho preparato su misura per il tuo concorso, ${concorso}:`
+  const introHtml = multiBandi
+    ? `${introNoun} che ho preparato su misura, <strong>divisi per i concorsi che hai guardato</strong>:`
+    : `${introNoun} che ho preparato su misura per il tuo concorso, <strong>${concorso}</strong>:`
 
   const estrattoText = multi
     ? 'Di ognuno sono le prime pagine — copertina, indice e l\'inizio delle sezioni — così vedi come ragiona il materiale prima di decidere.'
@@ -481,10 +493,15 @@ Se poi preferisci un formato diverso dal PDF, scrivimelo nella stessa risposta e
     chiusuraPrezzoHtml = `<p style="margin:16px 0 0;font-size:15px">E se vuoi procedere subito, rispondi e ti mando le istruzioni per il pagamento.</p>`
   }
 
-  const textLinks = reports.map((r) => `📄 ${r.label}:\n${r.viewUrl}`).join('\n\n')
+  const textLinks = gruppiEff
+    .map((g) => {
+      const righe = g.reports.map((r) => `📄 ${r.label}:\n${r.viewUrl}`).join('\n\n')
+      return multiBandi ? `▸ ${g.concorso}\n\n${righe}` : righe
+    })
+    .join('\n\n')
   const text = `Ciao ${firstName},
 
-${introNoun} che ho preparato su misura per il tuo concorso, ${concorso}:
+${introText}
 
 ${textLinks}
 
@@ -498,15 +515,23 @@ ${pianoText}
 ${chiusuraPrezzoText}
 ${sigText()}`
 
-  const htmlBlocks = reports
-    .map((r) => `
+  const htmlBlocks = gruppiEff
+    .map((g) => {
+      const testata = multiBandi
+        ? `
+  <p style="margin:22px 0 12px;padding:8px 12px;background:${BRAND.ink};color:${BRAND.acid};font-family:'Courier New',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">${g.concorso}</p>`
+        : ''
+      return testata + g.reports
+        .map((r) => `
   <p style="margin:0 0 8px;font-size:14px;color:#2a2a2a">📄 <strong>${r.label}</strong></p>
   <p style="margin:0 0 20px;text-align:center">${emailButton(r.viewUrl, "📄 APRI L'ANTEPRIMA")}</p>`)
+        .join('')
+    })
     .join('')
 
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
-  <p style="margin:0 0 18px;font-size:15px">${introNoun} che ho preparato su misura per il tuo concorso, <strong>${concorso}</strong>:</p>${htmlBlocks}
+  <p style="margin:0 0 18px;font-size:15px">${introHtml}</p>${htmlBlocks}
   <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">${estrattoText}</p>
   <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Come nasce un report: sotto c'è una <strong>base di conoscenza costruita solo su fonti ufficiali</strong>, tenute collegate tra loro e aggiornate; sopra ci metto il <strong>programma del bando e mi ci attengo</strong> — dentro c'è quello che il bando chiede, niente capitoli in più per fare volume. Dove esiste una banca dati ufficiale guardo anche le domande già uscite nelle prove.</p>
   <p style="margin:0 0 14px;font-size:15px">Il <strong>report completo</strong> è la dispensa integrale: tutte le sezioni, i punti dove si sbaglia più spesso e i quiz commentati. E sulle stesse materie il PDF non è l'unica strada: ci sono <strong>audio lezioni e podcast</strong> per studiare mentre ti muovi, <strong>video lezioni</strong>, i <strong>manuali completi</strong> e il <strong>simulatore di quiz</strong>.</p>${prezzoHtml}
@@ -790,19 +815,46 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
   let rcBundle = null
   if (category === 'RC') {
     if (!concorso) throw new Error('RC richiede concorso (chiave report-custom-manifest)')
-    rcBundle = getReportCustomBundle(concorso)
-    if (!rcBundle) throw new Error(`RC: concorso sconosciuto "${concorso}"`)
-    const wanted = Array.isArray(reports)
-      ? reports
-      : (typeof reports === 'string' && reports.trim()
-          ? reports.split(',').map((s) => s.trim()).filter(Boolean)
-          : null)
-    if (wanted && wanted.length) {
-      rcBundle = { ...rcBundle, reports: rcBundle.reports.filter((r) => wanted.includes(r.key)) }
+    // `concorso` = UNA chiave, oppure PIÙ chiavi separate da virgola. Il secondo
+    // caso serve a chi clicca più card della vetrina e chiede report di bandi
+    // diversi: una mail sola con i link raggruppati per bando.
+    const chiavi = String(concorso).split(',').map((s) => s.trim()).filter(Boolean)
+    // `reports` filtra le anteprime. Due sintassi:
+    //   "key1,key2"                   → filtro globale (mono-bando, storico)
+    //   "bando:key1+key2,bando2:key3" → filtro per bando (multi-bando). Serve
+    //   perché le chiavi si RIPETONO tra bandi (diritto-amm esiste in 4): un
+    //   filtro globale prenderebbe il report sbagliato.
+    const perBando = new Map()
+    let globale = null
+    const rawReports = Array.isArray(reports) ? reports.join(',') : (reports || '')
+    for (const voce of String(rawReports).split(',').map((s) => s.trim()).filter(Boolean)) {
+      const i = voce.indexOf(':')
+      if (i > 0) {
+        perBando.set(voce.slice(0, i).trim(), voce.slice(i + 1).split('+').map((s) => s.trim()).filter(Boolean))
+      } else {
+        if (!globale) globale = []
+        globale.push(voce)
+      }
     }
-    if (!rcBundle.reports.length) {
-      throw new Error(`RC: nessuna anteprima disponibile per "${concorso}"${wanted ? ' coi report richiesti ' + wanted.join(',') : ''} (fileId mancanti nel manifest)`)
+    const gruppi = []
+    for (const chiave of chiavi) {
+      const b = getReportCustomBundle(chiave)
+      if (!b) throw new Error(`RC: concorso sconosciuto "${chiave}"`)
+      const wanted = perBando.get(chiave) || (chiavi.length === 1 ? globale : null)
+      const rs = wanted && wanted.length ? b.reports.filter((r) => wanted.includes(r.key)) : b.reports
+      if (!rs.length) {
+        throw new Error(`RC: nessuna anteprima disponibile per "${chiave}"${wanted ? ' coi report richiesti ' + wanted.join(',') : ''} (fileId mancanti nel manifest)`)
+      }
+      gruppi.push({ ...b, reports: rs })
     }
+    rcBundle = gruppi.length === 1
+      ? gruppi[0]
+      : {
+          concorso: gruppi.map((g) => g.concorsoShort).join(' · '),
+          concorsoShort: `${gruppi.length} concorsi`,
+          reports: gruppi.flatMap((g) => g.reports),
+          gruppi,
+        }
   }
 
   // Subject: NL è una campagna a sé (fisso); M5/RC senza thread originale usano
