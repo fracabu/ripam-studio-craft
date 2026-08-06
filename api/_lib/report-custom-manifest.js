@@ -269,6 +269,77 @@ export const REPORT_CUSTOM_MANIFEST = {
       },
     ],
   },
+  'inps-499-assist-inf': {
+    concorso: 'concorso INPS 499 Assistenti informatici (Area degli assistenti, famiglia professionale assistente informatico)',
+    concorsoShort: 'concorso INPS 499 Assistenti informatici',
+    // Cartella Drive anteprime: ANTEPRIME/report-custom/inps-499-ass-inf (12 report
+    // = tutte e 16 le voci di programma dell'art. 6 del bando). Stessi fileId
+    // esposti dalla vetrina /report-custom/inps-499-assist-inf.
+    // Ordine per PRIORITÀ di studio (blocco tecnico ≈ 60-65% del programma, poi
+    // giuridico), non per ordine del bando. Prova unica: 60 quesiti in 120', 21/30.
+    reports: [
+      {
+        key: 'reti',
+        label: 'Reti — fondamenti di sistemi, reti locali e geografiche (livelli OSI, TCP/IP, indirizzamento, apparati) + reti multimediali e smart working',
+        fileId: '1OapoRuiVIHVSQj7OLZequj_lniwrkH7e',
+      },
+      {
+        key: 'sistemi-operativi',
+        label: 'Sistemi operativi — Linux e Windows per server e client (filesystem e permessi, processi e servizi, Active Directory, virtualizzazione)',
+        fileId: '1WhHutjNrnER_ehoZY_4hJbEaTFEMgprs',
+      },
+      {
+        key: 'database',
+        label: 'Database relazionali (modello relazionale, chiavi, normalizzazione, SQL, transazioni ACID, cenni NoSQL)',
+        fileId: '1i3a-AWq7sHJZg9htfak2tur3gnGyqfbF',
+      },
+      {
+        key: 'programmazione-middleware',
+        label: 'Programmazione e middleware (linguaggi e paradigmi, application server, web service REST e SOAP)',
+        fileId: '1oiwkfBPPGyLN7Qpflgbun7Lrqhc6j0YF',
+      },
+      {
+        key: 'informatica-base-office',
+        label: 'Informatica di base e office automation — la materia più sottovalutata da chi arriva dal tecnico',
+        fileId: '16n12FL9XB6HumQP6mjZGttmitx6_wi-l',
+      },
+      {
+        key: 'backup-recovery',
+        label: 'Backup e recovery (full/incrementale/differenziale, RTO e RPO, RAID, NAS e SAN, disaster recovery)',
+        fileId: '1ylnScXcgpwfZ17mwYXLXd1ZtFGAqiTqT',
+      },
+      {
+        key: 'intelligenza-artificiale',
+        label: 'Principi di intelligenza artificiale (apprendimento supervisionato e non, classificazione, clustering, reti neurali, IA nella PA)',
+        fileId: '1Au5vKkr_TrQq_ImLYsHc77LKAnWpAq_q',
+      },
+      {
+        key: 'gdpr-sicurezza',
+        label: 'GDPR e sicurezza informatica (principi, categorie particolari, diritti, DPO, misure tecniche, data breach)',
+        fileId: '1G5A8rQbrQkLgcUw1hb-tFPfGFCPLrrw8',
+      },
+      {
+        key: 'cad',
+        label: "CAD — Codice dell'amministrazione digitale (SPID/CIE/CNS, firme elettroniche, documento informatico, conservazione)",
+        fileId: '1mSSfr_cpi_MtMpA5l-45VcnfjDcb_5Ft',
+      },
+      {
+        key: 'diritto-amm',
+        label: 'Nozioni di diritto amministrativo (procedimento, provvedimento, accesso documentale e civico — L. 241/1990)',
+        fileId: '1gjcYdmOfYJncOvsPaiJ2v2WPRBYST0lY',
+      },
+      {
+        key: 'pubblico-impiego',
+        label: 'Ordinamento del lavoro alle dipendenze delle PA (accesso, gestione del personale, responsabilità disciplinare — D.Lgs. 165/2001)',
+        fileId: '16SuhPcH93rRjJEroG_S12sJuZMwFJZzc',
+      },
+      {
+        key: 'trasparenza-anticorruzione',
+        label: 'Trasparenza e anticorruzione (obblighi di pubblicazione, accesso civico, PNA, PTPCT, RPCT — L. 190/2012, D.Lgs. 33/2013)',
+        fileId: '1oP-afLdO0zXF9caIT55X8n2rqMikTMbb',
+      },
+    ],
+  },
   'ripam-1340-com': {
     concorso: 'RIPAM — Funzionari amministrativi (bando 1340), profilo Comunicazione (COM)',
     concorsoShort: 'concorso RIPAM 1340 Funzionari · profilo Comunicazione (COM)',

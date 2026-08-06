@@ -52,6 +52,28 @@ export const REPORT_CONCORSI = [
     ],
   },
   {
+    key: 'inps-499-assist-inf',
+    cod: 'INPS',
+    nome: 'INPS 499 Assistenti Informatici',
+    tag: 'profilo informatico · Area assistenti · Funzioni Centrali',
+    intro:
+      'Una sola prova scritta — 60 quesiti in 120 minuti, soglia 21/30 (il 70%, non il canonico 18/30): niente preselettiva, niente orale. Il blocco tecnico vale da solo circa i due terzi del programma. I report seguono l\'ordine di priorità, non quello del bando.',
+    reports: [
+      { t: 'Reti', d: 'Fondamenti di sistemi, reti locali e geografiche: i sette livelli OSI, TCP/IP, indirizzamento, apparati — più reti multimediali e smart working.', fileId: '1OapoRuiVIHVSQj7OLZequj_lniwrkH7e', img: 'reti' },
+      { t: 'Sistemi operativi', d: 'Linux e Windows per la gestione di server e client: filesystem e permessi, processi e servizi, Active Directory, virtualizzazione.', fileId: '1WhHutjNrnER_ehoZY_4hJbEaTFEMgprs', img: 'sistemi-operativi' },
+      { t: 'Database relazionali', d: 'Modello relazionale, chiavi, relazioni e normalizzazione, SQL, transazioni ACID e cenni NoSQL.', fileId: '1i3a-AWq7sHJZg9htfak2tur3gnGyqfbF', img: 'database' },
+      { t: 'Programmazione e middleware', d: 'Linguaggi e paradigmi a livello concettuale, application server e componenti middleware, web service REST e SOAP.', fileId: '1oiwkfBPPGyLN7Qpflgbun7Lrqhc6j0YF', img: 'programmazione-middleware' },
+      { t: 'Informatica di base e office automation', d: 'Le fondamenta e gli strumenti da ufficio: la materia dove chi è tecnico perde più punti per sottovalutazione.', fileId: '16n12FL9XB6HumQP6mjZGttmitx6_wi-l', img: 'informatica-base-office' },
+      { t: 'Backup e recovery', d: 'Full, incrementale e differenziale, RTO e RPO, RAID, NAS e SAN, disaster recovery e business continuity.', fileId: '1ylnScXcgpwfZ17mwYXLXd1ZtFGAqiTqT', img: 'backup-recovery' },
+      { t: 'Intelligenza artificiale', d: 'Principi di IA: apprendimento supervisionato e non, classificazione e clustering, reti neurali, applicazioni nella PA.', fileId: '1Au5vKkr_TrQq_ImLYsHc77LKAnWpAq_q', img: 'intelligenza-artificiale' },
+      { t: 'GDPR e sicurezza informatica', d: "Data privacy e sicurezza: principi, categorie particolari, diritti dell'interessato, DPO, misure tecniche e data breach (Reg. UE 2016/679).", fileId: '1G5A8rQbrQkLgcUw1hb-tFPfGFCPLrrw8', img: 'gdpr-sicurezza' },
+      { t: 'CAD', d: 'Identità digitale SPID/CIE/CNS, firme elettroniche, documento informatico e conservazione, piattaforme abilitanti (D.Lgs. 82/2005).', fileId: '1mSSfr_cpi_MtMpA5l-45VcnfjDcb_5Ft', img: 'cad' },
+      { t: 'Diritto amministrativo', d: 'Procedimento, provvedimento, accesso documentale e civico (L. 241/1990).', fileId: '1gjcYdmOfYJncOvsPaiJ2v2WPRBYST0lY', img: 'diritto-amministrativo' },
+      { t: 'Pubblico impiego', d: 'Ordinamento del lavoro alle dipendenze delle PA: accesso, gestione del personale, responsabilità disciplinare (D.Lgs. 165/2001).', fileId: '16SuhPcH93rRjJEroG_S12sJuZMwFJZzc', img: 'pubblico-impiego' },
+      { t: 'Trasparenza e anticorruzione', d: 'Obblighi di pubblicazione e accesso civico, PNA, PTPCT e RPCT (L. 190/2012, D.Lgs. 33/2013).', fileId: '1oP-afLdO0zXF9caIT55X8n2rqMikTMbb', img: 'trasparenza-anticorruzione' },
+    ],
+  },
+  {
     key: 'ripam-1340-amm',
     cod: 'RIPAM',
     nome: 'RIPAM 1.340 Funzionari — profilo AMM',
