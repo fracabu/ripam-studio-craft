@@ -40,6 +40,20 @@ const SECRET = process.env.TELEGRAM_WEBHOOK_SECRET
 const SITO = 'https://ripam-studio-craft.vercel.app'
 const BANDO_DEFAULT = 'ripam-3997-amm'   // il gruppo e' dedicato al 3997
 
+// ⚠️ BOT PRIVATO (scelta del 06/08/2026).
+// Un bot Telegram e' pubblico per natura: chiunque conosca lo username puo'
+// scrivergli, e tutti i 1.814 membri del gruppo potrebbero usarne i comandi.
+// Se il bot consegnasse le anteprime a chiunque, spariRebbe il passaggio dal
+// form /scrivimi — che e' il punto in cui una persona diventa un contatto con
+// nome, email e concorso. Il blast del 06/08 ha prodotto 12 richieste proprio
+// per quello.
+// Quindi: risponde SOLO agli id autorizzati. A tutti gli altri non replica —
+// il silenzio e' preferibile a un "non sei autorizzato" letto da mille persone.
+// Per aprirlo in futuro basta togliere il controllo o allargare la lista.
+const ADMIN_IDS = (process.env.TELEGRAM_ADMIN_IDS || '6932784097')
+  .split(',').map(s => s.trim()).filter(Boolean)
+const autorizzato = (userId) => ADMIN_IDS.includes(String(userId))
+
 const api = (metodo, body) =>
   fetch(`https://api.telegram.org/bot${TOKEN}/${metodo}`, {
     method: 'POST',
@@ -171,7 +185,17 @@ export default async function handler(req, res) {
   const testo = (msg.text || msg.caption || '').trim()
   const inGruppo = msg.chat?.type === 'group' || msg.chat?.type === 'supergroup'
 
-  // 1) antispam (solo nei gruppi, solo su non-amministratori)
+  // 0) BOT PRIVATO: a chi non e' autorizzato non si risponde e basta.
+  // Nessun messaggio di rifiuto: nel gruppo verrebbe letto da tutti e farebbe
+  // una figura peggiore del silenzio. Si risponde 200 perche' l'update e'
+  // stato ricevuto correttamente: e' la risposta che manca, non la consegna.
+  if (!autorizzato(msg.from?.id)) {
+    return res.status(200).json({ ok: true, azione: 'ignorato (bot privato)' })
+  }
+
+  // 1) antispam nei gruppi (oggi inattivo di fatto: con il bot privato gli
+  //    altri messaggi non arrivano nemmeno fin qui. Resta pronto per quando
+  //    il bot verra' aperto e promosso ad amministratore).
   if (inGruppo && eSpam(testo)) {
     const m = await api('getChatMember', { chat_id: chatId, user_id: msg.from?.id })
     const ruolo = m?.result?.status
@@ -181,7 +205,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // 2) solo comandi espliciti: in un gruppo grande il resto e' rumore
+  // 2) solo comandi espliciti
   const cmd = testo.match(/^\/([a-z_]+)(?:@\w+)?(?:\s+([\s\S]*))?$/i)
   if (!cmd) return res.status(200).json({ ok: true })
 
