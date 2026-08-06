@@ -81,3 +81,6 @@ graphify-out/
 docs/
 
 .vercel
+
+# stato locale della sentinella richieste (scripts/watch_richieste.mjs)
+.watch-richieste-state

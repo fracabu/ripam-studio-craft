@@ -57,7 +57,7 @@ export const REPORT_CONCORSI = [
     nome: 'INPS 499 Assistenti Informatici',
     tag: 'profilo informatico · Area assistenti · Funzioni Centrali',
     intro:
-      'Una sola prova scritta — 60 quesiti in 120 minuti, soglia 21/30 (il 70%, non il canonico 18/30): niente preselettiva, niente orale. Il blocco tecnico vale da solo circa i due terzi del programma. I report seguono l\'ordine di priorità, non quello del bando.',
+      'Una sola prova scritta — 60 quesiti in 120 minuti, soglia 21/30 (il 70%, non il canonico 18/30): niente preselettiva, niente orale. Il blocco tecnico vale da solo circa i due terzi del programma. I report seguono l\'ordine di priorità, non quello del bando — e c\'è anche il Dossier completo, tutti e dodici in un unico PDF da 497 pagine.',
     reports: [
       { t: 'Reti', d: 'Fondamenti di sistemi, reti locali e geografiche: i sette livelli OSI, TCP/IP, indirizzamento, apparati — più reti multimediali e smart working.', fileId: '1OapoRuiVIHVSQj7OLZequj_lniwrkH7e', img: 'reti' },
       { t: 'Sistemi operativi', d: 'Linux e Windows per la gestione di server e client: filesystem e permessi, processi e servizi, Active Directory, virtualizzazione.', fileId: '1WhHutjNrnER_ehoZY_4hJbEaTFEMgprs', img: 'sistemi-operativi' },
