@@ -220,8 +220,16 @@ export default async function handler(req, res) {
   if (nome === 'start' || nome === 'help' || nome === 'aiuto') {
     await rispondi(chatId, HELP, msg.message_id)
   } else if (nome === 'bandi') {
+    // La scorciatoia va scelta a mano: dedurla dalla chiave dava lo STESSO
+    // comando ai due profili del 1340 (AMM e COM), rendendo il secondo
+    // irraggiungibile.
+    const SCORCIATOIE = {
+      'ripam-3997-amm': '3997', 'ripam-1340-amm': '1340', 'ripam-1340-com': 'com',
+      'inps-1695-pecs': 'pecs', 'inps-499-assist-inf': '499', 'ade-622-gest': '622',
+      'cpi-sicilia-sac': 'sicilia', 'cerveteri-istruttore-amm': 'cerveteri',
+    }
     const righe = Object.keys(REPORT_CUSTOM_MANIFEST)
-      .map(k => `• <b>${NOMI[k] || k}</b> — <code>/report ${k.split('-')[1] || k}</code>`)
+      .map(k => `• <b>${NOMI[k] || k}</b> — <code>/report ${SCORCIATOIE[k] || k}</code>`)
     await rispondi(chatId, `<b>Concorsi con materiali pronti</b>\n\n${righe.join('\n')}\n\nVetrina: ${SITO}/report-custom`, msg.message_id)
   } else if (nome === 'report' || nome === 'anteprima') {
     const k = chiaveDa(arg) || (arg ? null : BANDO_DEFAULT)
