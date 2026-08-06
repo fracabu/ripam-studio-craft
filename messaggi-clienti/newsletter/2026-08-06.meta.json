@@ -1,0 +1,25 @@
+{
+  "subject": "I report del tuo concorso: sei bandi in vetrina, anteprime gratis",
+  "preheader": "Sei concorsi, un report per materia, anteprime gratis. Il nuovo arrivato è l'INPS 499 assistenti informatici.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-08-06",
+  "issue_label": "NEWSLETTER",
+  "kicker": "REPORT PER CONCORSO",
+  "headline": "Cerca il tuo concorso, guarda le prime pagine, decidi dopo.",
+  "is_welcome": false,
+  "campagna": "vetrina-report-6-bandi-2026-08-06",
+  "sections_used": ["intro", "hero_novita_inps_499", "sec1_sei_bandi", "sec2_come_si_chiede_anteprima", "closing_cta_scrivimi"],
+  "note": "Annuncio della vetrina report per concorso (6 bandi), con l'INPS 499 assistenti informatici come novità in evidenza. Taglio volutamente TRASVERSALE e non mono-bando: su 242 iscritti attivi solo 3 hanno un concorso INPS a profilo e 1 un segnale 'informatica', quindi un blast dedicato al solo INPS 499 sarebbe stato irrilevante per la quasi totalità della lista (e le disiscrizioni storiche nascono proprio da mail poco pertinenti). Così ogni iscritto trova comunque il proprio bando.",
+  "vetrina_urls": {
+    "indice": "https://ripam-studio-craft.vercel.app/report-custom",
+    "ripam-3997-amm": "https://ripam-studio-craft.vercel.app/report-custom/ripam-3997-amm",
+    "ripam-1340-amm": "https://ripam-studio-craft.vercel.app/report-custom/ripam-1340-amm",
+    "ripam-1340-com": "https://ripam-studio-craft.vercel.app/report-custom/ripam-1340-com",
+    "inps-1695-pecs": "https://ripam-studio-craft.vercel.app/report-custom/inps-1695-pecs",
+    "inps-499-assist-inf": "https://ripam-studio-craft.vercel.app/report-custom/inps-499-assist-inf",
+    "ade-622-gest": "https://ripam-studio-craft.vercel.app/report-custom/ade-622-gest"
+  },
+  "word_count": 400
+}
