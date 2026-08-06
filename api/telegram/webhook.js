@@ -173,7 +173,12 @@ const eSpam = (t) => !!t && SPAM.some(re => re.test(t))
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' })
-  if (SECRET && req.headers['x-telegram-bot-api-secret-token'] !== SECRET) {
+  // Confronto con trim: un valore incollato nella dashboard di Vercel si porta
+  // dietro con facilita' spazi o un ritorno a capo, e il segreto non
+  // combacerebbe piu' — sintomo: Telegram riceve 401 e riprova all'infinito.
+  const segretoAtteso = (SECRET || '').trim()
+  const segretoRicevuto = (req.headers['x-telegram-bot-api-secret-token'] || '').trim()
+  if (segretoAtteso && segretoRicevuto !== segretoAtteso) {
     return res.status(401).json({ error: 'unauthorized' })
   }
   if (!TOKEN) return res.status(500).json({ error: 'TELEGRAM_BOT_TOKEN mancante' })
