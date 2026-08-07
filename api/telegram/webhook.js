@@ -34,6 +34,7 @@
 // ============================================================================
 import { REPORT_CUSTOM_MANIFEST } from '../_lib/report-custom-manifest.js'
 import { BANDI_INDEX as INDICE } from '../../src/data/bandi-index.js'
+import { salvaMessaggio } from '../_lib/telegram-log.js'
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const SECRET = process.env.TELEGRAM_WEBHOOK_SECRET
@@ -190,7 +191,15 @@ export default async function handler(req, res) {
   const testo = (msg.text || msg.caption || '').trim()
   const inGruppo = msg.chat?.type === 'group' || msg.chat?.type === 'supergroup'
 
-  // 0) BOT PRIVATO: a chi non e' autorizzato non si risponde e basta.
+  // 0) MEMORIA, prima di ogni filtro. Il bot deve ricordare cosa dice il
+  // GRUPPO, non cosa dice Francesco: se il salvataggio stesse dopo il gate
+  // degli autorizzati, il buffer conterrebbe solo i comandi di chi lo comanda,
+  // e "rispondi ad Anna" resterebbe impossibile. Best-effort per costruzione:
+  // un errore qui accorcia la memoria, un'eccezione ucciderebbe il webhook e
+  // Telegram ritenterebbe l'update all'infinito.
+  if (inGruppo) await salvaMessaggio(msg)
+
+  // 0-bis) BOT PRIVATO: a chi non e' autorizzato non si risponde e basta.
   // Nessun messaggio di rifiuto: nel gruppo verrebbe letto da tutti e farebbe
   // una figura peggiore del silenzio. Si risponde 200 perche' l'update e'
   // stato ricevuto correttamente: e' la risposta che manca, non la consegna.
