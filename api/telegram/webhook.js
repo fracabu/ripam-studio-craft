@@ -34,7 +34,10 @@
 // ============================================================================
 import { REPORT_CUSTOM_MANIFEST } from '../_lib/report-custom-manifest.js'
 import { BANDI_INDEX as INDICE } from '../../src/data/bandi-index.js'
-import { salvaMessaggio } from '../_lib/telegram-log.js'
+import {
+  salvaMessaggio, cercaPersona, ultimiMessaggi, trovaTemplate,
+  messaggioPerId, templatePerSlug, logRisposta,
+} from '../_lib/telegram-log.js'
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const SECRET = process.env.TELEGRAM_WEBHOOK_SECRET
@@ -162,6 +165,52 @@ const testoBando = (b) => {
   return r.join('\n')
 }
 
+// ── "rispondi a <nome>": trovare la persona, proporre, poi pubblicare ──────
+//
+// Tre comandi invece di uno, per un motivo preciso: il webhook e' STATELESS.
+// Non c'e' una sessione dove ricordare "Francesco stava rispondendo ad Anna",
+// quindi ogni passo porta con se' tutto cio' che serve al successivo, e il
+// comando di conferma si copia-incolla dalla risposta precedente.
+//
+//   /chi anna                  -> chi puo' essere "Anna" (omonimi compresi)
+//   /rispondi anna             -> cosa ha chiesto + la scheda che scatta + il
+//                                 comando gia' pronto per pubblicare
+//   /invia <message_id> <slug> -> pubblica NEL GRUPPO, in reply a quel messaggio
+//
+// ⚠️ SOLO IN PRIVATO. /chi e /rispondi mostrano nomi e testi di membri del
+// gruppo: eseguirli in chat li ristamperebbe davanti a 1.814 persone. Nel
+// gruppo rispondono che vanno usati in privato, e non mostrano nulla.
+// (.claude/rules/never.md — i dati dei membri non escono da qui.)
+const soloPrivato = (inGruppo) => inGruppo
+  ? 'Questo comando mostra nomi e messaggi di membri del gruppo: usalo in privato, non qui.'
+  : null
+
+const quando = (d) => {
+  const t = new Date(d)
+  const ore = Math.round((Date.now() - t.getTime()) / 3_600_000)
+  if (ore < 1) return 'poco fa'
+  if (ore < 24) return `${ore} ore fa`
+  return `${Math.round(ore / 24)} giorni fa`
+}
+
+const taglia = (t, n = 220) => {
+  const s = (t || '').replace(/\s+/g, ' ').trim()
+  return s.length > n ? `${s.slice(0, n)}…` : s
+}
+
+// Telegram rifiuta l'HTML malformato: il testo dei membri va neutralizzato
+// prima di rimandarlo indietro dentro un messaggio in parse_mode HTML.
+const esc = (t) => (t || '')
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+const elencoPersone = (trovati, nome) => {
+  const righe = trovati.map(p =>
+    `• <b>${esc(p.nome || '?')}</b>${p.username ? ` (@${esc(p.username)})` : ''}\n` +
+    `  <code>/rispondi ${p.user_id}</code> — ${p.n_messaggi} msg, ultimo ${quando(p.ultimo_messaggio_at)}`)
+  return `Chi puo' essere «${esc(nome)}» — <b>${trovati.length}</b> negli ultimi 7 giorni:\n\n${righe.join('\n')}` +
+    (trovati.length > 1 ? `\n\n⚠️ Piu' di uno: scegli con l'id, non col nome.` : '')
+}
+
 // ── Antispam: solo lo spam evidente, per non colpire i candidati ───────────
 const SPAM = [
   /\b(?:crypto|bitcoin|forex|trading|investiment[oi])\b.{0,60}\b(?:guadagn|profitt|rendite?)\b/i,
@@ -252,6 +301,110 @@ export default async function handler(req, res) {
     if (!arg) await rispondi(chatId, `Scrivi anche quale: <code>/bando mic 1800</code>, <code>/bando inps 499</code>.`, msg.message_id)
     else if (!b) await rispondi(chatId, `Non ho una scheda per «${arg}». Verifica su inPA, oppure scrivi a Francesco: ${SITO}/scrivimi`, msg.message_id)
     else await rispondi(chatId, testoBando(b), msg.message_id)
+  } else if (nome === 'chi') {
+    const avviso = soloPrivato(inGruppo)
+    if (avviso) { await rispondi(chatId, avviso, msg.message_id); return res.status(200).json({ ok: true }) }
+    if (!arg) await rispondi(chatId, `Chi cerchi? <code>/chi anna</code>`)
+    else {
+      const trovati = await cercaPersona(arg)
+      await rispondi(chatId, trovati.length
+        ? elencoPersone(trovati, arg)
+        : `Nessuno che somigli a «${esc(arg)}» ha scritto negli ultimi 7 giorni.\n\n<i>Il buffer parte dal 07/08/2026 sera: prima di allora il bot non vedeva i messaggi del gruppo.</i>`)
+    }
+  } else if (nome === 'rispondi') {
+    const avviso = soloPrivato(inGruppo)
+    if (avviso) { await rispondi(chatId, avviso, msg.message_id); return res.status(200).json({ ok: true }) }
+    if (!arg) {
+      await rispondi(chatId, `A chi? <code>/rispondi anna</code> — oppure con l'id: <code>/rispondi 123456</code>`)
+      return res.status(200).json({ ok: true })
+    }
+    // Un id numerico salta la ricerca: e' il modo di sciogliere gli omonimi.
+    let persona = null
+    if (/^\d+$/.test(arg)) persona = { user_id: Number(arg), nome: null }
+    else {
+      const trovati = await cercaPersona(arg)
+      if (!trovati.length) {
+        await rispondi(chatId, `Nessuno che somigli a «${esc(arg)}» ha scritto negli ultimi 7 giorni.`)
+        return res.status(200).json({ ok: true })
+      }
+      // Piu' di un candidato: non si sceglie per conto di Francesco. Nel gruppo
+      // rispondere alla persona sbagliata e' pubblico e non si ritira.
+      if (trovati.length > 1) {
+        await rispondi(chatId, elencoPersone(trovati, arg))
+        return res.status(200).json({ ok: true })
+      }
+      persona = trovati[0]
+    }
+
+    const storico = await ultimiMessaggi(persona.user_id, { limite: 4 })
+    if (!storico.length) {
+      await rispondi(chatId, `Non ho messaggi recenti di questa persona (id <code>${persona.user_id}</code>).`)
+      return res.status(200).json({ ok: true })
+    }
+
+    const ultimo = storico[0]
+    const scheda = await trovaTemplate(ultimo.testo)
+    const righe = [
+      `<b>${esc(persona.nome || ultimo.nome || 'questa persona')}</b> — ultimi ${storico.length} messaggi:`,
+      '',
+      ...storico.map(m => `▸ <i>${quando(m.inviato_at)}</i> — ${esc(taglia(m.testo))}`),
+      '',
+    ]
+    if (scheda) {
+      righe.push(`Scheda che scatta: <b>${esc(scheda.titolo)}</b> (<code>${scheda.slug}</code>)`)
+      righe.push('')
+      righe.push('— — — anteprima della risposta — — —')
+      righe.push(scheda.testo)
+      righe.push('— — —')
+      righe.push('')
+      righe.push(`Per vederla ancora in privato:\n<code>/invia ${ultimo.message_id} ${scheda.slug}</code>`)
+      righe.push(`Per pubblicarla <b>nel gruppo</b>, in reply al suo messaggio:\n<code>/invia ${ultimo.message_id} ${scheda.slug} ok</code>`)
+    } else {
+      righe.push(`⚠️ Nessuna scheda scatta su questo messaggio.`)
+      righe.push(`Vedi le schede con <code>node scripts/telegram_template.mjs --lista</code>, o rispondi a mano con <code>telegram_post.mjs --reply ${ultimo.message_id}</code>.`)
+    }
+    await rispondi(chatId, righe.join('\n'))
+  } else if (nome === 'invia') {
+    const avviso = soloPrivato(inGruppo)
+    if (avviso) { await rispondi(chatId, avviso, msg.message_id); return res.status(200).json({ ok: true }) }
+    const [idTesto, slug, conferma] = arg.split(/\s+/)
+    if (!idTesto || !slug) {
+      await rispondi(chatId, `Uso: <code>/invia &lt;message_id&gt; &lt;slug&gt;</code> — aggiungi <code>ok</code> in fondo per pubblicare davvero nel gruppo.`)
+      return res.status(200).json({ ok: true })
+    }
+    const bersaglio = await messaggioPerId(Number(idTesto))
+    const scheda = await templatePerSlug(slug)
+    if (!bersaglio) await rispondi(chatId, `Non trovo il messaggio <code>${esc(idTesto)}</code> nel buffer (fuori dai 7 giorni?).`)
+    else if (!scheda) await rispondi(chatId, `Non esiste la scheda <code>${esc(slug)}</code>.`)
+    else if (conferma?.toLowerCase() !== 'ok') {
+      // SICURA. Senza "ok" non si pubblica: si vede solo cosa uscirebbe e dove.
+      // Nel gruppo un messaggio sbagliato lo leggono 1.814 persone e non si
+      // richiama indietro — stessa disciplina delle mail ai lead.
+      await rispondi(chatId,
+        `<b>Anteprima</b> — non ho pubblicato niente.\n\n` +
+        `Andrebbe a: <b>${esc(bersaglio.nome || '?')}</b>, in reply al suo messaggio\n` +
+        `<i>«${esc(taglia(bersaglio.testo, 120))}»</i>\n\n` +
+        `— — —\n${scheda.testo}\n— — —\n\n` +
+        `Se va bene:\n<code>/invia ${idTesto} ${slug} ok</code>`)
+    } else {
+      const esito = await api('sendMessage', {
+        chat_id: bersaglio.chat_id,
+        text: scheda.testo,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+        reply_to_message_id: bersaglio.message_id,
+      })
+      if (esito?.ok) {
+        await logRisposta({
+          templateSlug: scheda.slug, chatId: bersaglio.chat_id,
+          inRispostaA: bersaglio.message_id, messageId: esito.result?.message_id,
+          userId: bersaglio.user_id, nome: bersaglio.nome, modo: 'confermata',
+        })
+        await rispondi(chatId, `✅ Pubblicata in reply a <b>${esc(bersaglio.nome || '?')}</b> e registrata.`)
+      } else {
+        await rispondi(chatId, `❌ Telegram ha rifiutato: <code>${esc(esito?.description || 'errore sconosciuto')}</code>`)
+      }
+    }
   } else if (nome === 'anteprime') {
     await rispondi(chatId,
       `Le <b>anteprime</b> sono le prime pagine dei report, in chiaro e gratuite: servono a farti vedere com'è fatto il materiale prima di decidere qualsiasi cosa.\n\n` +

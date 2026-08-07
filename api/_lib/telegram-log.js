@@ -97,7 +97,7 @@ export async function ultimiMessaggi(userId, { limite = 5 } = {}) {
   if (!sql || !userId) return []
   try {
     return await sql`
-      SELECT message_id, thread_id, testo, tipo, inviato_at
+      SELECT chat_id, message_id, thread_id, testo, tipo, inviato_at
       FROM telegram_messaggi
       WHERE user_id = ${userId} AND e_bot = false
       ORDER BY inviato_at DESC
@@ -105,6 +105,50 @@ export async function ultimiMessaggi(userId, { limite = 5 } = {}) {
   } catch (e) {
     console.error(`[WARN] ultimi messaggi: ${e.message}`)
     return []
+  }
+}
+
+/**
+ * Un messaggio dal suo message_id, per rispondergli.
+ *
+ * Serve al passo finale di "rispondi a <nome>": il comando di conferma porta
+ * con se' solo il message_id (il webhook e' stateless, non c'e' una sessione
+ * dove tenere la persona scelta), e da li' bisogna risalire a chat_id e
+ * thread_id per agganciare la reply al punto giusto della conversazione.
+ */
+export async function messaggioPerId(messageId, { chatId = null } = {}) {
+  const sql = getSql()
+  if (!sql || !messageId) return null
+  try {
+    const righe = chatId
+      ? await sql`
+          SELECT chat_id, message_id, thread_id, user_id, nome, testo, inviato_at
+          FROM telegram_messaggi
+          WHERE message_id = ${messageId} AND chat_id = ${chatId} LIMIT 1`
+      : await sql`
+          SELECT chat_id, message_id, thread_id, user_id, nome, testo, inviato_at
+          FROM telegram_messaggi
+          WHERE message_id = ${messageId}
+          ORDER BY inviato_at DESC LIMIT 1`
+    return righe[0] || null
+  } catch (e) {
+    console.error(`[WARN] messaggio per id: ${e.message}`)
+    return null
+  }
+}
+
+/** Una scheda dal suo slug, per pubblicarla su conferma esplicita. */
+export async function templatePerSlug(slug) {
+  const sql = getSql()
+  if (!sql || !slug?.trim()) return null
+  try {
+    const righe = await sql`
+      SELECT slug, titolo, categoria, testo, auto, attivo, bando
+      FROM telegram_template WHERE slug = ${slug.trim().toLowerCase()} LIMIT 1`
+    return righe[0] || null
+  } catch (e) {
+    console.error(`[WARN] template per slug: ${e.message}`)
+    return null
   }
 }
 
