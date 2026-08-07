@@ -270,6 +270,11 @@ for (const [i, p] of scelti.entries()) {
   if (link) console.log(`  ${link}`)
 
   if (PROVA) {
+    // Il file_id si stampa anche in prova: e' meta' del motivo per cui la
+    // prova esiste. Vederlo qui e' l'unica conferma che l'upload ha davvero
+    // depositato il file sui server di Telegram e non solo consegnato un
+    // messaggio.
+    console.log(`  file_id: ${fileId || '⚠️ NON restituito — da capire prima di contarci per il cloud'}`)
     console.log('  (prova: la coda non e\' stata toccata)')
   } else {
     const dest = archivia(p, {
