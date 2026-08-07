@@ -30,6 +30,11 @@ node scripts/anteprima_log.mjs ...                   # registra a mano una conse
 node scripts/anteprime_list.mjs                      # elenca chi ha ricevuto quale anteprima
 node scripts/check_lead.mjs <email> [--full]         # cosa ha GIÀ ricevuto una persona (invii+anteprime+ordini+newsletter+profilo) → anti-doppione prima di rispondere
 
+# Gruppo Telegram — pubblicazione semiautomatica (mostra, invii solo con --invia)
+node scripts/telegram_post.mjs --testo post.txt --foto img.png --topic 26542 --muto --invia
+node scripts/telegram_ingest.mjs --materia contratti-pubblici            # elenca, non scrive
+node scripts/telegram_ingest.mjs --materia contratti-pubblici --scrivi   # riempie social/telegram/coda/
+
 # Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
 node scripts/backfill_invii.mjs --apply              # lo riversa su DB (idempotente, ~4 min su 2.6k messaggi)
