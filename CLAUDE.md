@@ -34,6 +34,10 @@ node scripts/check_lead.mjs <email> [--full]         # cosa ha GIÀ ricevuto una
 node scripts/telegram_post.mjs --testo post.txt --foto img.png --topic 26542 --muto --invia
 node scripts/telegram_ingest.mjs --materia contratti-pubblici            # elenca, non scrive
 node scripts/telegram_ingest.mjs --materia contratti-pubblici --scrivi   # riempie social/telegram/coda/
+node scripts/telegram_publish.mjs --coda                 # stato della coda del palinsesto
+node scripts/telegram_publish.mjs --prova --invia        # il prossimo post in privato a Francesco
+node scripts/telegram_publish.mjs --letto <cartella>     # sblocca un post riletto
+node scripts/telegram_publish.mjs --quanti 4 --invia     # pubblica una giornata nel topic 26542
 
 # Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
