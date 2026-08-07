@@ -199,7 +199,7 @@ function bloccoPianoText() {
 
 Se mi rispondi con tre informazioni:
 
-1) quando hai la prova e quante ore al giorno riesci davvero a metterci;
+1) da quanto ci stai lavorando e quante ore al giorno riesci davvero a metterci;
 2) le due o tre materie che senti più scoperte;
 3) che formazione hai alle spalle (una riga basta);
 
@@ -210,7 +210,7 @@ function bloccoPianoHtml() {
   <p style="margin:0 0 12px;font-size:15px">Poi, prima del materiale, viene <strong>il piano</strong>. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.</p>
   <p style="margin:0 0 8px;font-size:15px">Se mi rispondi con tre informazioni:</p>
   <ol style="margin:0 0 14px;padding-left:20px;font-size:15px;line-height:1.6">
-    <li>quando hai la prova e quante ore al giorno riesci davvero a metterci;</li>
+    <li>da quanto ci stai lavorando e quante ore al giorno riesci davvero a metterci;</li>
     <li>le due o tre materie che senti più scoperte;</li>
     <li>che formazione hai alle spalle (una riga basta);</li>
   </ol>
@@ -464,13 +464,21 @@ function buildRC({ firstName, bundle, prezzo }) {
 
   // Il PIANO viene prima del prodotto: è l'offerta a più alto valore percepito
   // e a costo zero per il lead. Le 3 domande sono il "prezzo" da pagare, ed è
-  // ciò che qualifica davvero il contatto (data prova, materie deboli, base di
-  // partenza). Regola commerciale 30/07/2026: prezzi solo se li chiede.
+  // ciò che qualifica davvero il contatto (tempo reale disponibile, materie
+  // deboli, base di partenza). Regola commerciale 30/07/2026: prezzi solo se
+  // li chiede.
+  //
+  // ⚠️ NON si chiede "quando hai la prova" (dal 07/08/2026): per la maggior
+  // parte dei bandi aperti il diario d'esame non è ancora uscito - l'INPS 499
+  // non ce l'ha, e il calendario RIPAM 1340 del 30/06 ha lasciato fuori proprio
+  // il profilo AMM. È una domanda a cui il candidato non sa rispondere, e la
+  // data la sappiamo noi dal wiki bandi: si chiede solo ciò che serve a
+  // COSTRUIRE il piano.
   const pianoText = `Ma prima del materiale viene una cosa che conta di più: il piano. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — e quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.
 
 Se mi rispondi con tre informazioni:
 
-1) quando hai la prova e quante ore al giorno riesci davvero a metterci;
+1) da quanto ci stai lavorando e quante ore al giorno riesci davvero a metterci;
 2) le due o tre materie che senti più scoperte;
 3) che formazione hai alle spalle (una riga basta);
 
@@ -538,7 +546,7 @@ ${sigText()}`
   <p style="margin:18px 0 14px;font-size:15px">Ma prima del materiale viene una cosa che conta di più: <strong>il piano</strong>. Studiare senza un ordine è il modo più rapido per arrivare alla prova con metà programma fatto bene e metà toccato di sfuggita — e quasi sempre la metà sbagliata, perché si parte da ciò che piace invece che da ciò che pesa.</p>
   <p style="margin:0 0 10px;font-size:15px">Se mi rispondi con <strong>tre informazioni</strong>:</p>
   <ol style="margin:0 0 16px;padding-left:20px;font-size:15px;line-height:1.7">
-    <li style="margin:0 0 8px"><strong>quando hai la prova</strong> e quante ore al giorno riesci davvero a metterci;</li>
+    <li style="margin:0 0 8px"><strong>da quanto ci stai lavorando</strong> e quante ore al giorno riesci davvero a metterci;</li>
     <li style="margin:0 0 8px">le <strong>due o tre materie</strong> che senti più scoperte;</li>
     <li>che <strong>formazione</strong> hai alle spalle (una riga basta).</li>
   </ol>
