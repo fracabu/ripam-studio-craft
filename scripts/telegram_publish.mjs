@@ -19,6 +19,7 @@
 //   node scripts/telegram_publish.mjs --letto 02-...-a-video   # marca "riletto"
 //
 // Flag:
+//   --serie   quale materia pubblicare (obbligatorio se in coda ce n'e' piu' di una)
 //   --post    pubblica quella cartella invece della prima della coda
 //   --quanti  quanti post consecutivi (default 1), con pausa tra uno e l'altro
 //   --prova   manda alla chat privata di Francesco e NON consuma la coda
@@ -47,6 +48,11 @@
 //     qualunque macchina. E' l'unica strada per far girare un giorno il
 //     palinsesto da cloud (i media stanno su un disco locale da 35 MB l'uno,
 //     Vercel non li vedra' mai). Costa una riga di JSON: si salva da subito.
+//
+// UNA MATERIA PER VOLTA. Le serie escono in fila, come sulla pagina Facebook:
+// il manuale si segue dall'inizio alla fine. Con due materie in coda l'ordine
+// alfabetico le intreccerebbe (la scheda 02 della seconda viene prima della 03
+// della prima), quindi in quel caso lo script si ferma e chiede --serie.
 //
 // L'archivio e' l'anti-doppione: una cartella pubblicata esce da coda/ ed
 // entra in pubblicati/, quindi non puo' ricapitare in testa alla coda.
@@ -137,17 +143,36 @@ const leggiCoda = () => {
 
 // ── Comandi che non pubblicano ─────────────────────────────────────────────
 const coda = leggiCoda()
+// Le serie si pubblicano UNA PER VOLTA, come sulla pagina Facebook: una
+// materia esce dall'inizio alla fine, poi comincia la successiva. Il rischio
+// da evitare e' l'intreccio, ed e' concreto: le cartelle si chiamano
+// NN-slug-a-video e l'ordine e' alfabetico, quindi con due materie in coda la
+// scheda 02 della seconda si infila prima della 03 della prima. Chi legge il
+// gruppo vedrebbe due manuali a giorni alterni.
+const SERIE = arg('serie')
+const serieInCoda = [...new Set(coda.map(p => p.meta?.serie).filter(Boolean))]
+const serieAmbigua = !SERIE && serieInCoda.length > 1
+const diSerie = (p) => !SERIE || p.meta?.serie === SERIE
+
+if (SERIE && !serieInCoda.includes(SERIE)) {
+  console.error(`In coda non c'e' la serie "${SERIE}". Ci sono: ${serieInCoda.join(', ') || '(nessuna)'}`)
+  process.exit(1)
+}
 
 if (flag('coda')) {
   if (!coda.length) { console.log('Coda vuota: niente in social/telegram/coda/.'); process.exit(0) }
-  const pronti = coda.filter(p => !p.rotto && !p.meta?.da_rileggere).length
-  console.log(`Coda: ${coda.length} post = ${(coda.length / POST_AL_GIORNO).toFixed(1)} giorni  ·  ${pronti} gia' riletti\n`)
-  for (const p of coda) {
-    const stato = p.rotto ? '⚠️ ' : p.meta.da_rileggere ? '📝 ' : '✅ '
-    const nota = p.rotto || (p.meta.da_rileggere ? 'da rileggere' : `${p.car}/1024 · ${p.mb.toFixed(0)} MB`)
-    console.log(`  ${stato}${p.nome.padEnd(56)} ${nota}`)
+  for (const s of serieInCoda) {
+    const posts = coda.filter(p => p.meta?.serie === s)
+    const pronti = posts.filter(p => !p.rotto && !p.meta.da_rileggere).length
+    console.log(`\n■ ${s} — ${posts.length} post = ${(posts.length / POST_AL_GIORNO).toFixed(1)} giorni  ·  ${pronti} gia' riletti`)
+    for (const p of posts) {
+      const stato = p.rotto ? '⚠️ ' : p.meta.da_rileggere ? '📝 ' : '✅ '
+      const nota = p.rotto || (p.meta.da_rileggere ? 'da rileggere' : `${p.car}/1024 · ${p.mb.toFixed(0)} MB`)
+      console.log(`  ${stato}${p.nome.padEnd(56)} ${nota}`)
+    }
   }
   console.log('\n📝 = mai riletto: --letto <cartella> per sbloccarlo.')
+  if (serieInCoda.length > 1) console.log('⚠️ Piu\' serie in coda: si pubblica una materia per volta, scegli con --serie <nome>.')
   process.exit(0)
 }
 
@@ -171,7 +196,14 @@ if (UNO) {
   if (!p) { console.error(`Non trovo "${UNO}" in coda. Elenco: --coda`); process.exit(1) }
   scelti = [p]
 } else {
-  scelti = coda.filter(p => !p.rotto).slice(0, QUANTI)
+  // Con piu' serie in coda non si sceglie a intuito: pescare "il primo in
+  // ordine alfabetico" pubblicherebbe la materia sbagliata senza dirlo.
+  if (serieAmbigua) {
+    console.error('In coda ci sono piu' + '\' serie e si pubblica una materia per volta:')
+    for (const s of serieInCoda) console.error(`  --serie ${s}  (${coda.filter(p => p.meta?.serie === s).length} post)`)
+    process.exit(1)
+  }
+  scelti = coda.filter(p => diSerie(p) && !p.rotto).slice(0, QUANTI)
   if (!scelti.length) {
     console.log(coda.length ? 'Nessun post pubblicabile: la coda ha solo post con problemi (--coda).' : 'Coda vuota.')
     process.exit(0)
@@ -182,7 +214,11 @@ if (UNO) {
 console.log('='.repeat(74))
 console.log(`destinazione: ${PROVA ? `PRIVATO di Francesco (${PRIVATO})` : `${CHAT} · topic ${TOPIC}`}` +
   `${MUTO ? ' · senza notifica' : ' · CON NOTIFICA'}`)
-console.log(`coda: ${coda.length} post = ${(coda.length / POST_AL_GIORNO).toFixed(1)} giorni`)
+// Il conteggio segue la serie che si sta pubblicando: dire "57 post in coda"
+// mentre ne escono 56 di una materia sola e' un numero che non aiuta.
+const inSerie = coda.filter(p => p.meta?.serie === scelti[0]?.meta?.serie)
+console.log(`serie ${scelti[0]?.meta?.serie}: ${inSerie.length} post = ${(inSerie.length / POST_AL_GIORNO).toFixed(1)} giorni` +
+  (serieInCoda.length > 1 ? `  ·  in coda anche: ${serieInCoda.filter(s => s !== scelti[0]?.meta?.serie).join(', ')}` : ''))
 console.log('='.repeat(74))
 for (const p of scelti) {
   console.log(`\n▸ ${p.nome}`)
@@ -287,5 +323,11 @@ for (const [i, p] of scelti.entries()) {
   ok++
 }
 
-const rimasti = leggiCoda().length
-console.log(`\n[OK] ${ok} post pubblicati. In coda restano ${rimasti} = ${(rimasti / POST_AL_GIORNO).toFixed(1)} giorni.`)
+// Il conteggio finale e' quello della SERIE appena pubblicata, non della coda
+// intera: e' l'unico numero che dice quanto manca alla fine di questa materia,
+// cioe' quando tocchera' preparare la prossima.
+const serieViva = scelti[0].meta.serie
+const rimasti = leggiCoda().filter(p => p.meta?.serie === serieViva).length
+console.log(`\n[OK] ${ok} post pubblicati. Della serie ${serieViva} restano ${rimasti} post = ` +
+  `${(rimasti / POST_AL_GIORNO).toFixed(1)} giorni.`)
+if (!rimasti) console.log('Serie finita: il prossimo passo e\' l\'ingest della materia successiva.')
