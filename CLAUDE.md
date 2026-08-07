@@ -39,6 +39,11 @@ node scripts/telegram_publish.mjs --prova --invia        # il prossimo post in p
 node scripts/telegram_publish.mjs --letto <cartella>     # sblocca un post riletto
 node scripts/telegram_publish.mjs --quanti 4 --invia     # pubblica una giornata nel topic 26542
 
+# Memoria del bot (tabelle telegram_* su Neon) — il webhook salva i messaggi del gruppo
+node scripts/telegram_template.mjs --lista                # le risposte che il bot può dare
+node scripts/telegram_template.mjs --prova "<domanda>"    # quale scheda scatta su una frase vera
+node scripts/telegram_template.mjs --seed schede.json     # carica/aggiorna un gruppo di schede
+
 # Registro invii (tabella `invii_email`) — anti-doppione delle comunicazioni
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
 node scripts/backfill_invii.mjs --apply              # lo riversa su DB (idempotente, ~4 min su 2.6k messaggi)
