@@ -22,6 +22,12 @@ const router = createRouter({
     // Rotta dedicata per la richiesta credenziali Quiz Pro: stesso componente
     // di /scrivimi ma in modalità bloccata (meta.tipo). URL linkabile/condivisibile.
     { path: '/quiz-pro', name: 'quiz-pro', component: Scrivimi, meta: { tipo: 'quiz-pro' } },
+    // Stessa logica per il piano di studio gratuito: /piano-studio invece di
+    // /scrivimi?tipo=piano-studio. Un URL senza "?" e "=" si detta a voce, si
+    // legge in uno screenshot e non viene troncato dalle anteprime di
+    // Telegram/WhatsApp — conta, perché il link gira nei post social e buona
+    // parte dei candidati lo apre dal telefono.
+    { path: '/piano-studio', name: 'piano-studio', component: Scrivimi, meta: { tipo: 'piano-studio' } },
     { path: '/materia/:slug', name: 'materia', component: Materia, props: true },
     // Landing condivisibile per materia (link puliti per Telegram): 1 CTA → modale opt-in
     { path: '/anteprime/:slug', name: 'anteprime', component: Anteprime, props: true },

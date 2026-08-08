@@ -60,7 +60,14 @@ const router = useRouter()
 // Rotta dedicata /quiz-pro → modalità credenziali bloccata. La meta della rotta
 // è la sorgente di verità: se presente, forza il tipo a quiz-pro.
 watch(() => route.meta?.tipo, (metaTipo) => {
-  if (metaTipo && TIPI.some(t => t.v === metaTipo)) tipo.value = metaTipo
+  if (metaTipo && TIPI.some(t => t.v === metaTipo)) {
+    tipo.value = metaTipo
+    // Chi arriva da una rotta dedicata ha già dichiarato cosa vuole: mostragli
+    // subito i campi, come fa il ramo query-string qui sotto. Senza questo,
+    // /piano-studio sarebbe PEGGIO di /scrivimi?tipo=piano-studio — stesso tipo
+    // preselezionato, ma form ancora chiuso e un click in più da fare.
+    started.value = true
+  }
 }, { immediate: true })
 
 // Selezionare "Credenziali Quiz Pro" dal form generale (/scrivimi) porta alla
