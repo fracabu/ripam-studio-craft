@@ -389,6 +389,71 @@ export const REPORT_CUSTOM_MANIFEST = {
       },
     ],
   },
+  // MIC 1.800 — i due profili. Anteprime tagliate dai due dossier (839 e 855 pp)
+  // in ANTEPRIME/report-custom/mic-1800-vigilanza e /mic-1800-tecnici.
+  'mic-1800-cod01': {
+    concorso: 'MIC — 1.800 Assistenti del Ministero della cultura, Codice 01 (vigilanza, accoglienza e tutela)',
+    concorsoShort: 'concorso MIC 1.800 Assistenti · Codice 01',
+    reports: [
+      { key: 'organizzazione-mic', label: 'Struttura e organizzazione del MiC (organigramma, direzioni generali, istituti autonomi, soprintendenze)', fileId: '15JwyJEGzWoTVuppuRwdwlTGOy1ab2ZRt' },
+      { key: 'patrimonio-culturale-italiano', label: 'Patrimonio culturale italiano (musei, siti UNESCO, arte, archeologia, paesaggio)', fileId: '12h_D1p1pidVt3t7TO3XdnDtWeg4vTTr9' },
+      { key: 'diritto-patrimonio-culturale', label: 'Diritto del patrimonio culturale (D.Lgs. 42/2004 — tutela, vincoli, circolazione, sanzioni)', fileId: '1D_J7khHycgpMi08n8mL5afiAb23ISHKw' },
+      { key: 'marketing-comunicazione', label: 'Marketing e comunicazione (L. 150/2000, URP e portavoce, comunicazione museale e brand identity)', fileId: '1p12RYHfhNhAc-7dSRaTMNHj5wtw4EXj_' },
+      { key: 'quesiti-situazionali', label: 'Quesiti situazionali (8 domande su 40, nessuna penalità)', fileId: '1lB0mYmcIsesTdbPjRq18GFTeRK2SXx9g' },
+      { key: 'diritto-amm', label: 'Diritto amministrativo (L. 241/1990 — procedimento, provvedimento, invalidità, accesso)', fileId: '1Lh_7KB0ulfDQiHESde-u9p9xganRxR1M' },
+      { key: 'pubblico-impiego', label: 'Pubblico impiego (D.Lgs. 165/2001 — rapporto, responsabilità, codice di comportamento)', fileId: '1VBpaJ3xYwNRP8IlmpYzGwI_wBlELX3ag' },
+      { key: 'anticorruzione', label: 'Anticorruzione e trasparenza (L. 190/2012, D.Lgs. 33/2013 — PNA, PTPCT, accesso civico)', fileId: '1lTFYNIeGKfPIyFsvsgO7BArxetuY14O3' },
+      { key: 'contratti-pubblici', label: 'Contratti pubblici (D.Lgs. 36/2023 — soggetti, procedure, fasi del contratto)', fileId: '17_18pYbyXGMaHPKbQWhomnmH9zQ32hZ5' },
+      { key: 'contabilita-stato', label: 'Contabilità di Stato (L. 196/2009 — ciclo di bilancio, rendiconto, controlli)', fileId: '1QyjAE_jcpjXEQo81UHi_wyhzdAfZS7Of' },
+      { key: 'diritto-penale', label: 'Diritto penale — reati contro la PA (artt. 314-360 c.p.)', fileId: '1JYC12lazqmpJzHoj2kKFmpVKgYsL2jM1' },
+      { key: 'diritto-ue', label: "Diritto dell'Unione europea (istituzioni, fonti, principi — TUE/TFUE)", fileId: '1HNM2JOFDhCtMGOPwrrCgGmLaIEXN6j1l' },
+      { key: 'cad', label: 'CAD — amministrazione digitale (D.Lgs. 82/2005 — identità digitale, firme, documento informatico)', fileId: '1Ba0pT8gYpeATv80aY8GQvbTsIs0_hV3u' },
+      { key: 'gdpr', label: "GDPR (Reg. UE 2016/679 — principi, basi giuridiche, diritti dell'interessato, data breach)", fileId: '1w7khblxyBsdaN1JjrwEqeewKqoB7UDEg' },
+      { key: 'informatica', label: 'Informatica e ICT (hardware, sistemi operativi, reti, sicurezza, office automation)', fileId: '1nt5SXuLhtHyxGb3Hf-Bq55PVDdoE_qtO' },
+      { key: 'sicurezza-lavoro', label: 'Sicurezza sul lavoro (D.Lgs. 81/2008 — soggetti, obblighi, valutazione dei rischi)', fileId: '1KIaQNlA1k-CBSR0rGCND2AKaGZD_KbAs' },
+    ],
+  },
+  'mic-1800-cod02': {
+    concorso: 'MIC — 1.800 Assistenti del Ministero della cultura, Codice 02 (assistente tecnico per la tutela e la valorizzazione)',
+    concorsoShort: 'concorso MIC 1.800 Assistenti · Codice 02',
+    reports: [
+      { key: 'metodologie-scavo', label: 'Metodologie e tecniche dello scavo (metodo stratigrafico, documentazione, archeologia subacquea)', fileId: '1z9VvxHTMe8a6Dx-n9DB8SM77bQC3SdE4' },
+      { key: 'archeologia-arte-musei', label: "Archeologia, storia dell'arte e musei (dalle civiltà antiche al contemporaneo, museologia e museografia)", fileId: '1MzmQLgyiNXPKFrP9Xoju_P9e5FoF0T8K' },
+      { key: 'diritto-patrimonio-culturale', label: 'Diritto del patrimonio culturale (D.Lgs. 42/2004 — beni culturali e paesaggistici, tutela, sanzioni)', fileId: '1Z4E__ED4y_tHer9YxuGiI0HTORk4s89g' },
+      { key: 'patrimonio-culturale-italiano', label: 'Patrimonio culturale italiano (musei, siti UNESCO, geografia e storia dell\'arte)', fileId: '1XhHmBtr66_GZ_7efgpIgmwhKBQr8hbiP' },
+      { key: 'organizzazione-mic', label: 'Struttura e organizzazione del MiC (organigramma, direzioni generali, soprintendenze)', fileId: '1Bfz5YhiCEzGCrMA6eGbkAM_mais3m00U' },
+      { key: 'quesiti-situazionali', label: 'Quesiti situazionali (8 domande su 40, nessuna penalità)', fileId: '1GeMv3V_Yvm7rQ4e7EnbvTQtAHcTTlzFe' },
+      { key: 'diritto-amm', label: 'Diritto amministrativo (L. 241/1990 — procedimento e fasi, termini, vizi, accesso)', fileId: '1eszQWZ72lo6vZZsK5JccZjk2yxgd9Pdh' },
+      { key: 'diritto-ue', label: "Diritto dell'Unione europea (le sette istituzioni, fonti e principi — TUE/TFUE)", fileId: '1280UcwdTiLG9hBrDPsbDo3MungyOYik3' },
+      { key: 'informatica', label: 'Informatica e ICT (hardware e memorie, sistemi operativi, reti, sicurezza)', fileId: '1L76tSD94mATpRp-YvTfG90qX3ymqQfyH' },
+      { key: 'diritto-penale', label: 'Diritto penale — reati contro la PA (peculato, corruzione, artt. 314-360 c.p.)', fileId: '1mviZLbGAbinEW3BJThx-Fk3qMjTM2lu6' },
+      { key: 'contabilita-stato', label: 'Contabilità di Stato (ciclo del bilancio e nuovi saldi, rendiconto, controlli)', fileId: '18IUvmRy3zkp3ApCM63BrjeU0jPBkao92' },
+      { key: 'cad', label: 'CAD — amministrazione digitale (documento informatico, identità digitale, firme)', fileId: '1r6szIZCANUNE-laIhHw_8flCPPEUCYva' },
+      { key: 'pubblico-impiego', label: 'Pubblico impiego (D.Lgs. 165/2001 — privatizzazione, accesso, disciplinare)', fileId: '1anEj6LbHW7vTMrInJA1bT_ZlBkW-TPAU' },
+      { key: 'gdpr', label: "GDPR e protezione dei dati (Reg. UE 2016/679 — principi, diritti, data breach)", fileId: '1O9Lv99uAsx7lf6C5eSYPPS2N3Po4I-EU' },
+      { key: 'contratti-pubblici', label: 'Contratti pubblici (D.Lgs. 36/2023 — procedure di affidamento, soggetti, fasi)', fileId: '16MWzDpIDz6TICcUZJeo9MbwJNZsS1Cym' },
+      { key: 'anticorruzione', label: 'Anticorruzione e trasparenza (L. 190/2012, D.Lgs. 33/2013 — PNA, PTPCT, accesso civico)', fileId: '1O-9Anbum1xq_SjQW6tsSu8G4NHyWXTtI' },
+    ],
+  },
+  // Difesa 1.100 — 11 report. Ordine per chi arriva dal RIPAM 3.997: prima le
+  // due materie davvero nuove (ordinamento Difesa e il blocco disciplinare).
+  'difesa-1100-amm': {
+    concorso: 'Ministero della Difesa — 1.100 Assistenti amministrativi (Area Assistenti)',
+    concorsoShort: 'concorso Difesa 1.100 Assistenti · profilo amministrativo',
+    reports: [
+      { key: 'ordinamento-difesa', label: "Ordinamento del Ministero della Difesa (D.Lgs. 66/2010 — Consiglio Supremo, Stato Maggiore e COVI, armamenti, PERSOCIV)", fileId: '19lAELDs56ajCyfPkVfeuSTVPgpTYLSjd' },
+      { key: 'pubblico-impiego', label: 'Pubblico impiego (D.Lgs. 165/2001 — con doveri, codice di comportamento e sanzioni disciplinari)', fileId: '1PdX2pinVc43JXFjC36n1N-7E51xe8BJx' },
+      { key: 'diritto-amm', label: 'Diritto amministrativo (L. 241/1990 — procedimento, provvedimento, invalidità, accesso)', fileId: '1EB8SH0xpxJTK1uwjyBSawULTWvoXg4qm' },
+      { key: 'contratti-pubblici', label: 'Contratti pubblici (D.Lgs. 36/2023 — soggetti, procedure, fasi del contratto)', fileId: '11nQ3nB7n-HxZeNHkKOkjnU-AopTvJ2TQ' },
+      { key: 'contabilita-stato', label: 'Contabilità di Stato (L. 196/2009 — ciclo di bilancio, rendiconto, controlli)', fileId: '14P4g1givy55cGte-W8W0bhCbHdAASMWS' },
+      { key: 'diritto-penale', label: 'Diritto penale nella PA (peculato, corruzione, concussione — artt. 314-360 c.p.)', fileId: '10Pb9ev3Sbo61xpm7-Q0I7rARSsT49eO2' },
+      { key: 'diritto-ue', label: "Diritto dell'Unione Europea (istituzioni, fonti, principi — TUE/TFUE)", fileId: '1_c3gutcRpaq52bcPO0pmeI-CY6lcVDRl' },
+      { key: 'anticorruzione', label: 'Anticorruzione e trasparenza (L. 190/2012, D.Lgs. 33/2013 — PNA, PTPCT, accesso civico)', fileId: '1T5TTn5bwBf9Kt9q50DsvX1nkcWLkjkUL' },
+      { key: 'gdpr', label: "GDPR (Reg. UE 2016/679 — principi, basi giuridiche, diritti dell'interessato)", fileId: '15lyfdobOMivUBudCPrilp17ga9eWscg5' },
+      { key: 'cad', label: 'CAD (D.Lgs. 82/2005 — identità e domicilio digitale, firme, documento informatico)', fileId: '1K2Co2ED65ciWQ9HdVqO2p-E5Puo5sW64' },
+      { key: 'informatica', label: 'Informatica (hardware, software, reti e sicurezza di base)', fileId: '1myUtdLSpzrtRsjJkLjLaUU_PZ1FFEIt_' },
+    ],
+  },
 }
 
 // Lista delle chiavi concorso ammesse (per validare l'input lato CLI/skill).

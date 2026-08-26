@@ -1034,6 +1034,20 @@ export const CONTENUTI = {
       ]
     }
   },
+  'ordinamento-difesa': {
+    vid: {
+      total: '7 episodi · 4h 35min',
+      episodes: [
+        { n:1, title:'La Patria e il Codice — cornice costituzionale e le otto componenti del Ministero', duration:'38:32', free:true },
+        { n:2, title:'Chi decide sopra tutti — il Ministro, il Consiglio supremo di difesa e Palazzo Chigi', duration:'37:22' },
+        { n:3, title:'Chi pensa e chi fa — il vertice militare, dallo Stato maggiore al COVI', duration:'36:03' },
+        { n:4, title:'Due cariche, non una — Segretario generale, armamenti, uffici centrali e arsenali', duration:'37:21' },
+        { n:5, title:'Chi porta la divisa e chi no — Forze armate, Carabinieri, personale civile e disciplina', duration:'41:49' },
+        { n:6, title:'Il tuo concorso in cifre — riserve, stratificazione storica e sigle da riconoscere', duration:'38:48' },
+        { n:7, title:'Trentacinque trabocchetti sull\'ordinamento della Difesa e simulazione finale', duration:'44:52' }
+      ]
+    }
+  },
 }
 
 export const getContenuti = (slug) => CONTENUTI[slug] || null

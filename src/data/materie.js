@@ -151,7 +151,7 @@ export const MATERIE = [
     topics:['Statistica descrittiva','Probabilità','Variabili aleatorie','Distribuzioni','Stima','Test di ipotesi','Regressione','Analisi multivariata'] },
   { n:37, slug:'ordinamento-difesa',              t:'Ordinamento della Difesa',        norm:'Codice Ordinamento Militare', c:['FUNZ'],
     intro:'Struttura e funzionamento del sistema Difesa: Forze Armate, gerarchia, ordinamento, missioni.',
-    avail:{pod:'soon',vid:'soon',rep:'soon',sim:'custom'},
+    avail:{pod:'soon',vid:'ready',rep:'ready',sim:'custom'},
     topics:['Codice Ordinamento Militare','Forze Armate','Stato Maggiore','Gerarchia militare','Personale militare','Servizio di leva','Missioni internazionali','Difesa civile'] },
   { n:38, slug:'ordinamento-fvg',                 t:'Ordinamento Regione FVG',         norm:'Statuto FVG · leggi regionali', c:['REG'],
     intro:'Ordinamento e organizzazione della Regione Autonoma Friuli Venezia Giulia: Statuto, organi, competenze.',
