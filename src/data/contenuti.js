@@ -1034,6 +1034,36 @@ export const CONTENUTI = {
       ]
     }
   },
+  'organizzazione-mic': {
+    vid: {
+      total: '8 episodi · 4h 48min',
+      episodes: [
+        { n:1, title:'Il Ministero della Cultura — storia, missione e struttura', duration:'37:00', free:true },
+        { n:2, title:'Le Direzioni Generali — chi fa cosa nel MiC', duration:'36:27' },
+        { n:3, title:'Dal centro al territorio — soprintendenze e strutture periferiche', duration:'35:36' },
+        { n:4, title:'I gioielli della corona — musei e istituti dotati di autonomia', duration:'35:38' },
+        { n:5, title:'I consiglieri del Ministro — gli organi consultivi', duration:'34:50' },
+        { n:6, title:'Le persone del MiC — profili professionali e concorsi', duration:'35:14' },
+        { n:7, title:'Il MiC incontra le altre leggi — i collegamenti normativi', duration:'36:04' },
+        { n:8, title:'Venti trabocchetti sull\'organizzazione del MiC e simulazione finale', duration:'37:28' }
+      ]
+    }
+  },
+  'marketing-comunicazione': {
+    vid: {
+      total: '8 episodi · 6h 02min',
+      episodes: [
+        { n:1, title:'La L. 150/2000 — quadro normativo e le tre attività', duration:'45:25', free:true },
+        { n:2, title:'Il portavoce e l\'ufficio stampa', duration:'46:38' },
+        { n:3, title:'L\'URP — funzioni, organizzazione e sportelli', duration:'47:21' },
+        { n:4, title:'Il piano di comunicazione e la formazione', duration:'45:01' },
+        { n:5, title:'Comunicazione digitale e social media nella PA', duration:'41:56' },
+        { n:6, title:'Marketing dei servizi pubblici e customer satisfaction', duration:'47:17' },
+        { n:7, title:'Comunicazione di crisi e comunicazione intranet', duration:'46:29' },
+        { n:8, title:'Trabocchetti e ripasso finale', duration:'41:57' }
+      ]
+    }
+  },
   'ordinamento-difesa': {
     vid: {
       total: '7 episodi · 4h 35min',
