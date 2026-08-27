@@ -108,13 +108,16 @@ export default async function handler(req, res) {
 
   const { nome, email, concorso, note, hp } = req.body || {}
 
-  // honeypot: se `hp` è compilato, è un bot → si finge successo.
-  // Loggato perché è un buco nero silenzioso: se un autofill compila il campo
-  // nascosto, un utente vero vede la conferma e la richiesta non arriva mai.
-  // Il log nei runtime logs Vercel è l'unico modo per accorgersene.
-  if (hp) {
-    console.warn('Honeypot triggered — richiesta scartata:', { email, nome, hp: String(hp).slice(0, 80) })
-    return res.status(200).json({ ok: true })
+  // honeypot: se `hp` è compilato è PROBABILMENTE un bot, ma non è una certezza —
+  // certi autofill (password manager, Safari iOS) riempiono anche i campi nascosti,
+  // e un utente vero vedeva la conferma senza che la richiesta arrivasse mai.
+  // Caso reale: 27/08/2026, richiesta credenziali Quiz Pro mai arrivata.
+  // Perciò NON si scarta più in silenzio: la richiesta prosegue marcata come
+  // sospetta, la notifica arriva col prefisso [SOSPETTO BOT] nell'oggetto e si
+  // saltano ack automatico e upsert. Meglio qualche spam etichettato che un lead perso.
+  const sospettoBot = Boolean(hp)
+  if (sospettoBot) {
+    console.warn('Honeypot triggered — richiesta marcata sospetta (NON scartata):', { email, nome, hp: String(hp).slice(0, 80) })
   }
 
   // validazione minima
@@ -138,7 +141,7 @@ export default async function handler(req, res) {
   // sanitize per email (rimuovi tag HTML dai campi utente)
   const clean = (s = '') => String(s).slice(0, 2000).replace(/[<>]/g, '')
 
-  const subject = `Nuova richiesta — ${clean(concorso)} — ${clean(nome)}`
+  const subject = `${sospettoBot ? '⚠️ [SOSPETTO BOT] ' : ''}Nuova richiesta — ${clean(concorso)} — ${clean(nome)}`
   const text = `Nuova richiesta dal sito Ripam Studio Craft
 
 Nome:      ${clean(nome)}
@@ -250,23 +253,28 @@ Questa è una conferma automatica. Ti rispondo a mano io appena posso.
   // se fallisce non blocca la submit (la richiesta è già arrivata al titolare).
   // IMPORTANTE: in Vercel serverless le promise non-awaited vengono troncate
   // alla return della response, quindi serve await anche per il "best effort".
-  try {
-    await transporter.sendMail({
-      from: `"Francesco — Ripam Studio Craft" <${user}>`,
-      to: clean(email),
-      replyTo: user,
-      subject: ackSubject,
-      text: ackText,
-      html: ackHtml
-    })
-  } catch (err) {
-    console.error('Ack mail failed (non blocking):', err)
+  // Sulle richieste sospette l'ack NON parte: se fosse davvero un bot con email
+  // falsa, sarebbe backscatter che danneggia la reputazione del mittente.
+  // La notifica marcata è già arrivata a Francesco, che decide se è vera.
+  if (!sospettoBot) {
+    try {
+      await transporter.sendMail({
+        from: `"Francesco — Ripam Studio Craft" <${user}>`,
+        to: clean(email),
+        replyTo: user,
+        subject: ackSubject,
+        text: ackText,
+        html: ackHtml
+      })
+    } catch (err) {
+      console.error('Ack mail failed (non blocking):', err)
+    }
   }
 
   // 3) upsert profilo candidato sul DB — best effort, non blocca la submit.
   //    Popola `candidati` (concorso + materie/formati d'interesse) per avere
   //    un quadro del candidato già pronto a ogni richiesta dal form.
-  try {
+  if (!sospettoBot) try {
     const source = isAnteprima
       ? 'anteprima'
       : /quiz\s*pro|credenzial/i.test(note)
