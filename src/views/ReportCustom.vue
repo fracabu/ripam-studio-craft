@@ -91,6 +91,14 @@ const anteprimaFormUrl = (concorso, report) =>
   scrivimiUrl(concorso, `Vorrei l'anteprima del report "${report}" (${concorso.nome}).`)
 const ctaUrl = (concorso) =>
   scrivimiUrl(concorso, `Mi interessano i report custom per ${concorso.nome}.`)
+// Un click solo per chi le vuole tutte: chi ne vuole una sola usa il link sulla card.
+const nAnteprime = (concorso) => concorso.reports.filter(hasAnteprima).length
+const tutteAnteprimeUrl = (concorso) =>
+  scrivimiUrl(
+    concorso,
+    `Vorrei ricevere TUTTE le anteprime dei report di ${concorso.nome} ` +
+    `(${nAnteprime(concorso)} materie, estratti gratuiti).`
+  )
 // Cover: pagina 1 del PDF report renderizzata in public/report-cover/<concorso>/<img>.png
 const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
 </script>
@@ -201,8 +209,21 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
           </article>
         </div>
 
+        <div v-if="nAnteprime(c)" class="rc-allbox">
+          <div class="rc-allbox-text">
+            <p class="rc-allbox-title">Le vuoi tutte insieme?</p>
+            <p class="rc-allbox-desc">
+              Un solo messaggio e ti mando gli estratti di tutte e {{ nAnteprime(c) }} le materie
+              di {{ c.nome }}. Sono gratis: le prime pagine vere di ogni report, non le copertine.
+            </p>
+          </div>
+          <RouterLink :to="tutteAnteprimeUrl(c)" class="btn rc-allbox-cta">
+            Ricevi tutte le {{ nAnteprime(c) }} anteprime &rarr;
+          </RouterLink>
+        </div>
+
         <div class="rc-actions">
-          <RouterLink :to="ctaUrl(c)" class="btn btn-primary rc-cta">
+          <RouterLink :to="ctaUrl(c)" class="btn btn-secondary rc-cta">
             Richiedi i report per {{ c.nome }} &rarr;
           </RouterLink>
           <RouterLink v-if="!single" :to="`/report-custom/${c.key}`" class="rc-page-link">
@@ -362,6 +383,31 @@ const coverUrl = (key, img) => `/report-cover/${key}/${img}.png`
 
 .rc-cta{ display:inline-block;margin-top:8px; }
 .rc-actions{ display:flex;flex-wrap:wrap;align-items:center;gap:18px; }
+
+/* "Le vuoi tutte insieme?" — un click per l'intero set di anteprime del bando */
+.rc-allbox{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;
+  border:3px solid var(--ink);background:var(--acid);
+  padding:20px 22px;margin:26px 0 18px;box-shadow:var(--shadow);
+}
+.rc-allbox-text{ flex:1 1 340px;min-width:0; }
+.rc-allbox-title{
+  font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--ink);margin:0 0 6px;
+}
+.rc-allbox-desc{ font-size:15px;line-height:1.5;color:var(--ink);margin:0;max-width:62ch; }
+/* Dentro il box acid il primario sparirebbe: qui il pieno è nero */
+.rc-allbox-cta{
+  flex:0 0 auto;margin-top:0;text-decoration:none;
+  background:var(--ink);color:var(--acid);box-shadow:var(--shadow);
+}
+.rc-allbox-cta:hover{
+  background:var(--bg);color:var(--ink);
+  transform:translate(-3px,-3px);box-shadow:var(--shadow-lg);
+}
+@media (max-width:640px){
+  .rc-allbox{ padding:18px; }
+  .rc-allbox-cta{ width:100%;text-align:center; }
+}
 .rc-page-link,.rc-back{
   font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;font-weight:700;
   color:var(--blue);text-decoration:none;

@@ -1,0 +1,28 @@
+{
+  "subject": "MIC e Difesa: 43 report nuovi e le lezioni audio",
+  "preheader": "Due codici del MIC, il Difesa 1.100 e tre serie da ascoltare. Anteprime in un click.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-08-27",
+  "issue_label": "NEWSLETTER",
+  "kicker": "MIC · DIFESA · AUDIO",
+  "headline": "Tre bandi nuovi in vetrina. E le lezioni ora si ascoltano.",
+  "is_welcome": false,
+  "campagna": "report-mic-difesa-audio-2026-08-27",
+  "sections_used": ["intro", "hero_pulsante_tutte_anteprime", "sec1_tre_set_nuovi", "sec2_audio_lezioni", "sec3_come_si_chiede", "closing_piano_studio"],
+  "note": "Annuncio dei 43 report nuovi (MIC 1.800 Cod. 01 e Cod. 02, 16 ciascuno; Difesa 1.100 amministrativo, 11) e delle tre serie di audio lezioni con supporto visivo. Hero sul nuovo pulsante 'Ricevi tutte le anteprime' in fondo a ogni pagina bando: prima si poteva chiedere solo una materia per volta. Nessun prezzo in tutta la mail, per scelta esplicita di Francesco: gli estratti sono gratis e i prezzi si danno solo a chi chiede di comprare. Nessun link Drive diretto — la richiesta passa dal form e la consegna la fa Francesco a mano, come per la vetrina di agosto. Taglio trasversale mitigato: i due set MIC e la Difesa non riguardano tutta la lista, per questo sec3 e il closing rilanciano sul piano di studio e su 'se il tuo bando non c'è scrivimelo'.",
+  "dipende_da_deploy": "Il pulsante 'Ricevi tutte le anteprime' (src/views/ReportCustom.vue) è committato ma va PUSHATO prima dell'invio: l'hero della mail lo annuncia come già presente sul sito.",
+  "vetrina_urls": {
+    "indice": "https://ripam-studio-craft.vercel.app/report-custom",
+    "mic-1800-cod01": "https://ripam-studio-craft.vercel.app/report-custom/mic-1800-cod01",
+    "mic-1800-cod02": "https://ripam-studio-craft.vercel.app/report-custom/mic-1800-cod02",
+    "difesa-1100-amm": "https://ripam-studio-craft.vercel.app/report-custom/difesa-1100-amm"
+  },
+  "audio_urls": {
+    "ordinamento-difesa": "https://ripam-studio-craft.vercel.app/materia/ordinamento-difesa",
+    "organizzazione-mic": "https://ripam-studio-craft.vercel.app/materia/organizzazione-mic",
+    "marketing-comunicazione": "https://ripam-studio-craft.vercel.app/materia/marketing-comunicazione"
+  },
+  "word_count": 487
+}
