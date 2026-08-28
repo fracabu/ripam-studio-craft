@@ -49,6 +49,45 @@ const QUIZ_PRO_RENEW_NOTE = 'Ho già un account su RIPAM Studio Quiz Pro e vorre
 // nel registro consensi GDPR (art. 7.1). Allineato a Newsletter.vue.
 const NEWSLETTER_CONSENT_TEXT = 'Acconsento a ricevere la newsletter di Ripam Studio Craft (max 1-2 email al mese) e ho letto la Privacy Policy. Posso disiscrivermi in qualunque momento.'
 
+// ---------------------------------------------------------------------------
+// EMAIL — suggeritore di dominio (28/08/2026)
+//
+// Perché esiste: l'email è l'UNICO campo del form che, se sbagliato, rende la
+// richiesta irrecuperabile — la persona aspetta una risposta che rimbalza e noi
+// non abbiamo modo di ricontattarla. È già successo: un candidato ha scritto
+// "tiscai.it" invece di "tiscali.it" e la consegna delle credenziali è tornata
+// indietro; il bounce non lo legge nessuno, quindi il typo è costato giorni.
+//
+// Due reti, in ordine di utilità:
+//   1. la tendina dei domini più usati in Italia, che si apre appena c'è la
+//      parte prima della @ — così il dominio si SCEGLIE invece di digitarlo;
+//   2. il "forse intendevi", che scatta su un dominio già scritto per intero e
+//      molto vicino a uno noto (distanza di edit 1-2). Non blocca: suggerisce.
+// ---------------------------------------------------------------------------
+// Ordinati per diffusione: senza filtro si vedono i primi otto, che coprono la
+// gran parte delle iscrizioni. Scrivendo "@t" restano tiscali, tim, tin, tre,
+// teletu — cioè il filtro per prefisso fa emergere anche quelli in fondo.
+const DOMINI_EMAIL = [
+  // i più usati in Italia
+  'gmail.com', 'libero.it', 'hotmail.it', 'yahoo.it', 'outlook.it',
+  'icloud.com', 'virgilio.it', 'alice.it', 'tiscali.it', 'live.it',
+  // stessi provider, varianti .com / secondarie
+  'hotmail.com', 'outlook.com', 'yahoo.com', 'live.com', 'msn.com',
+  'googlemail.com', 'ymail.com', 'me.com',
+  // Telecom / TIM
+  'tim.it', 'tin.it', 'teletu.it',
+  // Italiaonline / Libero
+  'inwind.it', 'iol.it', 'blu.it', 'giallo.it',
+  // Tiscali
+  'tiscalinet.it',
+  // altri operatori
+  'fastwebnet.it', 'vodafone.it', 'wind.it', 'tre.it',
+  // posta italiana e servizi
+  'poste.it', 'email.it', 'aruba.it', 'katamail.com', 'supereva.it',
+  // internazionali diffusi
+  'protonmail.com', 'proton.me', 'aol.com', 'gmx.com', 'mail.com',
+]
+
 // Stato form
 const nome = ref('')
 const email = ref('')
@@ -101,6 +140,91 @@ const materieDelBando = computed(() => {
 
 // Cambiando bando le materie spuntate prima non hanno più senso: si azzerano.
 watch(pianoBando, () => { pianoMaterie.value = [] })
+
+// --- Email: tendina domini + "forse intendevi" ------------------------------
+const emailAperta = ref(false)   // il campo ha il fuoco → si può mostrare la lista
+const emailIdx = ref(-1)         // opzione evidenziata da tastiera (-1 = nessuna)
+
+// Spezza l'email in parte locale + dominio digitato finora. Ritorna null se non
+// c'è ancora niente su cui suggerire (campo vuoto, o "@" senza nome davanti).
+function pezziEmail (v) {
+  if (!v) return null
+  const at = v.indexOf('@')
+  if (at === 0) return null                       // "@qualcosa": manca l'utente
+  if (at !== -1 && v.indexOf('@', at + 1) !== -1) return null  // due @
+  return at === -1
+    ? { locale: v, dominio: '' }                  // ha scritto solo l'utente
+    : { locale: v.slice(0, at), dominio: v.slice(at + 1).toLowerCase() }
+}
+
+const emailSuggerimenti = computed(() => {
+  const p = pezziEmail(email.value)
+  if (!p) return []
+  const lista = p.dominio
+    ? DOMINI_EMAIL.filter(d => d.startsWith(p.dominio) && d !== p.dominio)
+    : DOMINI_EMAIL
+  return lista.slice(0, 8).map(d => `${p.locale}@${d}`)
+})
+
+const mostraSuggerimenti = computed(() => emailAperta.value && emailSuggerimenti.value.length > 0)
+
+// Se l'utente continua a digitare, l'opzione evidenziata prima non è più quella
+// sotto il cursore: si azzera, così Invio torna a inviare il form.
+watch(email, () => { emailIdx.value = -1 })
+
+// Distanza di edit (Levenshtein), sulle stringhe corte dei domini.
+function distanza (a, b) {
+  const m = a.length, n = b.length
+  let prec = Array.from({ length: n + 1 }, (_, j) => j)
+  for (let i = 1; i <= m; i++) {
+    const cur = [i]
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(
+        prec[j] + 1,
+        cur[j - 1] + 1,
+        prec[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      )
+    }
+    prec = cur
+  }
+  return prec[n]
+}
+
+// "Forse intendevi": solo su un dominio scritto per intero (ha già il punto),
+// non in elenco, e a un passo o due da uno noto. Soglia stretta sui domini
+// corti per non dare suggerimenti a caso.
+const emailTypo = computed(() => {
+  const p = pezziEmail(email.value)
+  if (!p || !p.dominio.includes('.')) return ''
+  if (DOMINI_EMAIL.includes(p.dominio)) return ''
+  const max = p.dominio.length >= 7 ? 2 : 1
+  const vicino = DOMINI_EMAIL.find(d => distanza(d, p.dominio) <= max)
+  return vicino ? `${p.locale}@${vicino}` : ''
+})
+
+function scegliEmail (valore) {
+  email.value = valore
+  emailAperta.value = false
+  emailIdx.value = -1
+}
+
+function tastiEmail (e) {
+  if (e.key === 'Escape') { emailAperta.value = false; emailIdx.value = -1; return }
+  if (!mostraSuggerimenti.value) return
+  const n = emailSuggerimenti.value.length
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    emailIdx.value = (emailIdx.value + 1) % n
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    emailIdx.value = emailIdx.value <= 0 ? n - 1 : emailIdx.value - 1
+  } else if (e.key === 'Enter' && emailIdx.value >= 0) {
+    // Invio con un'opzione evidenziata la sceglie e NON invia il form;
+    // senza opzione evidenziata l'invio resta quello normale.
+    e.preventDefault()
+    scegliEmail(emailSuggerimenti.value[emailIdx.value])
+  }
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -300,9 +424,34 @@ const submit = async (e) => {
             <label for="sv-nome">Nome</label>
             <input id="sv-nome" v-model="nome" type="text" required placeholder="Come ti chiami" :disabled="status==='sending'" />
           </div>
-          <div class="sv-field">
+          <!-- Email con tendina dei domini: il dominio si sceglie, non si digita.
+               Vedi il commento DOMINI_EMAIL nello script per il perché. -->
+          <div class="sv-field sv-ac">
             <label for="sv-email">Email</label>
-            <input id="sv-email" v-model="email" type="email" required placeholder="tu@email.it" :disabled="status==='sending'" />
+            <input
+              id="sv-email" v-model="email" type="email" required
+              placeholder="tu@email.it" :disabled="status==='sending'"
+              autocomplete="email" role="combobox" aria-autocomplete="list"
+              aria-controls="sv-email-lista" :aria-expanded="mostraSuggerimenti"
+              :aria-activedescendant="emailIdx >= 0 ? `sv-email-opt-${emailIdx}` : null"
+              @focus="emailAperta = true" @blur="emailAperta = false"
+              @keydown="tastiEmail"
+            />
+            <ul
+              v-if="mostraSuggerimenti" id="sv-email-lista" class="sv-ac-lista"
+              role="listbox" aria-label="Domini email suggeriti"
+            >
+              <li
+                v-for="(s, i) in emailSuggerimenti" :key="s"
+                :id="`sv-email-opt-${i}`" role="option" :aria-selected="i === emailIdx"
+                class="sv-ac-opt" :class="{active: i === emailIdx}"
+                @mousedown.prevent="scegliEmail(s)"
+              >{{ s }}</li>
+            </ul>
+            <p v-else-if="emailTypo" class="sv-ac-typo">
+              Forse intendevi
+              <button type="button" @click="scegliEmail(emailTypo)">{{ emailTypo }}</button>?
+            </p>
           </div>
         </div>
 
@@ -516,6 +665,33 @@ const submit = async (e) => {
 .sv-field textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .sv-field textarea{resize:vertical;min-height:110px;font-family:inherit}
 .sv-opt{color:var(--muted,#6b6458);font-weight:500;text-transform:none;letter-spacing:0}
+
+/* Email: tendina dei domini + riga "forse intendevi" */
+.sv-ac{position:relative}
+.sv-ac-lista{
+  position:absolute;top:100%;left:0;right:0;z-index:20;
+  margin:4px 0 0;padding:0;list-style:none;
+  background:var(--bg);border:2px solid var(--ink);
+  box-shadow:4px 4px 0 var(--ink);
+  max-height:300px;overflow-y:auto;
+}
+.sv-ac-opt{
+  padding:9px 14px;font-size:14px;line-height:1.3;color:var(--ink);
+  cursor:pointer;border-bottom:1px solid rgba(10,10,10,.12);
+  overflow-wrap:anywhere;
+}
+.sv-ac-opt:last-child{border-bottom:none}
+.sv-ac-opt:hover,.sv-ac-opt.active{background:var(--acid);font-weight:600}
+.sv-ac-typo{
+  margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--muted,#6b6458);
+}
+.sv-ac-typo button{
+  background:transparent;border:none;padding:0;
+  font:inherit;font-weight:700;color:var(--ink);cursor:pointer;
+  text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px;
+  overflow-wrap:anywhere;
+}
+.sv-ac-typo button:hover{color:var(--blue,#3d5aff)}
 
 /* Dropdown Concorso (sostituisce gli 8 chip) */
 .sv-select{
