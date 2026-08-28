@@ -73,6 +73,34 @@ const instradamento = () => ({
   ...(MUTO ? { disable_notification: true } : {}),
 })
 
+// Chiamata generica alla Bot API. Sta QUI in alto (e non più sotto, vicino al
+// modo A) perché serve a entrambi i modi: il modo B --testo esce prima di
+// arrivare alla vecchia posizione, e con `const` dichiarato dopo non poteva
+// nemmeno richiamarla.
+const api = (metodo, body) =>
+  fetch(`https://api.telegram.org/bot${TOKEN}/${metodo}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  }).then(r => r.json())
+
+// Fissa in alto il messaggio appena pubblicato. Va invocata da OGNI ramo che
+// pubblica: se un ramo la salta, --pin viene ignorato in silenzio e chi lancia
+// il comando crede di aver fissato il post (successo 12/08/2026).
+// Uscita pulita dopo una chiamata di rete. `process.exit()` immediato, su
+// Windows, fa abortire libuv con "Assertion failed: !(handle->flags &
+// UV_HANDLE_CLOSING)" e restituisce exit code 9 anche quando il post è andato a
+// buon fine: chi legge il codice d'uscita crede che sia fallito. Impostiamo
+// solo exitCode e lasciamo che il processo finisca da sé quando le socket
+// keep-alive si chiudono (unref del timer: non tiene sveglio il processo).
+const uscita = (code = 0) => {
+  process.exitCode = code
+  setTimeout(() => process.exit(code), 1500).unref()
+}
+
+const fissa = async (message_id) => {
+  const p = await api('pinChatMessage', { chat_id: CHAT, message_id, disable_notification: true })
+  console.log(p.ok ? `[OK] fissato in alto — message_id ${message_id}` : `[WARN] pin non riuscito: ${p.description}`)
+}
+
 const NOMI = {
   'ripam-3997-amm': 'RIPAM 3.997 Assistenti — profilo amministrativo',
   'ripam-1340-amm': 'RIPAM 1.340 Funzionari — profilo AMM',
@@ -165,7 +193,8 @@ if (TESTO_FILE) {
   }
   if (!rr?.ok) { console.error('\n[FAIL]', rr?.description || 'errore sconosciuto'); process.exit(1) }
   console.log(`\n[OK] pubblicato — message_id ${rr.result.message_id}`)
-  process.exit(0)
+  if (flag('pin')) await fissa(rr.result.message_id)
+  uscita()
 }
 
 // ── MODO A: anteprime di un concorso ───────────────────────────────────────
@@ -200,11 +229,6 @@ const messaggio =
   `Tutti i concorsi coperti: ${SITO}/report-custom\n` +
   `Per un piano di studio su misura (gratuito): ${SITO}/scrivimi`
 
-const api = (metodo, body) =>
-  fetch(`https://api.telegram.org/bot${TOKEN}/${metodo}`, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-  }).then(r => r.json())
-
 console.log('='.repeat(70))
 console.log(`chat:    ${CHAT}`)
 console.log(`bando:   ${BANDO} — ${reports.length} anteprime`)
@@ -227,7 +251,4 @@ const r = await api('sendMessage', {
 if (!r?.ok) { console.error('\n[FAIL]', r?.description || 'errore sconosciuto'); process.exit(1) }
 console.log(`\n[OK] pubblicato — message_id ${r.result.message_id}`)
 
-if (flag('pin')) {
-  const p = await api('pinChatMessage', { chat_id: CHAT, message_id: r.result.message_id, disable_notification: true })
-  console.log(p?.ok ? '[OK] messaggio fissato in alto' : `[warn] pin non riuscito: ${p?.description}`)
-}
+if (flag('pin')) await fissa(r.result.message_id)
