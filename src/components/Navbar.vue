@@ -54,7 +54,9 @@ onUnmounted(() => {
         <RouterLink to="/tool">Tool</RouterLink>
         <RouterLink to="/quiz-pro">Quiz Pro</RouterLink>
         <RouterLink to="/chi-sono">Chi sono</RouterLink>
-        <RouterLink to="/#faq" active-class="" exact-active-class="">FAQ</RouterLink>
+        <!-- Il piano di studio è gratuito ed è la porta d'ingresso più efficace:
+             sta in barra al posto delle FAQ, che restano raggiungibili dalla home. -->
+        <RouterLink to="/piano-studio">Piano gratis</RouterLink>
         <RouterLink to="/scrivimi" class="nav-cta">Scrivimi →</RouterLink>
       </div>
       <button
@@ -81,6 +83,7 @@ onUnmounted(() => {
       <RouterLink to="/tool" @click="close">Tool</RouterLink>
       <RouterLink to="/quiz-pro" @click="close">Quiz Pro</RouterLink>
       <RouterLink to="/chi-sono" @click="close">Chi sono</RouterLink>
+      <RouterLink to="/piano-studio" @click="close">Piano gratis</RouterLink>
       <RouterLink to="/#faq" active-class="" exact-active-class="" @click="close">FAQ</RouterLink>
       <RouterLink to="/scrivimi" class="nav-cta" @click="close">Scrivimi →</RouterLink>
     </div>

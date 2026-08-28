@@ -37,6 +37,12 @@
 //              es. --label "Lead - Hot,Anteprima inviata"
 //   --unlabel  Gmail label da RIMUOVERE dal thread dopo l'invio (nomi, separati da virgola)
 //              es. --unlabel "Da rispondere"
+//   --no-thread  NON agganciare la risposta al thread del destinatario (default:
+//              la aggancia, cercando via IMAP l'ultimo messaggio ricevuto da lui
+//              e mettendone il Message-ID in In-Reply-To/References). Senza
+//              aggancio Gmail apre una conversazione nuova e il thread del lead
+//              resta con l'ultima parola sua — cioè sembra inevaso. Usa
+//              --no-thread solo per un primo contatto che deve stare per conto suo.
 //   --dry-run  stampa a video e NON invia
 //   --out      con --dry-run: salva la mail completa (guscio + logo) in un .html
 //              da aprire nel browser per rivederla prima di dare l'ok all'invio
@@ -193,6 +199,67 @@ function findAllMailBox(boxes, prefix = '') {
   return null
 }
 
+// ---------------------------------------------------------------------------
+// THREADING — perché esiste (28/08/2026)
+//
+// Senza gli header In-Reply-To e References, Gmail apre una conversazione NUOVA
+// anche quando l'oggetto è "Re: ...": il thread costruito lato client si basa su
+// quegli header, non sul testo dell'oggetto. Conseguenza pratica: la risposta
+// finisce in un thread a parte e in casella il thread del lead resta con
+// l'ULTIMA PAROLA SUA — cioè sembra inevaso anche quando è già stato gestito.
+// Il 28/08 questo ha fatto sembrare "da rispondere" Letizia, Roberta e Danilo,
+// che erano già stati serviti, e ha richiesto mezz'ora di incroci a mano fra
+// inviata e ricevuta per capirlo.
+//
+// Rimedio: prima di spedire cerco via IMAP l'ultimo messaggio ricevuto DA quel
+// destinatario e mi ci aggancio. È il comportamento di DEFAULT (si disattiva
+// con --no-thread): se dipendesse da un flag da ricordare, il problema
+// tornerebbe la prima volta che me lo dimentico.
+// ---------------------------------------------------------------------------
+async function ultimoMessageIdDa({ user, pass, email }) {
+  const { default: Imap } = await import('imap')
+  return new Promise((resolve) => {
+    const imap = new Imap({
+      user, password: pass,
+      host: 'imap.gmail.com', port: 993, tls: true,
+      tlsOptions: { rejectUnauthorized: false, servername: 'imap.gmail.com' },
+      authTimeout: 20000,
+    })
+    // Best-effort: se qualcosa non va si spedisce comunque, senza agganciare.
+    const giveUp = () => { try { imap.end() } catch {} ; resolve(null) }
+    imap.once('error', giveUp)
+
+    imap.once('ready', () => {
+      imap.getBoxes((err, boxes) => {
+        if (err) return giveUp()
+        const allMail = findAllMailBox(boxes)
+        if (!allMail) return giveUp()
+        imap.openBox(allMail, true, (errOpen) => {
+          if (errOpen) return giveUp()
+          imap.search([['FROM', email]], (errS, uids) => {
+            if (errS || !uids || !uids.length) return giveUp()
+            // L'ultimo UID è il messaggio più recente ricevuto da quell'indirizzo.
+            const ultimo = uids[uids.length - 1]
+            let mid = null
+            const f = imap.fetch(ultimo, { bodies: 'HEADER.FIELDS (MESSAGE-ID)' })
+            f.on('message', (msg) => {
+              let buf = ''
+              msg.on('body', (s) => s.on('data', (c) => { buf += c.toString('utf8') }))
+              msg.once('end', () => {
+                const m = buf.replace(/\r?\n[ \t]+/g, ' ').match(/^Message-ID:\s*(<[^>]+>)/im)
+                if (m) mid = m[1]
+              })
+            })
+            f.once('error', giveUp)
+            f.once('end', () => { try { imap.end() } catch {} ; resolve(mid) })
+          })
+        })
+      })
+    })
+    imap.connect()
+  })
+}
+
 async function applyGmailLabels({ user, pass, messageId, add = [], remove = [] }) {
   const { default: Imap } = await import('imap')
   const cleanId = String(messageId).replace(/^<|>$/g, '')
@@ -337,10 +404,23 @@ const transporter = nodemailer.createTransport({
   auth: { user, pass }, tls: { rejectUnauthorized: false },
 })
 
+// Aggancio al thread del lead (vedi il commento su ultimoMessageIdDa).
+let inReplyTo = null
+if (!args['no-thread'] && !args.demo) {
+  try {
+    inReplyTo = await ultimoMessageIdDa({ user, pass, email: to })
+    if (inReplyTo) console.log(`[i]  aggancio al thread esistente (${inReplyTo})`)
+    else console.log('[i]  nessun messaggio precedente da questo indirizzo: parte un thread nuovo')
+  } catch {
+    console.log('[i]  threading non riuscito: parte un thread nuovo')
+  }
+}
+
 try {
   const info = await transporter.sendMail({
     from: `"${fromName}" <${user}>`,
     to, replyTo: user, subject, text, html,
+    ...(inReplyTo ? { inReplyTo, references: [inReplyTo] } : {}),
     attachments: [useLight ? logoLightAttachment() : logoDarkAttachment(), ...extraAttachments],
   })
   console.log(`[OK] inviata a ${to} — ${info.messageId}`)

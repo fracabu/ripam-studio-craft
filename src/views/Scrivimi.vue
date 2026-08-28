@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { CONCORSI } from '../data/formati.js'
+import { REPORT_CONCORSI } from '../data/report-concorsi.js'
 
 const TIPI = [
   { v: 'materia', l: 'Materia di studio' },
@@ -10,6 +11,35 @@ const TIPI = [
   { v: 'tool', l: 'Tool su misura' },
   { v: 'quiz-pro', l: 'Credenziali RIPAM Studio Quiz Pro' },
   { v: 'non-so', l: 'Non lo so ancora' }
+]
+
+// ---------------------------------------------------------------------------
+// PIANO DI STUDIO — perché questi campi esistono (28/08/2026)
+//
+// Fino a oggi chi chiedeva il piano compilava solo nome/email/concorso e
+// lasciava vuoto il campo note: non per pigrizia, ma perché davanti a una
+// casella libera non sa cosa scrivere. Risultato: arrivava una richiesta senza
+// ore al giorno, senza materie deboli e — sui bandi con più codici — senza
+// nemmeno sapere QUALE codice, che è il dato senza cui il piano non si può
+// proprio fare. Ogni piano richiedeva un giro di mail solo per chiedere le
+// stesse cinque cose.
+//
+// Le richieste dalla vetrina report arrivano invece sempre complete, perché
+// quel testo lo precompila la vetrina. Da lì l'idea: chiedere le cinque
+// informazioni con controlli a click, zero digitazione, e comporle nel testo
+// della richiesta esattamente come fa la vetrina.
+// ---------------------------------------------------------------------------
+const PIANO_ORE = ['Meno di 2 ore', '2-3 ore', '4-5 ore', 'Più di 5 ore']
+const PIANO_STUDI = [
+  'Diploma',
+  'Laurea giuridica o economica',
+  'Laurea in altra materia',
+  'Sto ancora studiando',
+]
+const PIANO_CONCORSI = [
+  'È il mio primo concorso',
+  'Sì, ma non li ho superati',
+  'Sì, e ho superato qualche prova',
 ]
 
 const QUIZ_PRO_NOTE = 'Vorrei ricevere le credenziali per accedere a RIPAM Studio Quiz Pro.'
@@ -44,6 +74,13 @@ const username = ref('')
 // (bastano nome + email). Si apre solo se l'utente vuole aggiungere qualcosa.
 const showQuizNote = ref(false)
 
+// Piano di studio: le cinque risposte a click (vedi commento sopra).
+const pianoBando = ref('')
+const pianoOre = ref('')
+const pianoMaterie = ref([])
+const pianoStudi = ref('')
+const pianoConcorsi = ref('')
+
 const status = ref('idle') // idle | sending | sent | error
 const errorMsg = ref('')
 
@@ -53,6 +90,17 @@ const errorMsg = ref('')
 const isQuizProMode = computed(() => tipo.value === 'quiz-pro')
 const isRinnovo = computed(() => isQuizProMode.value && quizProAction.value === 'rinnovo')
 const isPianoStudio = computed(() => tipo.value === 'piano-studio')
+
+// Le materie da spuntare sono quelle del bando scelto: niente elenco generico
+// da 40 voci in cui nessuno si ritrova. Se il bando non è in elenco, la sezione
+// materie non compare e il campo libero resta lì per dirlo a parole.
+const materieDelBando = computed(() => {
+  const b = REPORT_CONCORSI.find(c => c.key === pianoBando.value)
+  return b ? b.reports.map(r => r.t) : []
+})
+
+// Cambiando bando le materie spuntate prima non hanno più senso: si azzerano.
+watch(pianoBando, () => { pianoMaterie.value = [] })
 
 const route = useRoute()
 const router = useRouter()
@@ -113,6 +161,18 @@ const submit = async (e) => {
   } else if (isQuizProMode.value) {
     const extra = note.value || QUIZ_PRO_NOTE
     composedNote = `Cosa serve: Credenziali RIPAM Studio Quiz Pro\n\n${extra}`
+  } else if (isPianoStudio.value) {
+    // Le cinque risposte diventano righe etichettate: la mail arriva già
+    // leggibile e il piano si può iniziare senza un giro di domande.
+    const b = REPORT_CONCORSI.find(c => c.key === pianoBando.value)
+    const righe = ['Cosa serve: Piano di studio', '']
+    if (b) righe.push(`Bando: ${b.nome}${b.tag ? ` (${b.tag})` : ''}`)
+    if (pianoOre.value) righe.push(`Ore al giorno: ${pianoOre.value}`)
+    if (pianoMaterie.value.length) righe.push(`Materie più scoperte: ${pianoMaterie.value.join(', ')}`)
+    if (pianoStudi.value) righe.push(`Studi: ${pianoStudi.value}`)
+    if (pianoConcorsi.value) righe.push(`Concorsi già fatti: ${pianoConcorsi.value}`)
+    if (note.value) righe.push('', note.value)
+    composedNote = righe.join('\n')
   } else {
     const tipoLabel = TIPI.find(t => t.v === tipo.value)?.l || ''
     composedNote = tipoLabel ? `Cosa serve: ${tipoLabel}\n\n${note.value}` : note.value
@@ -264,6 +324,62 @@ const submit = async (e) => {
           </select>
         </div>
 
+        <!-- Piano di studio: le cinque risposte a click. Tutto facoltativo —
+             chi non sa una cosa la salta e il piano parte lo stesso, ma chi
+             spunta arriva con la richiesta già completa. -->
+        <div v-if="isPianoStudio && started" class="sv-piano sv-reveal">
+          <p class="sv-piano-intro">Il piano è gratuito. Rispondi a quello che sai — bastano pochi click e te lo cucio addosso invece di mandarti un calendario generico.</p>
+
+          <div class="sv-field">
+            <label for="sv-piano-bando">Quale bando prepari</label>
+            <select id="sv-piano-bando" v-model="pianoBando" class="sv-select" :disabled="status==='sending'">
+              <option value="">— scegli —</option>
+              <option v-for="c in REPORT_CONCORSI" :key="c.key" :value="c.key">{{ c.nome }}</option>
+              <option value="altro">Un altro concorso (lo scrivo sotto)</option>
+            </select>
+          </div>
+
+          <div class="sv-field">
+            <label>Quante ore al giorno riesci davvero a studiare</label>
+            <div class="sv-seg" role="radiogroup" aria-label="Ore al giorno">
+              <label v-for="o in PIANO_ORE" :key="o" class="sv-seg-opt" :class="{active: pianoOre === o}">
+                <input type="radio" name="sv-piano-ore" :value="o" v-model="pianoOre" :disabled="status==='sending'" />
+                <span>{{ o }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div v-if="materieDelBando.length" class="sv-field">
+            <label>Le materie su cui ti senti più scoperto <span class="sv-opt">(quante vuoi)</span></label>
+            <div class="sv-checks">
+              <label v-for="m in materieDelBando" :key="m" class="sv-check" :class="{active: pianoMaterie.includes(m)}">
+                <input type="checkbox" :value="m" v-model="pianoMaterie" :disabled="status==='sending'" />
+                <span>{{ m }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="sv-field">
+            <label>Che studi hai fatto</label>
+            <div class="sv-seg" role="radiogroup" aria-label="Studi">
+              <label v-for="s in PIANO_STUDI" :key="s" class="sv-seg-opt" :class="{active: pianoStudi === s}">
+                <input type="radio" name="sv-piano-studi" :value="s" v-model="pianoStudi" :disabled="status==='sending'" />
+                <span>{{ s }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="sv-field">
+            <label>Hai già fatto altri concorsi pubblici</label>
+            <div class="sv-seg" role="radiogroup" aria-label="Concorsi già fatti">
+              <label v-for="c in PIANO_CONCORSI" :key="c" class="sv-seg-opt" :class="{active: pianoConcorsi === c}">
+                <input type="radio" name="sv-piano-conc" :value="c" v-model="pianoConcorsi" :disabled="status==='sending'" />
+                <span>{{ c }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
         <!-- Quiz Pro: nota facoltativa collassata di default (form più corto) -->
         <button
           v-if="isQuizProMode && !showQuizNote"
@@ -276,13 +392,13 @@ const submit = async (e) => {
           v-if="(isQuizProMode && showQuizNote) || (!isQuizProMode && started)"
           class="sv-field sv-reveal"
         >
-          <label for="sv-note">{{ isQuizProMode ? 'Note (facoltative)' : 'Dimmi di più' }}</label>
+          <label for="sv-note">{{ isQuizProMode ? 'Note (facoltative)' : (isPianoStudio ? 'Vuoi aggiungere altro?' : 'Dimmi di più') }} <span v-if="isPianoStudio" class="sv-opt">(facoltativo)</span></label>
           <textarea
             id="sv-note"
             v-model="note"
-            :rows="isQuizProMode ? 3 : 4"
-            :required="!isQuizProMode"
-            :placeholder="isQuizProMode ? 'Aggiungi qualcosa se vuoi — oppure lascia così com\'è.' : (isPianoStudio ? 'Il tuo percorso di studi, dove ti senti più scoperto e quante ore puoi studiare — così te lo personalizzo.' : 'Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…')"
+            :rows="isQuizProMode || isPianoStudio ? 3 : 4"
+            :required="!isQuizProMode && !isPianoStudio"
+            :placeholder="isQuizProMode ? 'Aggiungi qualcosa se vuoi — oppure lascia così com\'è.' : (isPianoStudio ? 'Se lavori, se hai una scadenza vicina, se il tuo bando non era in elenco: scrivilo qui.' : 'Materia, scadenza del concorso, cosa hai già provato, cosa non ti torna…')"
             :disabled="status==='sending'"
           ></textarea>
         </div>
@@ -430,6 +546,41 @@ const submit = async (e) => {
   text-decoration-thickness:2px;text-underline-offset:3px;
 }
 .sv-note-toggle:hover{color:var(--blue,#3d5aff)}
+
+/* PIANO DI STUDIO — il blocco delle cinque risposte a click.
+   Riquadrato e staccato dal resto: si legge come "questa parte è per il piano",
+   non come cinque campi in più appiccicati al form generico. */
+.sv-piano{
+  display:flex;flex-direction:column;gap:18px;
+  padding:18px;
+  border:2px solid var(--ink);
+  background:var(--bg-alt,#ede6d8);
+  box-shadow:4px 4px 0 var(--ink);
+}
+.sv-piano-intro{
+  margin:0;
+  font-size:14px;line-height:1.5;
+  color:var(--ink);
+}
+/* Le materie sono tante (fino a 16): griglia fluida invece di una colonna
+   lunghissima, così restano scorribili con un colpo d'occhio. */
+.sv-checks{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:8px;
+}
+.sv-check{
+  display:flex;align-items:flex-start;gap:8px;
+  cursor:pointer;user-select:none;
+  padding:8px 10px;
+  border:2px solid var(--ink);background:var(--bg);
+  font-size:13px;line-height:1.35;
+  transition:background .12s;
+}
+.sv-check:hover{background:var(--bg-alt,#ede6d8)}
+.sv-check.active{background:var(--acid)}
+.sv-check input{margin:1px 0 0;accent-color:var(--ink);flex:0 0 auto}
+.sv-check span{flex:1 1 auto}
 
 /* SEGMENTED CONTROLS */
 .sv-seg{display:flex;flex-wrap:wrap;gap:8px}
