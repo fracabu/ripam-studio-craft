@@ -84,3 +84,12 @@ docs/
 
 # stato locale della sentinella richieste (scripts/watch_richieste.mjs)
 .watch-richieste-state
+
+# token OAuth di Google Drive (scripts/drive_auth.mjs): sono CREDENZIALI vere
+# dell'account ripamstudiocraft, con accesso in scrittura al Drive. Mai su Git.
+.drive-token.json
+
+# bozze delle mail in attesa di revisione: contengono NOMI, dati e materiali
+# di singoli candidati (stessa ragione per cui è ignorato messaggi-clienti/).
+# Vivono solo su questa macchina: un `git add -A` distratto le pubblicherebbe.
+scripts/_pending/
