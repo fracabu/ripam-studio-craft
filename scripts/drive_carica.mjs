@@ -18,6 +18,8 @@
 //   --dentro    id della cartella madre (default: ANTEPRIME/report-custom)
 //   --ext       estensione da caricare (default .pdf)
 //   --carica    esegue davvero (senza, mostra e basta)
+//   --privato   NON apre a "chiunque abbia il link" (materiale a pagamento:
+//               l'accesso si da' poi per nome con drive_condividi.mjs)
 //   --json      stampa alla fine la mappa file -> fileId (per i manifest)
 //
 // IDEMPOTENTE: se un file con lo stesso nome e la stessa dimensione c'e' gia',
@@ -44,6 +46,7 @@ const DENTRO = arg('dentro', '1ry6xwRZk6MdTbN3fCWkXIsUF5PbWxJHY')
 const EXT = (arg('ext', '.pdf') || '').toLowerCase()
 const CARICA = flag('carica')
 const JSON_OUT = flag('json')
+const PRIVATO = flag('privato')
 
 if (!DA || !existsSync(DA)) { console.error(`[FAIL] --da <cartella> mancante o inesistente: ${DA}`); process.exit(1) }
 if (!IN) { console.error('[FAIL] --in <nome sottocartella su Drive> e\' obbligatorio'); process.exit(1) }
@@ -93,6 +96,9 @@ const upload = async (file, nome, parent, fileIdEsistente = null) => {
 }
 
 const condividi = async (id) => {
+  // Sul materiale comprato il link pubblico non deve esistere nemmeno per un
+  // minuto: si carica privato e si da' accesso nominale a chi ha pagato.
+  if (PRIVATO) return
   try {
     await api(`files/${id}/permissions`, {
       method: 'POST', headers: { 'content-type': 'application/json' },
@@ -141,6 +147,6 @@ for (const f of files) {
 if (!CARICA) {
   console.log('\n[anteprima] NIENTE caricato. Aggiungi --carica per farlo davvero.')
 } else {
-  console.log(`\nFatto: ${Object.keys(mappa).length} file su Drive, condivisi con "chiunque abbia il link".`)
+  console.log(`\nFatto: ${Object.keys(mappa).length} file su Drive, ${PRIVATO ? 'PRIVATI (nessun link pubblico)' : 'condivisi con "chiunque abbia il link"'}.`)
   if (JSON_OUT) console.log('\n' + JSON.stringify(mappa, null, 2))
 }

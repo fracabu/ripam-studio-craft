@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import HeroRicerca from '../components/HeroRicerca.vue'
 import Hero from '../components/Hero.vue'
 import TrustStrip from '../components/TrustStrip.vue'
 import Pilastri from '../components/Pilastri.vue'
@@ -28,6 +29,9 @@ const onPrefillSelect = (data = {}) => {
 
 <template>
   <main id="main" class="home-page">
+    <!-- Prima la strada (ricerca + blocchi), poi il racconto: chi arriva da un
+         post social ha già deciso perché è qui. -->
+    <HeroRicerca />
     <Hero />
     <TrustStrip />
     <Pilastri />

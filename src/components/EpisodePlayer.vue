@@ -69,7 +69,11 @@ const onLoaded = () => {
 const onTime = () => { if (audioEl.value) currentTime.value = audioEl.value.currentTime }
 const onPlay = () => { isPlaying.value = true }
 const onPause = () => { isPlaying.value = false }
-const onEnded = () => { isPlaying.value = false; currentTime.value = 0 }
+// L'anteprima dura ~80 secondi contro i 30-40 minuti dell'episodio: quando
+// finisce, chi ascolta è nel punto in cui VORREBBE il seguito. È lì che si
+// chiede il contatto, non prima — il file intero non si pubblica.
+const finito = ref(false)
+const onEnded = () => { isPlaying.value = false; currentTime.value = 0; finito.value = true }
 const onError = () => { hasError.value = true; isReady.value = false }
 
 const seek = (e) => {
@@ -106,7 +110,10 @@ onUnmounted(() => {
         {{ ep.title }}
         <span v-if="ep.free" class="ep-badge-free">GRATIS</span>
       </div>
-      <div class="ep-meta">{{ ep.duration }} &middot; {{ formatExt }}</div>
+      <div class="ep-meta">
+        {{ ep.duration }} &middot; {{ formatExt }}
+        <span v-if="hasPreview" class="ep-meta-prev">&middot; anteprima 1:20</span>
+      </div>
     </div>
     <span class="ep-tag">{{ formatLabel }}</span>
     <button
@@ -134,6 +141,11 @@ onUnmounted(() => {
       <span class="ep-time">{{ timeLabel }}</span>
       <span v-if="hasError" class="ep-err">Anteprima non disponibile</span>
     </div>
+
+    <!-- Finita l'anteprima: l'episodio intero si chiede, non si scarica. -->
+    <button v-if="finito" type="button" class="ep-more" @click.stop="emit('request')">
+      Finita l'anteprima — <strong>vuoi l'episodio intero?</strong> &rarr;
+    </button>
   </div>
 </template>
 
@@ -183,4 +195,12 @@ onUnmounted(() => {
   font-family:"JetBrains Mono",ui-monospace,monospace;
   font-size:10px;letter-spacing:.05em;color:#c63d3d;flex:0 0 auto;
 }
+.ep-meta-prev{ opacity:.7; }
+.ep-more{
+  flex:1 0 100%;margin-top:8px;cursor:pointer;text-align:left;
+  border:2px solid var(--ink);background:var(--acid);
+  padding:8px 12px;font-family:inherit;font-size:13px;color:var(--ink);
+  box-shadow:var(--shadow-sm);
+}
+.ep-more:hover{ background:var(--ink);color:var(--acid); }
 </style>

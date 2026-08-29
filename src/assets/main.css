@@ -68,8 +68,10 @@ body{
   font-family:"Space Grotesk",system-ui,sans-serif;
   background:var(--bg);
   color:var(--ink);
-  line-height:1.55;
-  font-size:17px;
+  line-height:1.6;
+  /* 18px: al 100% di zoom il 17 risultava piccolo su schermi grandi. Vale per
+     tutto ciò che eredita; le misure in px esplicite vanno alzate una per una. */
+  font-size:18px;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
 }

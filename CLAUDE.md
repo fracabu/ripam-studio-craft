@@ -23,6 +23,12 @@ node scripts/orders_list.mjs                         # vista clienti aggregati (
 node scripts/orders_list.mjs --ordini                # tutti gli ordini, riga per riga
 node scripts/orders_list.mjs --email <email>         # ordini di un singolo cliente
 
+# Preventivi (tabella `preventivi`) — il DENOMINATORE che gli ordini non hanno
+node scripts/preventivo_add.mjs --email <email> --offerta "<cosa>" --importo 99 [--bando <slug> --alternative "..." --campagna <slug> --data YYYY-MM-DD]
+node scripts/conversioni.mjs                         # quotati vs chiusi, per fascia di prezzo
+node scripts/conversioni.mjs --aperti                # solo i preventivi fermi (= to-do follow-up)
+node scripts/conversioni.mjs --bando mic-1800-cod01 --giorni 90
+
 # Drip anteprime + invio diretto lead — INVIANO mail vere via nodemailer (no bozza). Girano a PC acceso.
 node scripts/send_drip.mjs --dry-run                 # consegna "a goccia" nuove materie agli iscritti (anti-doppione su `anteprime_inviate`; salta chi è iscritto da <7 giorni, override con --min-eta-giorni)
 node scripts/send_lead.mjs ...                       # invio diretto mail a un lead (guscio DARK + logo inline); bozza composta da lead-draft.mjs / skill auto-risposte-lead
@@ -48,6 +54,11 @@ node scripts/telegram_template.mjs --seed schede.json     # carica/aggiorna un g
 node scripts/backfill_invii.mjs --dry-run            # ricostruisce lo storico dalla Posta inviata (IMAP), non scrive
 node scripts/backfill_invii.mjs --apply              # lo riversa su DB (idempotente, ~4 min su 2.6k messaggi)
 node scripts/backfill_invii_newsletter.mjs [<YYYY-MM-DD>] --apply   # riversa le newsletter da newsletter_send_events (fonte DB, non IMAP)
+
+# Bounce (tabella `bounce_events`) — chi rifiuta la consegna. Legge i mailer-daemon via IMAP.
+node scripts/bounce_scan.mjs                         # dry-run, ultimi 90 giorni
+node scripts/bounce_scan.mjs --since 2026-01-01 --apply   # registra e RICALCOLA newsletter_subscribers.bounce_count
+node scripts/bounce_scan.mjs --lista                 # solo il report da DB (view `indirizzi_morti`), niente IMAP
 ```
 
 Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.mjs` sono diagnostiche usa-e-getta (git-ignored).
@@ -111,13 +122,29 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 - `campagna` = slug parlante e stabile (es. `invito-newsletter-quizpro-2026-07-16`): è la chiave dell'unique `(LOWER(email), campagna)` e quella con cui i blast futuri filtrano. Per invii ricorrenti (drip, newsletter) **la data va nello slug**, altrimenti l'unique collassa più invii in una riga sola.
 - ⚠️ Gli oggetti letti da IMAP sono MIME encoded-word (`=?UTF-8?Q?…`) e "folded" su più righe: vanno **unfoldati e decodificati** prima di qualunque match, altrimenti il filtro è cieco (è l'errore che aveva prodotto il falso "0 già invitati").
 
+### Dati preventivi (quanto è stato CHIESTO, non solo incassato)
+- Schema in `db/schema_preventivi.sql` (stesso DB Neon). Tabella `preventivi` = fonte unica di "a chi ho quotato cosa, a quanto, e com'è finita"; view `preventivi_aperti` = quelli ancora fermi, con i giorni di attesa.
+- **Perché esiste** (29/08/2026): `ordini` dice quanto è stato incassato, mai **quante volte è stato chiesto**. I quattro ordini da 99 € possono venire da 5 preventivi (80% di chiusura → prezzo basso) o da 20 (20% → prezzo alto): due mondi opposti, indistinguibili senza il denominatore. Senza, il prezzo si tara a sensazione — ed è così che lo stesso kit di report è uscito a **139 €** e, due giorni dopo, a **99 €** a due persone diverse.
+- L'**esito non si scrive a mano**: `conversioni.mjs` deduce la chiusura incrociando `ordini` (stessa email, ordine successivo al preventivo, somma delle rate entro 90 giorni). Nel campo `esito` si marcano solo i "no" espliciti (`--esito perso`), che il DB non può vedere.
+- ⚠️ **Un tasso di chiusura vicino al 100% non è una buona notizia**: è margine lasciato sul tavolo. Il prezzo giusto è quello che qualcuno rifiuta.
+- Regola: **ogni volta che in una mail esce un prezzo, si registra la riga**. Chi non registra sta misurando solo le vittorie.
+
+### Dati bounce (indirizzi che rifiutano la consegna)
+- Schema in `db/schema_bounce.sql` (stesso DB Neon). Tabella `bounce_events` = fonte unica di "quale indirizzo ha rifiutato, quando, perché"; view `indirizzi_morti` = un indirizzo per riga con quanti bounce permanenti ha e se è **ancora in lista** newsletter.
+- **Perché esiste** (29/08/2026): `newsletter_subscribers.bounce_count` esisteva dal primo giorno e `api/newsletter/send.js` la usa in **tre punti** per escludere chi sta a `bounce_count >= 3` (idem la view `newsletter_active`) — ma **nessuno l'ha mai incrementata**, perché i mailer-daemon arrivavano in inbox e non li leggeva nessuno. Il filtro era sempre falso e un indirizzo morto restava in lista per sempre.
+- `scripts/bounce_scan.mjs` legge i DSN via IMAP e **ricalcola** `bounce_count` (non incrementa): rilanciarlo non gonfia i contatori. Idempotente su `UNIQUE(dsn_message_id, LOWER(email))`.
+- ⚠️ **Permanente vs temporaneo**: un «Delivery Status Notification (Delay)» **non** è un indirizzo morto — Gmail sta ritentando. Solo `Status 5.x.x` / `Action: failed` conta. Contare i delay escluderebbe dalla newsletter gente raggiungibile.
+- La maggior parte dei bounce permanenti trovati sono **typo di digitazione** (`libero.itt`, `alicr.it`, `ail.com`, nomi storpiati): non sono indirizzi finti, sono persone vere che non ricevono niente. Vanno corretti a mano, vale più di tre tentativi a vuoto.
+
 ### Variabili d'ambiente (`.env.local`, mai committato)
 `DATABASE_URL`/`POSTGRES_URL` (Neon), `GMAIL_USER`, `GMAIL_APP_PASSWORD` (App Password Gmail), `ADMIN_SECRET` (auth di `send.js`), `PUBLIC_BASE_URL`. Su Vercel sono iniettate; in locale si fanno `npx vercel env pull .env.local`.
 
 ## Convenzioni e vincoli importanti
 
+- ⚠️ **In questo file (e in qualunque file tracciato) NON vanno nomi, cognomi o email di clienti e candidati**: `CLAUDE.md` finisce su git. Gli esempi si scrivono in forma anonima («due persone diverse», «un cliente storico»). I dati con nome stanno a DB o nei percorsi git-ignored qui sotto. Lo stesso vale per prezzi praticati al singolo cliente e per il fatturato.
 - **Privacy / git-ignore**: `messaggi-clienti/*` è ignorato (contiene IBAN, prezzi, dati personali dei clienti) **tranne** `messaggi-clienti/newsletter/**`, che deve arrivare in produzione perché `send.js` lo legge. Le anteprime PDF dei manuali (`public/preview/**/manuale-anteprima.pdf`) sono git-ignored: si consegnano solo via link Drive a chi le richiede, non si pubblicano dal sito.
 - **Push = deploy**: Vercel fa auto-deploy da `main`. Non pushare senza chiedere all'utente (decide lui la tempistica). Lavorare su `main`.
+- ⭐ **Niente materiale scaricabile senza un contatto.** Sul sito non si pubblicano link diretti a Drive né file interi: l'anteprima si *chiede* dal form (`/scrivimi?tipo=materia&note=…`) e la manda Francesco. Vale per report, manuali ed episodi. Quello che sta online è solo l'**assaggio**: gli mp3 in `public/preview/**` durano ~80 secondi contro i 30-45 minuti dell'episodio vero, e quando finiscono `EpisodePlayer.vue` propone di chiedere l'intero. **Why**: il primo episodio è il pezzo che fa decidere — chi lo scarica in silenzio non lascia una mail e non lo ricontatti più. Le vendite chiuse ad agosto vengono tutte da un episodio mandato *dopo* che la persona aveva scritto. Le anteprime PDF dei manuali (`public/preview/**/manuale-anteprima.pdf`) sono git-ignored proprio per questo.
 - **Slug stabili**: gli slug in `materie.js` sono URL pubblici (`/materia/:slug`) e chiavi del manifest anteprime — cambiarli rompe link e consegne.
 - **GDPR**: vedi `TODO.md` per l'adeguamento privacy pendente (consenso marketing separato). Il consenso newsletter è doppio opt-in con registro consensi completo.
 

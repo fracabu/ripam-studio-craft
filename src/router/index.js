@@ -9,6 +9,7 @@ import Scrivimi from '../views/Scrivimi.vue'
 import Anteprime from '../views/Anteprime.vue'
 import Iscriviti from '../views/Iscriviti.vue'
 import ReportCustom from '../views/ReportCustom.vue'
+import Media from '../views/Media.vue'
 import NotFound from '../views/NotFound.vue'
 
 const router = createRouter({
@@ -37,6 +38,14 @@ const router = createRouter({
     // Pagina dedicata a un singolo concorso (link da mandare a un lead: vede
     // solo i report del suo bando). :concorso = key in src/data/report-concorsi.js
     { path: '/report-custom/:concorso', name: 'report-concorso', component: ReportCustom, props: true },
+    // Vetrina dei media di studio (audio lezioni con slide). Stessa struttura di
+    // /report-custom: indice + pagina per bando da mandare a un lead.
+    { path: '/media', name: 'media', component: Media },
+    { path: '/media/:concorso', name: 'media-concorso', component: Media, props: true },
+    // /lezioni ha girato in locale prima del cambio nome: resta come redirect,
+    // costa due righe e non lascia 404 in giro.
+    { path: '/lezioni', redirect: '/media' },
+    { path: '/lezioni/:concorso', redirect: (to) => `/media/${to.params.concorso}` },
     { path: '/privacy', name: 'privacy', component: Legale, props: { slug: 'privacy' }, meta: { slug: 'privacy' } },
     { path: '/cookie-policy', name: 'cookie-policy', component: Legale, props: { slug: 'cookie-policy' }, meta: { slug: 'cookie-policy' } },
     { path: '/termini', name: 'termini', component: Legale, props: { slug: 'termini' }, meta: { slug: 'termini' } },
