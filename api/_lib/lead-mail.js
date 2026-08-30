@@ -942,5 +942,8 @@ export function buildLeadEmail({ category, nome, slug, link, podcast, audio, vid
       throw new Error(`Categoria sconosciuta: ${category} (attese M1|M2|M3|M4|M5|RC|CO|TL|NL)`)
   }
 
-  return { subject, text: built.text, html: emailShell(built.inner, built.kicker) }
+  // `inner`/`kicker` escono insieme all'html gia' incorniciato: servono a chi
+  // invia con send_lead.mjs, che il guscio (dark) se lo mette da solo — passargli
+  // l'html completo produrrebbe due gusci annidati.
+  return { subject, text: built.text, html: emailShell(built.inner, built.kicker), inner: built.inner, kicker: built.kicker }
 }
