@@ -56,7 +56,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import nodemailer from 'nodemailer'
 import { neon } from '@neondatabase/serverless'
-import { LOGO_DARK_B64 } from '../api/_lib/logo-dark-data.js'
+import { emailShell, logoAttachment, BRAND } from '../api/_lib/email-shell.js'
 import { MATERIE as CATALOGO } from '../src/data/materie.js'
 import { logInvio } from '../api/_lib/invii-log.js'
 
@@ -209,35 +209,12 @@ async function giorniDiSilenzio(email) {
   return (Date.now() - ultimo) / 86_400_000
 }
 
-// --- brand dark shell (identico a send_lead.mjs) ----------------------------
-const BRAND = { ink: '#0a0a0a', cream: '#f5f0e8', acid: '#c6f432', muted: '#6b6458', rule: '#e6dfd2', baseUrl: BASE_URL }
-function darkShell(innerHtml, kicker) {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.cream}" style="background:${BRAND.cream};margin:0;padding:0;width:100%;">
-  <tr><td align="center" style="padding:20px 12px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
-      <tr><td style="background:${BRAND.ink};padding:20px 24px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-          <td align="left" style="vertical-align:middle;">
-            <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;"><img src="cid:logo-dark.png" alt="Ripam Studio Craft" width="180" style="display:block;width:180px;max-width:180px;height:auto;border:0;outline:none;" /></a>
-          </td>
-          <td align="right" style="vertical-align:middle;font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;color:${BRAND.acid};text-transform:uppercase;line-height:1.5;white-space:nowrap;">${kicker}</td>
-        </tr></table>
-      </td></tr>
-      <tr><td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:28px 28px 8px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
-        ${innerHtml}
-      </td></tr>
-      <tr><td style="padding:8px 28px 28px;">
-        <hr style="border:none;border-top:1px solid ${BRAND.rule};margin:18px 0">
-        <p style="margin:0;font-size:12px;color:${BRAND.muted};line-height:1.55">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
-        <a href="mailto:ripamstudiocraft@gmail.com" style="color:${BRAND.muted}">ripamstudiocraft@gmail.com</a> &middot; <a href="${BRAND.baseUrl}" style="color:${BRAND.muted}">ripam-studio-craft.vercel.app</a></p>
-      </td></tr>
-    </table>
-  </td></tr>
-</table>`
-}
-function logoDarkAttachment() {
-  return { filename: 'logo-dark.png', content: Buffer.from(LOGO_DARK_B64, 'base64'), cid: 'logo-dark.png', contentType: 'image/png' }
-}
+// --- guscio: importato da api/_lib/email-shell.js ---------------------------
+// Era una copia locale del guscio dark di send_lead.mjs, footer legale
+// compreso: due file da aggiornare a ogni cambio di P.IVA o palette, con la
+// certezza di dimenticarne uno. Fonte unica dal 31/08/2026.
+const darkShell = (innerHtml, kicker) => emailShell(innerHtml, kicker)
+const logoDarkAttachment = () => logoAttachment()
 
 // --- builder contenuto -------------------------------------------------------
 // Solo nome reale: se manca, ritorna '' → saluto "Ciao," (evita "Ciao Giber81").

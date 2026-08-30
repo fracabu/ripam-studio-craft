@@ -1,19 +1,26 @@
-// Guscio email unico per TUTTE le mail di sistema Ripam Studio Craft.
+// Guscio email UNICO per TUTTE le mail Ripam Studio Craft: di sistema e non.
 //
 // Single source of truth di header (logo brand) + footer legale, con stili
 // INLINE email-safe (niente <style>, niente classi: i client mail li spogliano).
-// Sostituisce lo "stamp" testuale (fascia nera + JetBrains Mono) finora
-// duplicato a mano in:
-//   - api/newsletter/subscribe.js   (mail conferma iscrizione)
-//   - api/_lib/anteprima-mail.js     (consegna / "in arrivo" anteprima manuale)
-//   - api/newsletter/confirm.js      (pagina HTML, non mail — resta com'è)
 //
-// Pensato anche per la futura skill "auto-risposte lead" (Fase 2): le bozze
-// di risposta riusano emailShell() così ogni mail esce uniforme col logo.
+// UN SOLO ASPETTO (deciso 31/08/2026): header NERO con logo chiaro
+// (`logo-dark.png` inline) + corpo crema + footer legale. Prima esistevano
+// quattro gusci: questo (allora crema), `darkShell` duplicato in
+// scripts/send_lead.mjs E in scripts/send_drip.mjs, più un `lightShell`
+// (sfondo bianco) dentro send_lead. I due script riscrivevano a mano anche il
+// footer coi dati legali, quindi P.IVA e denominazione vivevano in tre posti:
+// cambiarli qui non bastava e le mail partivano disallineate. Ora entrambi gli
+// script importano da qui; il flag --light di send_lead è accettato ma ignorato.
 //
-// Se cambia palette, logo o dati legali del titolare → si cambia QUI.
+// Chi lo usa: api/newsletter/subscribe.js (conferma iscrizione),
+// api/_lib/anteprima-mail.js (consegna anteprime), api/_lib/lead-mail.js
+// (modelli di risposta ai lead), scripts/send_lead.mjs, scripts/send_drip.mjs.
+// api/newsletter/confirm.js è una pagina HTML, non una mail: resta com'è.
+//
+// Se cambia palette, logo o dati legali del titolare → si cambia QUI, e adesso
+// è vero per davvero.
 
-import { LOGO_B64 } from './logo-data.js'
+import { LOGO_DARK_B64 } from './logo-dark-data.js'
 
 const BASE_URL = 'https://ripam-studio-craft.vercel.app'
 const LOGO_URL = `${BASE_URL}/logo.png`
@@ -23,7 +30,8 @@ const LOGO_URL = `${BASE_URL}/logo.png`
 // `cid:<LOGO_CID>`. Il valore coincide col filename dell'allegato perché il path
 // bozze della skill (Gmail API create_draft) genera il Content-ID DAL filename:
 // usando lo stesso identico CID, header (nodemailer) e bozze restano uniformi.
-const LOGO_CID = 'logo.png'
+// È il logo DARK (chiaro su fondo nero): l'header del guscio unico è nero.
+const LOGO_CID = 'logo-dark.png'
 
 // Token brand (speculari a :root in src/assets/main.css e ai dati di legale.js).
 export const BRAND = {
@@ -49,14 +57,16 @@ export const BRAND = {
 //     interna di emailShell (non standalone). Layout table-based per reggere su
 //     Outlook/live.it (che spogliano background/margini sui <div>).
 export function emailHeader(kicker = '') {
-  const kickerHtml = kicker
-    ? `<div style="margin:10px 0 0;font-family:'Courier New',monospace;font-size:11px;letter-spacing:.12em;font-weight:700;color:${BRAND.muted};">${kicker}</div>`
-    : ''
   return `<tr>
-    <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:18px 24px;border-bottom:3px solid ${BRAND.ink};">
-      <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
-        <img src="cid:${BRAND.logoCid}" alt="${BRAND.brandName}" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;">
-      </a>${kickerHtml}
+    <td bgcolor="${BRAND.ink}" style="background:${BRAND.ink};padding:20px 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="left" style="vertical-align:middle;">
+          <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
+            <img src="cid:${BRAND.logoCid}" alt="${BRAND.brandName}" width="180" style="display:block;width:180px;max-width:180px;height:auto;border:0;outline:none;">
+          </a>
+        </td>
+        <td align="right" style="vertical-align:middle;font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:.14em;color:${BRAND.acid};text-transform:uppercase;line-height:1.5;white-space:nowrap;">${kicker}</td>
+      </tr></table>
     </td>
   </tr>`
 }
@@ -78,11 +88,15 @@ export function emailShell(innerHtml, kicker = '') {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.cream}" style="background:${BRAND.cream};margin:0;padding:0;width:100%;">
   <tr>
     <td align="center" style="padding:20px 12px;">
-      <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
         ${emailHeader(kicker)}
         <tr>
-          <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:24px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
+          <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:28px 28px 8px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
             ${innerHtml}
+          </td>
+        </tr>
+        <tr>
+          <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:8px 28px 28px;">
             ${emailFooter()}
           </td>
         </tr>
@@ -99,7 +113,7 @@ export function emailShell(innerHtml, kicker = '') {
 // niente fetch remoto → funziona ovunque, anche durante un deploy o a sito
 // irraggiungibile. `cid` è forzato uguale a LOGO_CID così combacia con l'<img>.
 export function logoAttachment() {
-  return { filename: 'logo.png', content: Buffer.from(LOGO_B64, 'base64'), cid: LOGO_CID, contentType: 'image/png' }
+  return { filename: LOGO_CID, content: Buffer.from(LOGO_DARK_B64, 'base64'), cid: LOGO_CID, contentType: 'image/png' }
 }
 
 // Pulsante CTA brutalist (giallo brand, ombra hard-offset). Helper opzionale

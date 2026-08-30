@@ -65,6 +65,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import nodemailer from 'nodemailer'
 import { LOGO_DARK_B64 } from '../api/_lib/logo-dark-data.js'
+import { emailShell, logoAttachment, BRAND } from '../api/_lib/email-shell.js'
 import { logInvio } from '../api/_lib/invii-log.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -97,81 +98,12 @@ function parseArgs(argv) {
 }
 const args = parseArgs(process.argv.slice(2))
 
-// --- guscio DARK (header nero + logo chiaro inline, stile newsletter) -------
-const BRAND = {
-  ink: '#0a0a0a', cream: '#f5f0e8', acid: '#c6f432', muted: '#6b6458', rule: '#e6dfd2',
-  baseUrl: 'https://ripam-studio-craft.vercel.app',
-}
-
-function darkShell(innerHtml, kicker = 'RISPOSTA') {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BRAND.cream}" style="background:${BRAND.cream};margin:0;padding:0;width:100%;">
-  <tr><td align="center" style="padding:20px 12px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
-      <tr>
-        <td style="background:${BRAND.ink};padding:20px 24px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-            <td align="left" style="vertical-align:middle;">
-              <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
-                <img src="cid:logo-dark.png" alt="Ripam Studio Craft" width="180" style="display:block;width:180px;max-width:180px;height:auto;border:0;outline:none;" />
-              </a>
-            </td>
-            <td align="right" style="vertical-align:middle;font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.14em;color:${BRAND.acid};text-transform:uppercase;line-height:1.5;white-space:nowrap;">${kicker}</td>
-          </tr></table>
-        </td>
-      </tr>
-      <tr>
-        <td bgcolor="${BRAND.cream}" style="background:${BRAND.cream};padding:28px 28px 8px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
-          ${innerHtml}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:8px 28px 28px;">
-          <hr style="border:none;border-top:1px solid ${BRAND.rule};margin:18px 0">
-          <p style="margin:0;font-size:12px;color:${BRAND.muted};line-height:1.55">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
-          <a href="mailto:ripamstudiocraft@gmail.com" style="color:${BRAND.muted}">ripamstudiocraft@gmail.com</a> &middot; <a href="${BRAND.baseUrl}" style="color:${BRAND.muted}">ripam-studio-craft.vercel.app</a></p>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-</table>`
-}
-
-function logoDarkAttachment() {
-  return { filename: 'logo-dark.png', content: Buffer.from(LOGO_DARK_B64, 'base64'), cid: 'logo-dark.png', contentType: 'image/png' }
-}
-
-// --- guscio LIGHT (sfondo bianco + logo normale in alto, niente header nero) -
-function lightShell(innerHtml) {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="background:#ffffff;margin:0;padding:0;width:100%;">
-  <tr><td align="center" style="padding:24px 12px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;font-family:Arial,Helvetica,sans-serif;color:${BRAND.ink};">
-      <tr>
-        <td align="left" style="padding:8px 28px 18px;border-bottom:1px solid ${BRAND.rule};">
-          <a href="${BRAND.baseUrl}" style="text-decoration:none;border:0;">
-            <img src="cid:logo.png" alt="Ripam Studio Craft" width="190" style="display:block;width:190px;max-width:190px;height:auto;border:0;outline:none;" />
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:26px 28px 8px;font-size:15px;line-height:1.55;color:${BRAND.ink};">
-          ${innerHtml}
-        </td>
-      </tr>
-      <tr>
-        <td style="padding:8px 28px 28px;">
-          <hr style="border:none;border-top:1px solid ${BRAND.rule};margin:18px 0">
-          <p style="margin:0;font-size:12px;color:${BRAND.muted};line-height:1.55">Francesco Capurso &middot; Ripam Studio Craft &middot; Roma &middot; P.IVA 18528431002<br>
-          <a href="mailto:ripamstudiocraft@gmail.com" style="color:${BRAND.muted}">ripamstudiocraft@gmail.com</a> &middot; <a href="${BRAND.baseUrl}" style="color:${BRAND.muted}">ripam-studio-craft.vercel.app</a></p>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-</table>`
-}
-
-function logoLightAttachment() {
-  return { filename: 'logo.png', content: readFileSync(join(ROOT, 'public', 'logo.png')), cid: 'logo.png', contentType: 'image/png' }
-}
+// --- guscio: uno solo, importato da api/_lib/email-shell.js -----------------
+// Header nero + logo chiaro inline + footer legale. Prima questo script aveva
+// una copia locale del guscio dark E una variante light, col footer legale
+// riscritto a mano: tre punti da aggiornare a ogni cambio di P.IVA o palette.
+// Ora la fonte è una sola (31/08/2026). Il flag --light resta accettato per
+// compatibilità con le skill che lo passano, ma non ha più effetto.
 
 // --- allegati extra: "file.pdf,altro.pdf" o "file.pdf|Nome visibile.pdf,..." -
 function parseAttachments(spec) {
@@ -362,8 +294,8 @@ if (args.demo) {
   text = typeof args.text === 'string' ? readFileSync(args.text, 'utf8') : subject
 }
 
-const useLight = !!args.light
-const html = useLight ? lightShell(innerHtml) : darkShell(innerHtml, kicker)
+if (args.light) console.warn('[i]  --light ignorato: dal 31/08/2026 il guscio è uno solo (header nero).')
+const html = emailShell(innerHtml, kicker)
 const fromName = typeof args.from === 'string' ? args.from : 'Francesco — Ripam Studio Craft'
 const extraAttachments = parseAttachments(args.attach)
 
@@ -380,7 +312,7 @@ if (args['dry-run']) {
   console.log(`[dry-run] NON invio.`)
   console.log(`  to:      ${to}`)
   console.log(`  subject: ${subject}`)
-  console.log(`  guscio:  ${useLight ? 'LIGHT (sfondo bianco + logo.png)' : `DARK (header nero + logo-dark, kicker "${kicker}")`}`)
+  console.log(`  guscio:  unico (header nero + logo-dark, kicker "${kicker}")`)
   console.log(`  html:    ${html.length} char`)
   console.log(`  text:    ${String(text).length} char`)
   console.log(`  campagna: ${campagna}  (registro invii_email)`)
@@ -433,7 +365,7 @@ try {
     from: `"${fromName}" <${user}>`,
     to, replyTo: user, subject, text, html,
     ...(inReplyTo ? { inReplyTo, references: [inReplyTo] } : {}),
-    attachments: [useLight ? logoLightAttachment() : logoDarkAttachment(), ...extraAttachments],
+    attachments: [logoAttachment(), ...extraAttachments],
   })
   console.log(`[OK] inviata a ${to} — ${info.messageId}`)
 

@@ -48,19 +48,20 @@
 
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join } from 'node:path'
-import { LOGO_B64 } from '../api/_lib/logo-data.js'
+import { LOGO_DARK_B64 } from '../api/_lib/logo-dark-data.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 
 // Logo brand come allegato INLINE per la bozza Gmail: il guscio email-shell.js
-// referenzia l'<img> con `cid:logo.png`, quindi la mail deve PORTARE con sé il
-// file (altrimenti header con immagine rotta). I byte arrivano da logo-data.js
+// referenzia l'<img> con `cid:logo-dark.png` (header nero, guscio unico dal
+// 31/08/2026), quindi la mail deve PORTARE con sé il file (altrimenti header
+// con immagine rotta). I byte arrivano da logo-dark-data.js
 // (stessa sorgente delle mail di sistema), già base64 → li mettiamo nel JSON: la
-// skill li passa a create_draft come attachment { inline:true, filename:'logo.png' }
-// → Gmail genera il Content-ID dal filename, combaciando col `cid:logo.png`.
+// skill li passa a create_draft come attachment { inline:true, filename:'logo-dark.png' }
+// → Gmail genera il Content-ID dal filename, combaciando col `cid:logo-dark.png`.
 function logoAttachmentForDraft() {
-  return { filename: 'logo.png', mimeType: 'image/png', inline: true, content: LOGO_B64 }
+  return { filename: 'logo-dark.png', mimeType: 'image/png', inline: true, content: LOGO_DARK_B64 }
 }
 
 // Parse --k=v / --k v
