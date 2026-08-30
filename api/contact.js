@@ -108,16 +108,40 @@ export default async function handler(req, res) {
 
   const { nome, email, concorso, note, hp } = req.body || {}
 
-  // honeypot: se `hp` è compilato è PROBABILMENTE un bot, ma non è una certezza —
-  // certi autofill (password manager, Safari iOS) riempiono anche i campi nascosti,
-  // e un utente vero vedeva la conferma senza che la richiesta arrivasse mai.
-  // Caso reale: 27/08/2026, richiesta credenziali Quiz Pro mai arrivata.
-  // Perciò NON si scarta più in silenzio: la richiesta prosegue marcata come
-  // sospetta, la notifica arriva col prefisso [SOSPETTO BOT] nell'oggetto e si
-  // saltano ack automatico e upsert. Meglio qualche spam etichettato che un lead perso.
-  const sospettoBot = Boolean(hp)
-  if (sospettoBot) {
-    console.warn('Honeypot triggered — richiesta marcata sospetta (NON scartata):', { email, nome, hp: String(hp).slice(0, 80) })
+  // honeypot: `hp` compilato NON basta a dire "bot".
+  //
+  // Storia in due tappe. Prima si scartava in silenzio: il 27/08/2026 una richiesta
+  // di credenziali Quiz Pro non è mai arrivata, perché un password manager aveva
+  // riempito anche il campo nascosto. Allora si è smesso di scartare e si è iniziato
+  // a marcare l'oggetto con [SOSPETTO BOT]. Ma marcare *chiunque* compili `hp` ha
+  // spostato il problema invece di risolverlo: gli autofill colpiscono proprio le
+  // persone più vere, quelle che usano un gestore di password. Il 30/08/2026 è
+  // successo a una cliente con tredici ordini alle spalle.
+  //
+  // Quindi ora si guarda COSA c'è dentro. Un autofill ci mette un dato personale
+  // plausibile — l'email, il nome, un telefono — cioè spesso lo stesso valore che
+  // l'utente ha scritto nei campi veri. Un bot ci mette link, HTML, o testo lungo.
+  const hpVal = String(hp || '').trim()
+  const somigliaAutofill =
+    hpVal.length > 0 && hpVal.length <= 160 && (
+      hpVal.toLowerCase() === String(email || '').toLowerCase().trim() ||
+      hpVal.toLowerCase() === String(nome || '').toLowerCase().trim() ||
+      /^[\p{L}\s'.-]{2,60}$/u.test(hpVal) ||                       // solo lettere: un nome
+      /^[+\d\s().-]{6,20}$/.test(hpVal) ||                          // un numero di telefono
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(hpVal)                      // un'email qualsiasi
+    )
+  const sembraSpam = /https?:\/\/|<[a-z]|\[url|\bviagra\b|\bcasino\b/i.test(hpVal) || hpVal.length > 160
+
+  // Bot solo se il campo è pieno E il contenuto non somiglia a un autofill.
+  const sospettoBot = hpVal.length > 0 && (sembraSpam || !somigliaAutofill)
+
+  if (hpVal.length > 0) {
+    console.warn(
+      sospettoBot
+        ? 'Honeypot: contenuto non plausibile, marcata sospetta'
+        : 'Honeypot compilato ma sembra autofill: richiesta trattata come legittima',
+      { email, nome, hp: hpVal.slice(0, 80) },
+    )
   }
 
   // validazione minima
