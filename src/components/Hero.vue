@@ -108,7 +108,6 @@ const formats = [
             :src="HERO_PREVIEW.src"
             preload="metadata"
             playsinline
-            muted="false"
             @loadedmetadata="onLoaded"
             @timeupdate="onTime"
             @play="onPlay"
