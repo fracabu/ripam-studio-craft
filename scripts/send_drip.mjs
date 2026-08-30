@@ -27,6 +27,17 @@
 //   --rate <ms>          pausa tra un invio e l'altro (default 1500ms, limiti Gmail)
 //   --min-eta-giorni <n> non scrivere a chi si è iscritto da meno di n giorni
 //                        (default 7; --min-eta-giorni 0 disattiva il filtro)
+//   --min-silenzio-giorni <n>  non scrivere a chi è stato contattato da meno di n
+//                        giorni su QUALSIASI canale (default 7; 0 disattiva)
+//   --no-pertinenza      manda le materie a chiunque, come prima del 30/08/2026
+//   --anche-senza-concorso  includi chi non ha un concorso noto a profilo
+//
+// PERTINENZA (dal 2026-08-30): si mandano solo le materie del concorso che la
+// persona prepara (`candidati.concorsi` × campo `c` di src/data/materie.js).
+// Prima si sceglieva per esaurimento — "ti mando ciò che non hai ancora" — e con
+// abbastanza giri tutti ricevevano tutto: otto iscritti sono arrivati a 30+
+// anteprime a testa. Chi non ha un concorso mappato viene saltato: non sapendo
+// cosa gli serve, non si indovina.
 //
 // QUARANTENA NUOVI ISCRITTI (dal 2026-07-23): un iscritto appena confermato sta
 // già ricevendo la sequenza d'ingresso (conferma + welcome/anteprima). Se il drip
@@ -46,6 +57,8 @@ import { dirname, join } from 'node:path'
 import nodemailer from 'nodemailer'
 import { neon } from '@neondatabase/serverless'
 import { LOGO_DARK_B64 } from '../api/_lib/logo-dark-data.js'
+import { MATERIE as CATALOGO } from '../src/data/materie.js'
+import { logInvio } from '../api/_lib/invii-log.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
@@ -143,6 +156,58 @@ const MIN_ETA_GIORNI = args['min-eta-giorni'] !== undefined && args['min-eta-gio
 const recipientsPath = typeof args.recipients === 'string'
   ? args.recipients
   : join(ROOT, 'messaggi-clienti', 'drip', '2026-06-05.recipients.json')
+
+// --- PERTINENZA: mandare solo materie del concorso che la persona prepara ----
+// Prima del 2026-08-30 il drip sceglieva per ESAURIMENTO: "ti mando ciò che non
+// hai ancora", indipendentemente dal concorso. Con abbastanza giri tutti
+// ricevevano tutto (otto persone a 30+ anteprime a testa) — ed è il motivo per
+// cui "la gente riceve cose che non ha chiesto". Il concorso lo sappiamo già:
+// `candidati.concorsi`, riempito da api/contact.js. Ora lo usiamo.
+const NO_PERTINENZA = !!args['no-pertinenza']              // torna al vecchio comportamento
+const ANCHE_SENZA_CONCORSO = !!args['anche-senza-concorso'] // includi chi non ha concorso noto
+// Giorni di silenzio minimi contando TUTTI i canali (drip, lead, newsletter,
+// campagne): welcome/drip/newsletter avevano ognuno il proprio anti-doppione,
+// ma nessuno guardava il totale. 0 = disattivato.
+const MIN_SILENZIO_GIORNI = args['min-silenzio-giorni'] !== undefined && args['min-silenzio-giorni'] !== true
+  ? Math.max(0, Number(args['min-silenzio-giorni']) || 0)
+  : 7
+
+// slug materia → famiglie concorso del catalogo (campo `c` di src/data/materie.js)
+const FAMIGLIE_DI = new Map(CATALOGO.map(m => [m.slug, m.c || []]))
+// Le famiglie realmente usate dal catalogo: se il concorso di una persona non
+// compare qui, non possiamo dire quali materie le servano → non tiriamo a
+// indovinare, la saltiamo (a meno di --anche-senza-concorso).
+const FAMIGLIE_NOTE = new Set(CATALOGO.flatMap(m => m.c || []))
+
+/** Sigle concorso della persona, dal profilo candidato. */
+async function concorsiDi(email) {
+  const r = (await sql`
+    SELECT concorsi FROM candidati WHERE LOWER(email) = ${email} LIMIT 1
+  `)[0]
+  return (r?.concorsi || []).map(c => String(c).toUpperCase().trim()).filter(Boolean)
+}
+
+/** Le materie del drip pertinenti a quei concorsi. */
+function materiePertinenti(materie, concorsi) {
+  if (NO_PERTINENZA) return materie
+  return materie.filter(m => {
+    const fam = FAMIGLIE_DI.get(m.slug)
+    if (!fam || !fam.length) return false        // materia fuori catalogo: non la mandiamo alla cieca
+    return fam.some(f => concorsi.includes(f))
+  })
+}
+
+/** Giorni dall'ultimo contatto su QUALSIASI canale (registro invii + anteprime). */
+async function giorniDiSilenzio(email) {
+  const r = (await sql`
+    SELECT GREATEST(
+             COALESCE((SELECT MAX(inviata_at) FROM invii_email      WHERE LOWER(email) = ${email}), 'epoch'::timestamptz),
+             COALESCE((SELECT MAX(inviata_at) FROM anteprime_inviate WHERE LOWER(email) = ${email}), 'epoch'::timestamptz)
+           ) AS ultimo`)[0]
+  const ultimo = r?.ultimo ? new Date(r.ultimo).getTime() : 0
+  if (!ultimo || ultimo < new Date('2000-01-01').getTime()) return Infinity
+  return (Date.now() - ultimo) / 86_400_000
+}
 
 // --- brand dark shell (identico a send_lead.mjs) ----------------------------
 const BRAND = { ink: '#0a0a0a', cream: '#f5f0e8', acid: '#c6f432', muted: '#6b6458', rule: '#e6dfd2', baseUrl: BASE_URL }
@@ -330,12 +395,40 @@ for (const email of emails) {
     }
   }
 
+  // Silenzio minimo su TUTTI i canali: se ha sentito parlare di noi da poco,
+  // il drip aspetta. Vale anche se il contatto è stato una risposta a mano.
+  if (MIN_SILENZIO_GIORNI > 0) {
+    const silenzio = await giorniDiSilenzio(email)
+    if (silenzio < MIN_SILENZIO_GIORNI) {
+      console.log(`[skip] ${email} — contattata ${silenzio.toFixed(1)}g fa (< ${MIN_SILENZIO_GIORNI}g di silenzio richiesti)`)
+      skipped++; continue
+    }
+  }
+
+  // Pertinenza: le materie del concorso che prepara, non l'inventario residuo.
+  const concorsi = await concorsiDi(email)
+  const concorsiUtili = concorsi.filter(c => FAMIGLIE_NOTE.has(c))
+  if (!NO_PERTINENZA && !concorsiUtili.length && !ANCHE_SENZA_CONCORSO) {
+    const perche = concorsi.length
+      ? `concorso "${concorsi.join(', ')}" non mappato sul catalogo materie`
+      : 'nessun concorso noto a profilo'
+    console.log(`[skip] ${email} — ${perche}: non so cosa le serve, non tiro a indovinare`)
+    skipped++; continue
+  }
+
   // materie già ricevute (qualsiasi formato) → escludile
   const got = (await sql`
     SELECT DISTINCT materia FROM anteprime_inviate WHERE LOWER(email) = ${email}
   `).map(r => r.materia)
-  const daInviare = MATERIE.filter(m => !got.includes(m.slug))
-  if (!daInviare.length) { console.log(`[skip] ${email} — ha già tutte e ${MATERIE.length} le materie`); skipped++; continue }
+  const nonRicevute = MATERIE.filter(m => !got.includes(m.slug))
+  const daInviare = concorsiUtili.length ? materiePertinenti(nonRicevute, concorsiUtili) : nonRicevute
+  if (!daInviare.length) {
+    const motivo = nonRicevute.length
+      ? `le ${nonRicevute.length} materie che le mancano non sono del suo concorso (${concorsiUtili.join(', ')})`
+      : `ha già tutte e ${MATERIE.length} le materie`
+    console.log(`[skip] ${email} — ${motivo}`)
+    skipped++; continue
+  }
 
   const firstName = deriveFirstName(sub.nome, email)
   const skippedMat = MATERIE.filter(m => got.includes(m.slug)).map(m => m.slug)
@@ -358,6 +451,13 @@ for (const email of emails) {
         ON CONFLICT (LOWER(email), materia, formato) DO NOTHING
       `
     }
+    // Registro trasversale: senza questa riga il drip resta invisibile agli altri
+    // canali e il tetto di silenzio non lo conta (regola: chi non logga, per il
+    // sistema non è partito).
+    await logInvio({
+      email, nome: sub.nome, campagna: INVIO_ID, oggetto: SUBJECT,
+      tipo: 'drip', canale: 'drip', messageId: info.messageId, esito: 'sent',
+    })
     await sql`UPDATE newsletter_subscribers SET last_email_sent_at = now() WHERE id = ${sub.id}`
     sent++
   } catch (e) { console.error(`        [FAIL] ${e.message}`); errors++ }
