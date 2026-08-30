@@ -54,7 +54,7 @@ import { RouterLink } from 'vue-router'
 .cc-kicker{
   display:inline-block;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.08em;
+  font-size:13.5px;font-weight:700;letter-spacing:.08em;
   background:var(--ink);color:var(--bg);
   padding:5px 12px;margin-bottom:18px;
 }
@@ -73,7 +73,7 @@ import { RouterLink } from 'vue-router'
 .cc-pay{
   display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.05em;color:var(--muted,#6b6458);
+  font-size:13px;letter-spacing:.05em;color:var(--muted,#6b6458);
 }
 .cc-pay-l{font-weight:700}
 .cc-pay-v{color:var(--ink);opacity:.85}
@@ -88,7 +88,7 @@ import { RouterLink } from 'vue-router'
 .cc-card-pill{
   align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--acid);color:var(--ink);
   padding:5px 9px;border:2px solid var(--ink);
 }
@@ -104,7 +104,7 @@ import { RouterLink } from 'vue-router'
 }
 .cc-steps li .n{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   color:var(--muted,#6b6458);flex:0 0 24px;
 }
 </style>

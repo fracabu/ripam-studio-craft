@@ -116,7 +116,7 @@ const SECONDARI = [
 }
 
 .hr-kicker{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:700;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;font-weight:700;
   letter-spacing:.12em;color:var(--muted);margin:0 0 14px;
 }
 .hr-title{
@@ -147,7 +147,7 @@ const SECONDARI = [
 .hr-card-ico{ font-size:21px;line-height:1;margin-bottom:2px; }
 .hr-card-t{ font-size:18px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap; }
 .hr-free{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;font-weight:700;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;
   background:var(--ink);color:var(--acid);padding:2px 6px;
 }

@@ -37,7 +37,7 @@ const STEP = [
 }
 .cf-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.14em;
+  font-size:13px;font-weight:700;letter-spacing:.14em;
   color:var(--acid);flex:0 0 auto;
 }
 .cf-steps{
@@ -55,12 +55,12 @@ const STEP = [
 }
 .cf-num{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;color:var(--acid);
+  font-size:13px;font-weight:700;color:var(--acid);
 }
 .cf-pay{
   flex:0 0 auto;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.04em;
+  font-size:13.5px;font-weight:700;letter-spacing:.04em;
   color:var(--ink);background:var(--acid);
   padding:8px 12px;border:2px solid var(--acid);
   text-decoration:none;transition:transform .12s;

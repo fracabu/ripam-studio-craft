@@ -284,7 +284,7 @@ const submit = async (e) => {
 .ant-pill{
   display:inline-block;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--acid,#c6f432);color:var(--ink,#0a0a0a);
   padding:5px 10px;border:2px solid var(--ink,#0a0a0a);
   margin-bottom:14px;
@@ -310,7 +310,7 @@ const submit = async (e) => {
 .ant-field{display:flex;flex-direction:column;gap:6px}
 .ant-field > label{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   color:var(--muted,#6b6458);text-transform:uppercase;
 }
 .ant-req{color:var(--blue,#3d5aff)}
@@ -327,7 +327,7 @@ const submit = async (e) => {
 
 .ant-consent{
   display:flex;align-items:flex-start;gap:10px;
-  font-size:12.5px;line-height:1.5;color:var(--ink-soft,#2a2a2a);
+  font-size:13.5px;line-height:1.5;color:var(--ink-soft,#2a2a2a);
   cursor:pointer;
 }
 .ant-consent input{
@@ -347,21 +347,21 @@ const submit = async (e) => {
 
 .ant-hint{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10.5px;letter-spacing:.05em;color:var(--muted,#6b6458);
+  font-size:12.5px;letter-spacing:.05em;color:var(--muted,#6b6458);
   margin:4px 0 0;
 }
 .ant-err{
-  font-size:13.5px;color:#c63d3d;margin:0;
+  font-size:14.5px;color:#c63d3d;margin:0;
   padding:10px 12px;border:2px solid #c63d3d;background:rgba(198,61,61,.08);
 }
 
 /* SUCCESS */
 .ant-success{display:flex;flex-direction:column;gap:10px}
 .ant-success p{font-size:14.5px;line-height:1.55;margin:0;color:var(--ink-soft,#2a2a2a)}
-.ant-note{font-size:12.5px !important;color:var(--muted,#6b6458) !important}
+.ant-note{font-size:13.5px !important;color:var(--muted,#6b6458) !important}
 .ant-note code{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11.5px;background:var(--bg-alt,#ede6d8);padding:1px 4px;border:1px solid var(--ink,#0a0a0a);
+  font-size:13px;background:var(--bg-alt,#ede6d8);padding:1px 4px;border:1px solid var(--ink,#0a0a0a);
 }
 
 @media (prefers-reduced-motion:reduce){

@@ -607,7 +607,7 @@ const submit = async (e) => {
 
 .sv-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:14px;
 }
 .sv-h1{
@@ -627,7 +627,7 @@ const submit = async (e) => {
 .sv-quiz-feat{
   margin:10px 0 0;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:600;letter-spacing:.03em;
+  font-size:13.5px;font-weight:600;letter-spacing:.03em;
   color:var(--ink);
   border-left:3px solid var(--acid);
   padding-left:12px;
@@ -647,7 +647,7 @@ const submit = async (e) => {
 .sv-field{display:flex;flex-direction:column;gap:6px}
 .sv-field > label{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   color:var(--muted);text-transform:uppercase;
 }
 .sv-field input[type="text"],
@@ -683,7 +683,7 @@ const submit = async (e) => {
 .sv-ac-opt:last-child{border-bottom:none}
 .sv-ac-opt:hover,.sv-ac-opt.active{background:var(--acid);font-weight:600}
 .sv-ac-typo{
-  margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--muted,#6b6458);
+  margin:2px 0 0;font-size:14.5px;line-height:1.4;color:var(--muted,#6b6458);
 }
 .sv-ac-typo button{
   background:transparent;border:none;padding:0;
@@ -717,7 +717,7 @@ const submit = async (e) => {
   align-self:flex-start;
   background:transparent;border:none;padding:2px 0;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:600;letter-spacing:.04em;
+  font-size:13.5px;font-weight:600;letter-spacing:.04em;
   color:var(--ink);cursor:pointer;text-decoration:underline;
   text-decoration-thickness:2px;text-underline-offset:3px;
 }
@@ -750,7 +750,7 @@ const submit = async (e) => {
   cursor:pointer;user-select:none;
   padding:8px 10px;
   border:2px solid var(--ink);background:var(--bg);
-  font-size:13px;line-height:1.35;
+  font-size:14.5px;line-height:1.35;
   transition:background .12s;
 }
 .sv-check:hover{background:var(--bg-alt,#ede6d8)}
@@ -765,7 +765,7 @@ const submit = async (e) => {
   padding:9px 14px;
   border:2px solid var(--ink);background:var(--bg);
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:600;letter-spacing:.05em;
+  font-size:13.5px;font-weight:600;letter-spacing:.05em;
   transition:background .12s, transform .12s;
   user-select:none;
 }
@@ -776,7 +776,7 @@ const submit = async (e) => {
 
 .sv-privacy{
   display:flex;align-items:flex-start;gap:10px;
-  font-size:13px;line-height:1.45;color:var(--ink-soft,#2a2a2a);
+  font-size:14.5px;line-height:1.45;color:var(--ink-soft,#2a2a2a);
   cursor:pointer;
 }
 .sv-privacy input{margin-top:2px;width:16px;height:16px;accent-color:var(--ink);flex:0 0 auto}
@@ -795,7 +795,7 @@ const submit = async (e) => {
 .sv-actions .btn{align-self:flex-start;min-width:140px;text-align:center}
 .sv-hint{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.05em;color:var(--muted,#6b6458);
+  font-size:13px;letter-spacing:.05em;color:var(--muted,#6b6458);
 }
 
 .sv-err{
@@ -812,7 +812,7 @@ const submit = async (e) => {
 }
 .sv-success-k{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
 }
 .sv-success-h{font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-.025em;margin:0;line-height:1.15}
 .sv-success p{font-size:15px;line-height:1.55;margin:0}
@@ -827,13 +827,13 @@ const submit = async (e) => {
 }
 .sv-alt-blurb{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;letter-spacing:.05em;
+  font-size:14.5px;letter-spacing:.05em;
 }
 .sv-alt-cta{
   padding:9px 14px;
   border:2px solid var(--bg);background:var(--blue,#3d5aff);color:var(--bg);
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   text-decoration:none;
   transition:transform .15s, box-shadow .15s;
 }

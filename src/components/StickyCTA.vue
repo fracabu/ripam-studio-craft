@@ -43,13 +43,13 @@ const goToContatti = (e) => {
 }
 .blurb{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;letter-spacing:.05em;
+  font-size:13.5px;letter-spacing:.05em;
 }
 .blurb strong{color:var(--acid);font-weight:700}
 .actions{display:flex;gap:10px}
 .a{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   padding:9px 14px;
   background:var(--acid);color:var(--ink);
   border:2px solid var(--bg);
@@ -60,9 +60,9 @@ const goToContatti = (e) => {
 .a.tg{background:var(--blue);color:var(--bg)}
 @media (max-width:640px){
   .sticky-cta{padding:10px 14px;gap:10px}
-  .blurb{font-size:11px;flex:1 1 100%;text-align:center}
+  .blurb{font-size:13px;flex:1 1 100%;text-align:center}
   .actions{flex:1 1 100%;justify-content:center}
-  .a{padding:8px 12px;font-size:10px}
+  .a{padding:8px 12px;font-size:12.5px}
 }
 .sticky-fade-enter-from,.sticky-fade-leave-to{opacity:0;transform:translateY(8px)}
 .sticky-fade-enter-active,.sticky-fade-leave-active{transition:opacity .2s, transform .2s}

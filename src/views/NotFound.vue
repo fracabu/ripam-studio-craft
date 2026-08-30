@@ -113,7 +113,7 @@ onMounted(() => {
 .nf-badge{
   display:inline-block;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   padding:6px 10px;background:var(--acid);border:2px solid var(--ink);
   margin-bottom:28px;
 }
@@ -155,27 +155,27 @@ onMounted(() => {
 .r-row{
   display:flex;justify-content:space-between;gap:12px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.05em;
+  font-size:13px;font-weight:700;letter-spacing:.05em;
   padding:6px 0;
 }
-.r-status{font-size:13px;color:#c63d3d}
+.r-status{font-size:14.5px;color:#c63d3d}
 .r-mono{opacity:.85;word-break:break-all;max-width:60%;text-align:right}
 .r-ok{color:#1aa06b}
 .r-sep{height:0;border-top:2px dashed var(--ink);margin:8px 0}
 .r-block{padding:6px 0}
 .r-block .r-h{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--ink);opacity:.6;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;color:var(--ink);opacity:.6;
   margin-bottom:6px;
 }
 .r-block ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
 .r-block ul li{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.04em;
+  font-size:13px;letter-spacing:.04em;
 }
 .r-tot{
   background:var(--acid);padding:10px 12px;border:2px solid var(--ink);
-  margin-top:8px;font-size:13px;
+  margin-top:8px;font-size:14.5px;
 }
 .r-bar{
   height:36px;margin-top:14px;
@@ -184,14 +184,14 @@ onMounted(() => {
 .r-ts{
   margin-top:8px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;letter-spacing:.06em;opacity:.6;text-align:right;
+  font-size:12.5px;letter-spacing:.06em;opacity:.6;text-align:right;
 }
 
 /* SUGGEST */
 .nf-suggest{padding:64px 0 0}
 .nf-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:18px;
 }
 .nf-cards{
@@ -209,7 +209,7 @@ onMounted(() => {
 .nf-card:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink);background:var(--acid)}
 .nf-card-num{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.1em;opacity:.6;margin-bottom:8px;
+  font-size:13px;font-weight:700;letter-spacing:.1em;opacity:.6;margin-bottom:8px;
 }
 .nf-card h3{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:0 0 8px}
 .nf-card p{font-size:14px;line-height:1.5;margin:0 0 18px;color:var(--ink-soft,#2a2a2a)}

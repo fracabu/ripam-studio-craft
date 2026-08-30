@@ -188,18 +188,18 @@ onUnmounted(() => {
 .ep.is-playing .ep-bar-in{background:var(--acid)}
 .ep-time{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.05em;
+  font-size:12.5px;font-weight:700;letter-spacing:.05em;
   color:var(--ink);opacity:.75;flex:0 0 auto;
 }
 .ep-err{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;letter-spacing:.05em;color:#c63d3d;flex:0 0 auto;
+  font-size:12.5px;letter-spacing:.05em;color:#c63d3d;flex:0 0 auto;
 }
 .ep-meta-prev{ opacity:.7; }
 .ep-more{
   flex:1 0 100%;margin-top:8px;cursor:pointer;text-align:left;
   border:2px solid var(--ink);background:var(--acid);
-  padding:8px 12px;font-family:inherit;font-size:13px;color:var(--ink);
+  padding:8px 12px;font-family:inherit;font-size:14.5px;color:var(--ink);
   box-shadow:var(--shadow-sm);
 }
 .ep-more:hover{ background:var(--ink);color:var(--acid); }

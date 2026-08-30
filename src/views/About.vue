@@ -128,7 +128,7 @@ const stats = [
 
 .ab-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:14px;
 }
 
@@ -173,7 +173,7 @@ const stats = [
 .ab-card-name{font-size:20px;font-weight:700;letter-spacing:-.02em}
 .ab-card-where{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.06em;color:var(--ink);opacity:.7;
+  font-size:13px;letter-spacing:.06em;color:var(--ink);opacity:.7;
 }
 .ab-tags{
   list-style:none;padding:0;margin:6px 0 0;
@@ -181,7 +181,7 @@ const stats = [
 }
 .ab-tags li{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   padding:4px 8px;border:2px solid var(--ink);
 }
 
@@ -194,7 +194,7 @@ const stats = [
 }
 .ab-stats-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--acid);margin-bottom:28px;
 }
 .ab-stats-grid{
@@ -210,7 +210,7 @@ const stats = [
 }
 .ab-stat-l{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.1em;
+  font-size:13px;font-weight:700;letter-spacing:.1em;
   margin-top:8px;color:var(--bg);opacity:.75;
 }
 .ab-stats-note{
@@ -247,7 +247,7 @@ const stats = [
 .ab-skill-pill{
   display:inline-block;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.1em;
+  font-size:12.5px;font-weight:700;letter-spacing:.1em;
   padding:5px 9px;border:2px solid var(--ink);
 }
 .ab-skill-blue .ab-skill-pill{background:var(--blue);color:var(--bg)}

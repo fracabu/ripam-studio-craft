@@ -169,7 +169,7 @@ const flusso = [
 
 .tl-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:14px;
 }
 .tl-h1{
@@ -211,7 +211,7 @@ const flusso = [
 .tl-receive-pill{
   display:inline-block;align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--bg);color:var(--ink);
   padding:5px 9px;
 }
@@ -226,7 +226,7 @@ const flusso = [
 .tl-live-pill{
   display:inline-block;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--acid,#c6f432);color:var(--ink);
   padding:5px 10px;border:2px solid var(--ink);margin-bottom:14px;
 }
@@ -258,11 +258,11 @@ const flusso = [
 }
 .tl-card-ex-l{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.6;
+  font-size:12.5px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.6;
   margin-bottom:6px;
 }
 .tl-card-ex ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:4px}
-.tl-card-ex ul li{font-size:13px;line-height:1.4}
+.tl-card-ex ul li{font-size:14.5px;line-height:1.4}
 .tl-card-ex ul li::before{content:"— ";opacity:.6}
 .tl-card .btn{margin-top:auto;align-self:flex-start;text-decoration:none}
 
@@ -281,7 +281,7 @@ const flusso = [
 .tl-svc-meta{
   display:flex;gap:14px;flex-wrap:wrap;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.06em;
+  font-size:13px;font-weight:700;letter-spacing:.06em;
   border-top:2px dashed var(--ink);padding-top:10px;color:var(--ink);opacity:.85;
 }
 .tl-svc-card .btn{align-self:flex-start;text-decoration:none}
@@ -298,14 +298,14 @@ const flusso = [
 }
 .tl-step-num{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
+  font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
 }
 .tl-step h3{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:0}
 .tl-step p{font-size:14px;line-height:1.5;margin:0;color:var(--ink-soft,#2a2a2a)}
 .tl-step-when{
   margin-top:auto;align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   background:var(--ink);color:var(--bg);
   padding:5px 9px;
 }

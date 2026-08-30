@@ -517,7 +517,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .mat-breadcrumb{
   display:flex;flex-wrap:wrap;gap:8px;align-items:center;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.06em;
+  font-size:13px;font-weight:700;letter-spacing:.06em;
   margin-bottom:18px;color:var(--ink);opacity:.75;
 }
 .mat-breadcrumb a{color:var(--ink);text-decoration:none;border-bottom:1px solid transparent}
@@ -534,7 +534,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 
 .mat-ep-tag{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   padding:4px 8px;border:2px solid var(--ink);background:var(--bg);
   margin-left:6px;
 }
@@ -548,11 +548,11 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 }
 .mat-norm-l{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
+  font-size:12.5px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
 }
 .mat-norm-v{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--ink);
+  font-size:14.5px;font-weight:700;letter-spacing:.04em;color:var(--ink);
 }
 
 /* RAIL ACID */
@@ -570,7 +570,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .mat-rail-pill{
   align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--ink);color:var(--bg);
   padding:5px 9px;
 }
@@ -590,11 +590,11 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .rail-ico{font-size:18px;line-height:1;text-align:center}
 .rail-l{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.06em;
+  font-size:13px;font-weight:700;letter-spacing:.06em;
 }
 .rail-st{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
   padding:3px 6px;border:2px solid var(--ink);
 }
 .mat-rail-item.st-ready .rail-st{background:var(--mic,#1aa06b);color:#fff}
@@ -609,7 +609,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 }
 .mat-rail-foot{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:9.5px;font-weight:600;letter-spacing:.06em;
+  font-size:12px;font-weight:600;letter-spacing:.06em;
   line-height:1.4;color:var(--ink);opacity:.7;
   border-top:2px dashed var(--ink);padding-top:10px;
 }
@@ -642,11 +642,11 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .ff-meta h3{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0}
 .ff-fmt{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--ink);opacity:.6;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;color:var(--ink);opacity:.6;
 }
 .ff-stato{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   padding:4px 8px;border:2px solid var(--ink);align-self:start;flex:0 0 auto;
 }
 .ff-card.ff-ready .ff-stato{background:var(--acid);color:var(--ink)}
@@ -669,7 +669,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .mat-anteprima-pill{
   align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10.5px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--ink,#0a0a0a);color:var(--acid,#c6f432);
   padding:4px 8px;border:2px solid var(--ink,#0a0a0a);
 }
@@ -726,7 +726,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 .mr-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .mr-badge{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   padding:4px 8px;border:2px solid var(--ink);background:var(--bg);color:var(--ink);
 }
 .mr-badge[data-c="RIPAM"]{background:var(--ripam,#3d5aff);color:var(--bg)}
@@ -739,7 +739,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 
 .mr-norm{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.05em;color:var(--ink);opacity:.7;
+  font-size:12.5px;font-weight:700;letter-spacing:.05em;color:var(--ink);opacity:.7;
 }
 
 .mr-title{font-size:20px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0}

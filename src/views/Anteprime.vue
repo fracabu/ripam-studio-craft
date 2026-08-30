@@ -101,7 +101,7 @@ const closeModale = () => { open.value = false }
 
 .ap-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:14px;
 }
 .ap-h1{
@@ -115,7 +115,7 @@ const closeModale = () => { open.value = false }
 }
 .ap-norm{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:600;letter-spacing:.04em;
+  font-size:13.5px;font-weight:600;letter-spacing:.04em;
   color:var(--ink);margin:0 0 14px;
   border-left:3px solid var(--acid);padding-left:12px;
 }
@@ -133,7 +133,7 @@ const closeModale = () => { open.value = false }
 
 .ap-hint{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.05em;color:var(--muted,#6b6458);
+  font-size:13px;letter-spacing:.05em;color:var(--muted,#6b6458);
   margin:22px 0 0;
 }
 </style>

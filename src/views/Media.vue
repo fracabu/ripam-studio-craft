@@ -169,7 +169,7 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 
 .lz-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.12em;
+  font-size:13.5px;font-weight:700;letter-spacing:.12em;
   color:var(--muted);margin-bottom:16px;
 }
 .lz-hero{
@@ -183,7 +183,7 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 }
 .lz-demo-meta{
   display:flex; justify-content:space-between; align-items:center; gap:12px;
-  margin-top:10px; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  margin-top:10px; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
   color:var(--muted,#6b6458);
 }
 .lz-demo-stamp{ font-weight:700; color:var(--ink); }
@@ -213,7 +213,7 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 
 .lz-chips{ display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 44px; }
 .lz-chips-label{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;
   font-weight:700;letter-spacing:.08em;color:var(--muted);margin-right:4px;
 }
 .lz-chip{
@@ -222,14 +222,14 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 }
 .lz-chip:hover,.lz-chip.is-active{ background:var(--acid); }
 .lz-chip-n{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;color:var(--muted);
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;color:var(--muted);
 }
 
 .lz-concorso{ margin-bottom:56px; }
 .lz-concorso-title{ font-size:clamp(24px,3vw,32px);font-weight:700;letter-spacing:-.02em;margin:0 0 6px; }
 .lz-concorso-link{ color:var(--ink);text-decoration:none;border-bottom:3px solid var(--acid); }
 .lz-concorso-tag{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;
   color:var(--muted);margin:0 0 10px;
 }
 .lz-concorso-intro{ font-size:18px;line-height:1.6;color:var(--ink-soft);max-width:60ch;margin:0 0 8px; }
@@ -250,7 +250,7 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 .lz-card-top{ display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px; }
 .lz-card-ep{
   background:var(--acid);border:2px solid var(--ink);padding:3px 8px;
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:700;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;font-weight:700;
 }
 .lz-card-dur{
   font-family:"JetBrains Mono",ui-monospace,monospace;font-size:14px;
@@ -259,7 +259,7 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 .lz-card-title{ font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0 0 8px;line-height:1.2; }
 .lz-card-desc{ font-size:16px;line-height:1.55;color:var(--ink-soft);margin:0 0 12px;flex:1; }
 .lz-card-meta{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;
   color:var(--muted);margin:0 0 14px;line-height:1.5;
 }
 .lz-card-warn{ display:block;color:var(--ink);font-weight:700;margin-top:4px; }
@@ -285,6 +285,6 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
 
 @media (max-width:600px){
   .lz-grid{ grid-template-columns:1fr; }
-  .lz-stat{ font-size:12px; }
+  .lz-stat{ font-size:13.5px; }
 }
 </style>

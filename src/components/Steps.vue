@@ -45,6 +45,6 @@
   padding:5px 10px;
   background:var(--ink);color:var(--bg);
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
 }
 </style>

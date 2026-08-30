@@ -89,7 +89,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 }
 .ed-manifesto .kk{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--acid);margin-bottom:24px;
 }
 .ed-manifesto h2{
@@ -125,7 +125,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 }
 .ed-col h4{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   margin:0 0 4px;color:var(--acid);
 }
 .ed-col .lead-col{
@@ -139,7 +139,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 .ed-col ul li{display:flex;align-items:baseline;gap:10px}
 .ed-col ul li .ar{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;color:var(--acid);
+  font-size:13px;font-weight:700;color:var(--acid);
   flex:0 0 auto;
 }
 .ed-col ul li a{
@@ -150,7 +150,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 .ed-col ul li a:hover{border-bottom-color:var(--acid);color:var(--acid)}
 .ed-col ul li .num{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
   color:var(--bg);opacity:.55;margin-left:6px;
 }
 
@@ -191,7 +191,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 }
 .ed-wm-tag{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.18em;
+  font-size:12.5px;font-weight:700;letter-spacing:.18em;
   color:var(--bg);opacity:.6;
 }
 
@@ -202,7 +202,7 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 .ed-legals .row1{
   display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.06em;
+  font-size:13px;font-weight:700;letter-spacing:.06em;
 }
 .ed-legals .row1 a{
   color:var(--bg);text-decoration:none;
@@ -213,12 +213,12 @@ import { LEGAL_HOLDER } from '../data/legale.js'
 .ed-legals .row1 .piva{color:var(--bg);opacity:.6}
 .ed-legals .row2{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;letter-spacing:.05em;
+  font-size:12.5px;letter-spacing:.05em;
   color:var(--bg);opacity:.55;
 }
 .ed-legals .row3{
   max-width:62ch;text-align:right;
-  font-size:10.5px;line-height:1.45;
+  font-size:12.5px;line-height:1.45;
   color:var(--bg);opacity:.5;
   margin-top:6px;
 }

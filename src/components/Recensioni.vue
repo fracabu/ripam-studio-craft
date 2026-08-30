@@ -103,7 +103,7 @@ const RECENSIONI = [
 .rec-source{
   display:inline-flex;align-items:center;gap:6px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;letter-spacing:.04em;text-transform:uppercase;
+  font-size:13px;letter-spacing:.04em;text-transform:uppercase;
   opacity:.7;
 }
 .rec-tg{

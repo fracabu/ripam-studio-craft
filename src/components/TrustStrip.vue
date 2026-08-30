@@ -18,12 +18,12 @@
   padding:14px 24px;
   display:flex;justify-content:center;gap:36px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;letter-spacing:.06em;
+  font-size:13.5px;letter-spacing:.06em;
   flex-wrap:wrap;
 }
 .trust-strip span{display:inline-flex;align-items:center;gap:8px}
 .trust-strip .check{color:var(--acid);font-weight:700}
 @media (max-width:640px){
-  .trust-strip{gap:18px;font-size:11px;padding:12px 18px}
+  .trust-strip{gap:18px;font-size:13px;padding:12px 18px}
 }
 </style>

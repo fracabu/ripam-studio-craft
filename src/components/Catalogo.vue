@@ -332,11 +332,11 @@ const pickChip = (slug) => openMateria(slug)
 .cat-opt.active .cat-opt-name mark{background:var(--ink);color:var(--acid)}
 .cat-opt-meta{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
   color:var(--muted,#6b6458);white-space:nowrap;
 }
 .cat-opt-empty,.cat-opt-more{
-  cursor:default;font-size:13px;color:var(--muted,#6b6458);
+  cursor:default;font-size:14.5px;color:var(--muted,#6b6458);
   font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.03em;
 }
 .cat-opt-empty a{color:var(--ink);font-weight:700;border-bottom:2px solid var(--acid)}
@@ -364,7 +364,7 @@ const pickChip = (slug) => openMateria(slug)
   display:flex;align-items:center;gap:9px;width:fit-content;margin:4px auto 0;
   background:var(--bg);border:2px solid var(--ink);cursor:pointer;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  font-size:13.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:var(--ink);
   padding:11px 20px;
   box-shadow:3px 3px 0 var(--ink);
@@ -388,7 +388,7 @@ const pickChip = (slug) => openMateria(slug)
   display:inline-flex;align-items:center;gap:8px;
   padding:8px 14px;border:2px solid var(--ink);background:var(--bg);
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:600;letter-spacing:.05em;
+  font-size:13.5px;font-weight:600;letter-spacing:.05em;
   cursor:pointer;color:var(--ink);
   transition:background .15s, transform .12s;
 }
@@ -437,7 +437,7 @@ const pickChip = (slug) => openMateria(slug)
 .cc-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .cc-badge{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   padding:4px 8px;border:2px solid var(--ink);
   background:var(--bg);color:var(--ink);
 }
@@ -453,7 +453,7 @@ const pickChip = (slug) => openMateria(slug)
 .cc-ep{
   margin-left:auto;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   color:var(--ink);opacity:.7;
 }
 
@@ -465,7 +465,7 @@ const pickChip = (slug) => openMateria(slug)
 .cc-pills{display:flex;flex-wrap:wrap;gap:6px}
 .cc-pill{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
   padding:4px 8px;border:2px solid var(--ink);
 }
 .cc-pill.st-ready{background:var(--mic,#1aa06b);color:#fff}
@@ -480,7 +480,7 @@ const pickChip = (slug) => openMateria(slug)
 }
 .cc-norm{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.05em;
+  font-size:13px;font-weight:700;letter-spacing:.05em;
   color:var(--ink);opacity:.85;
 }
 .cc-arrow{

@@ -136,7 +136,7 @@ if (props.autofocus) nextTick(() => input.value?.focus())
 .rk-input::placeholder{ color:var(--muted); }
 .rk-input::-webkit-search-cancel-button{ cursor:pointer; }
 .rk-n{
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12px;font-weight:700;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13.5px;font-weight:700;
   background:var(--acid);border:2px solid var(--ink);padding:2px 7px;flex:none;
 }
 
@@ -147,7 +147,7 @@ if (props.autofocus) nextTick(() => input.value?.focus())
 }
 .rk-hint{
   margin:0;padding:10px 14px;border-bottom:2px solid var(--ink);
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;
   font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
 }
 .rk-row{
@@ -160,7 +160,7 @@ if (props.autofocus) nextTick(() => input.value?.focus())
 .rk-row-short{ justify-content:space-between;font-weight:700;font-size:17px; }
 .rk-tag{
   flex:none;width:74px;text-align:center;
-  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:10px;font-weight:700;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;font-weight:700;
   letter-spacing:.06em;text-transform:uppercase;
   border:2px solid var(--ink);padding:3px 0;background:#fff;
 }

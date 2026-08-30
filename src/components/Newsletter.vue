@@ -172,7 +172,7 @@ const submit = async (e) => {
 .nl-kicker{
   display:inline-block;align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.08em;
+  font-size:13.5px;font-weight:700;letter-spacing:.08em;
   background:var(--ink);color:var(--bg);
   padding:5px 12px;margin-bottom:18px;
 }
@@ -196,7 +196,7 @@ const submit = async (e) => {
 .nl-bullets li{
   display:flex;gap:10px;align-items:baseline;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;letter-spacing:.02em;color:var(--ink);
+  font-size:14.5px;letter-spacing:.02em;color:var(--ink);
 }
 .nl-tick{font-weight:700;color:var(--blue,#3d5aff)}
 
@@ -211,7 +211,7 @@ const submit = async (e) => {
 .nl-card-pill{
   position:absolute;top:-12px;left:20px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--acid);color:var(--ink);
   padding:5px 10px;border:2px solid var(--ink);
 }
@@ -221,7 +221,7 @@ const submit = async (e) => {
 .nl-field{display:flex;flex-direction:column;gap:6px}
 .nl-field > label{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.08em;
+  font-size:13px;font-weight:700;letter-spacing:.08em;
   color:var(--muted,#6b6458);text-transform:uppercase;
 }
 .nl-req{color:var(--blue,#3d5aff)}
@@ -238,7 +238,7 @@ const submit = async (e) => {
 
 .nl-consent{
   display:flex;align-items:flex-start;gap:10px;
-  font-size:12.5px;line-height:1.5;color:var(--ink-soft,#2a2a2a);
+  font-size:13.5px;line-height:1.5;color:var(--ink-soft,#2a2a2a);
   cursor:pointer;
 }
 .nl-consent input{
@@ -256,11 +256,11 @@ const submit = async (e) => {
 .nl-actions .btn{min-width:160px;text-align:center}
 .nl-hint{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10.5px;letter-spacing:.05em;color:var(--muted,#6b6458);
+  font-size:12.5px;letter-spacing:.05em;color:var(--muted,#6b6458);
 }
 
 .nl-err{
-  font-size:13.5px;color:#c63d3d;margin:0;
+  font-size:14.5px;color:#c63d3d;margin:0;
   padding:10px 12px;border:2px solid #c63d3d;background:rgba(198,61,61,.08);
 }
 
@@ -271,7 +271,7 @@ const submit = async (e) => {
 }
 .nl-success-k{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   background:var(--acid);color:var(--ink);
   padding:5px 10px;border:2px solid var(--ink);
   align-self:flex-start;

@@ -53,7 +53,7 @@ const goMateria = () => router.push({ name: 'materia', params: { slug: 'contratt
 .hero-mono{
   margin-top:18px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;color:var(--muted,#6b6458);
+  font-size:13px;color:var(--muted,#6b6458);
   letter-spacing:.05em;
 }
 
@@ -63,7 +63,7 @@ const goMateria = () => router.push({ name: 'materia', params: { slug: 'contratt
 }
 .dossier-facts{
   display:flex; justify-content:space-between; gap:8px; margin:14px 0 12px;
-  font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted,#6b6458);
+  font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted,#6b6458);
 }
 .dossier-facts b{ font-size:17px; color:var(--ink); display:block; }
 .dossier-cta{
@@ -85,7 +85,7 @@ const goMateria = () => router.push({ name: 'materia', params: { slug: 'contratt
 }
 .demo-pills span{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.06em;
+  font-size:12.5px;font-weight:700;letter-spacing:.06em;
   padding:5px 8px;border:2px solid var(--ink);
   background:var(--bg);color:var(--ink);
 }

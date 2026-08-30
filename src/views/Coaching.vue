@@ -112,7 +112,7 @@ const flusso = [
 
 .cg-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--muted,#6b6458);margin-bottom:14px;
 }
 .cg-h1{
@@ -159,7 +159,7 @@ const flusso = [
 .cg-receive-pill{
   display:inline-block;align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.12em;
+  font-size:12.5px;font-weight:700;letter-spacing:.12em;
   background:var(--ink);color:var(--bg);
   padding:5px 9px;
 }
@@ -200,14 +200,14 @@ const flusso = [
 }
 .cg-step-num{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
+  font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--ink);opacity:.55;
 }
 .cg-step h3{font-size:20px;font-weight:700;letter-spacing:-.02em;margin:0}
 .cg-step p{font-size:14px;line-height:1.5;margin:0;color:var(--ink-soft,#2a2a2a)}
 .cg-step-when{
   margin-top:auto;align-self:flex-start;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:10px;font-weight:700;letter-spacing:.08em;
+  font-size:12.5px;font-weight:700;letter-spacing:.08em;
   background:var(--ink);color:var(--bg);
   padding:5px 9px;
 }

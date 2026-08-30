@@ -134,7 +134,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 
 .lh-kicker{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;font-weight:700;letter-spacing:.14em;
+  font-size:13.5px;font-weight:700;letter-spacing:.14em;
   color:var(--ink);margin-bottom:22px;
   display:inline-block;padding:5px 10px;
   background:var(--acid);border:2px solid var(--ink);
@@ -153,7 +153,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
   border:2px solid var(--ink);padding:18px 20px;
   background:var(--bg-alt,#f6f4ef);
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;line-height:1.7;
+  font-size:13.5px;line-height:1.7;
   display:flex;flex-direction:column;gap:6px;
   transform:rotate(.6deg);
   box-shadow:3px 3px 0 var(--ink);
@@ -161,7 +161,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 .lh-meta > div{display:flex;gap:10px;justify-content:space-between;align-items:baseline;flex-wrap:wrap}
 .lh-meta b{
   color:var(--ink);letter-spacing:.06em;
-  text-transform:uppercase;font-size:10px;font-weight:700;
+  text-transform:uppercase;font-size:12.5px;font-weight:700;
 }
 .lh-meta span.acid{background:var(--acid);padding:1px 6px}
 
@@ -174,7 +174,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 }
 .lh-toc h3{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;letter-spacing:.12em;
+  font-size:13px;font-weight:700;letter-spacing:.12em;
   color:var(--acid);margin:0 0 16px;
 }
 .lh-toc ol{
@@ -192,7 +192,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 .lh-toc ol li a:hover{color:var(--acid);border-bottom-color:var(--acid)}
 .lh-toc ol li .nn{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:11px;font-weight:700;color:var(--acid);
+  font-size:13px;font-weight:700;color:var(--acid);
   flex:0 0 28px;
 }
 
@@ -210,7 +210,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 @media(max-width:720px){.lh-art{grid-template-columns:1fr;gap:8px}}
 .lh-art .nn{
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;font-weight:700;letter-spacing:.08em;
+  font-size:14.5px;font-weight:700;letter-spacing:.08em;
   color:var(--ink);padding-top:6px;
 }
 .lh-art h2{
@@ -238,14 +238,14 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
 }
 .lh-contact .t p{
   margin:0;font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;color:var(--bg);opacity:.7;
+  font-size:14.5px;color:var(--bg);opacity:.7;
 }
 .lh-contact a.cta{
   background:var(--acid);color:var(--ink);
   padding:14px 22px;border:2px solid var(--acid);
   text-decoration:none;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:13px;font-weight:700;letter-spacing:.08em;
+  font-size:14.5px;font-weight:700;letter-spacing:.08em;
   text-transform:uppercase;
   box-shadow:4px 4px 0 var(--bg);
   transition:transform .15s, box-shadow .15s;
@@ -257,7 +257,7 @@ watch(page, (p) => { if (p) document.title = `${p.title} — Ripam Studio Craft`
   display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
   padding-top:8px;
   font-family:"JetBrains Mono",ui-monospace,monospace;
-  font-size:12px;letter-spacing:.06em;color:var(--muted,#6b6458);
+  font-size:13.5px;letter-spacing:.06em;color:var(--muted,#6b6458);
 }
 .lh-other a{color:var(--ink);text-decoration:none;border-bottom:2px solid var(--acid)}
 .lh-other a:hover{background:var(--acid)}
