@@ -5,13 +5,15 @@ import { useRouter, RouterLink } from 'vue-router'
 const router = useRouter()
 const goMateria = () => router.push({ name: 'materia', params: { slug: 'contratti-pubblici' } })
 
-// Anteprima audio in evidenza nell'hero. Episodio reale del podcast Contratti Pubblici.
+// Anteprima in evidenza nell'hero: i primi 3 minuti di una audio lezione con
+// supporto visivo, presa dall'episodio 1 di Contratti Pubblici. Era un episodio
+// podcast fino al 30/08/2026, poi il podcast è uscito dal catalogo.
 const HERO_PREVIEW = {
-  src: '/preview/contratti-pubblici/pod-ep7.mp3',
-  ep: 'EP. 07 · TRABOCCHETTI',
-  title: 'I 20 trabocchetti del codice appalti',
-  meta: 'MP3 + TXT · D.Lgs. 36/2023',
-  durationFallback: '1:15',
+  src: '/preview/contratti-pubblici/vid-ep1-anteprima.mp4',
+  ep: 'EP. 01 · AUDIO + VISIVO',
+  title: 'Un nuovo codice per gli appalti',
+  meta: 'MP4 + SRT · D.Lgs. 36/2023',
+  durationFallback: '3:00',
   materiaSlug: 'contratti-pubblici'
 }
 
@@ -99,18 +101,21 @@ const formats = [
           </div>
         </div>
 
-        <aside class="demo-card" aria-label="Anteprima episodio podcast">
-          <audio
+        <aside class="demo-card" aria-label="Anteprima audio lezione con supporto visivo">
+          <video
             ref="audioEl"
+            class="demo-video"
             :src="HERO_PREVIEW.src"
             preload="metadata"
+            playsinline
+            muted="false"
             @loadedmetadata="onLoaded"
             @timeupdate="onTime"
             @play="onPlay"
             @pause="onPause"
             @ended="onPause"
             @error="onError"
-          ></audio>
+          ></video>
           <div class="demo-head">
             <span class="demo-stamp">{{ HERO_PREVIEW.ep }}</span>
             <span class="demo-now">ANTEPRIMA</span>
@@ -178,6 +183,11 @@ const formats = [
   background:var(--bg);
   box-shadow:6px 6px 0 var(--ink);
   display:flex;flex-direction:column;gap:14px;
+}
+.demo-video{
+  width:100%; display:block; aspect-ratio:16/9; background:var(--ink);
+  border:2px solid var(--ink); box-shadow:4px 4px 0 var(--ink);
+  margin-bottom:14px; object-fit:cover;
 }
 .demo-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .demo-stamp{

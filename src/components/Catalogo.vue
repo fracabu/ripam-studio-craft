@@ -41,13 +41,13 @@ const STATO = {
 }
 
 // Icona per chiave formato
-const ICO = { pod:'🎙️', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
-const LBL = { pod:'PODCAST', vid:'AUDIO+VISIVO', rep:'REPORT', man:'MANUALE', sim:'SIM' }
+const ICO = { vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
+const LBL = { vid:'AUDIO+VISIVO', rep:'REPORT', man:'MANUALE', sim:'SIM' }
 
 // 'aul' (audio lezioni monovoce) è fuori catalogo dal 31/07/2026: niente badge.
 const formatPills = (m) => {
   const out = []
-  for (const k of ['pod','vid','rep','man','sim']) {
+  for (const k of ['vid','rep','man','sim']) {
     const stato = m.avail?.[k]
     if (!stato || !STATO[stato]) continue
     out.push({ k, ico: ICO[k], lbl: LBL[k], stato: STATO[stato].l, cls: STATO[stato].cls })
@@ -58,7 +58,7 @@ const formatPills = (m) => {
 // Numero episodi reali se esistono nei CONTENUTI; fallback "topics" come argomenti
 const epCount = (m) => {
   const c = CONTENUTI?.[m.slug]
-  for (const k of ['pod','aul','vid']) {
+  for (const k of ['aul','vid']) {
     if (c?.[k]?.episodes?.length) return { n: c[k].episodes.length, l: 'EPISODI' }
   }
   if (m.topics?.length) return { n: m.topics.length, l: 'ARGOMENTI' }

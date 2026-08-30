@@ -1,12 +1,5 @@
 export const FORMATI = [
   {
-    k:'pod', ico:'🎙️',
-    t:'Serie Podcast',
-    short:'Podcast dialogato, 8 episodi',
-    desc:'Serie podcast in stile NotebookLM: due voci che discutono la materia in modo accessibile. ~3 ore totali, con trascrizioni. Per ascolto rilassato in auto, palestra, passeggiata.',
-    fmt:'MP3 + TXT', label:'Podcast', price:29
-  },
-  {
     // NB: la chiave resta 'vid' (è usata come chiave di `avail` in materie.js e
     // dei blocchi in contenuti.js). Cambia solo il nome pubblico: non erano
     // "video lezioni", sono audio lezioni con supporto visivo.

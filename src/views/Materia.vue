@@ -33,7 +33,7 @@ const reportCoverUrl = computed(() => {
 })
 
 const contactRef = ref(null)
-const activeTab = ref('pod')
+const activeTab = ref('vid')
 
 const scrollToContact = () => {
   document.getElementById('contatti')?.scrollIntoView({ behavior: 'smooth' })
@@ -80,15 +80,15 @@ const tabEnabled = (k) => k === 'rep'
   ? !!reportCustom.value
   : !!contenuti.value?.[k]
 
-const tabIcon = { pod:'🎙️', aul:'🎧', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
-const tabLabel = { pod:'Podcast', vid:'Audio + Visivo', rep:'Report', man:'Manuale', sim:'Simulatore' }
+const tabIcon = { aul:'🎧', vid:'🎥', rep:'📄', man:'📚', sim:'🎯' }
+const tabLabel = { vid:'Audio + Visivo', rep:'Report', man:'Manuale', sim:'Simulatore' }
 
 const activeFormato = computed(() => FORMATI.find(f => f.k === activeTab.value))
 
 const freeEpisode = computed(() => {
   const c = contenuti.value
   if (!c) return null
-  for (const k of ['pod','aul','vid']) {
+  for (const k of ['aul','vid']) {
     const ep = c[k]?.episodes?.find(e => e.free)
     if (ep) return { ...ep, formato: k }
   }
@@ -97,7 +97,7 @@ const freeEpisode = computed(() => {
 
 watch(materia, (m) => {
   if (m) document.title = `${m.t} — Ripam Studio Craft`
-  activeTab.value = 'pod'
+  activeTab.value = 'vid'
 }, { immediate: true })
 
 // Altre materie della stessa famiglia (massimo 3, escluse quella corrente)
@@ -123,7 +123,7 @@ const STATO_LBL = { ready: 'READY', soon: 'SOON', custom: 'CSTM' }
 const formatStati = computed(() => {
   const m = materia.value
   if (!m) return []
-  const order = ['pod', 'aul', 'vid', 'rep', 'man', 'sim']
+  const order = ['aul', 'vid', 'rep', 'man', 'sim']
   return order.map(k => {
     const stato = m.avail?.[k]
     return {
@@ -147,7 +147,7 @@ const goFormat = (k) => {
 const epTotal = computed(() => {
   const c = contenuti.value
   if (!c) return null
-  for (const k of ['pod', 'aul', 'vid']) {
+  for (const k of ['aul', 'vid']) {
     if (c[k]?.episodes?.length) return c[k].episodes.length
   }
   return null
@@ -275,7 +275,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
 
         <template v-if="contenuti">
         <div class="struct-tabs">
-          <button v-for="k in ['pod','aul','vid','rep','man','sim']" :key="k"
+          <button v-for="k in ['aul','vid','rep','man','sim']" :key="k"
             class="struct-tab" :class="{active: activeTab===k}" @click="activeTab=k"
             :disabled="!tabEnabled(k)">
             <span class="struct-tab-ico">{{ tabIcon[k] }}</span>
@@ -289,7 +289,7 @@ const closeAnteprima = () => { anteprimaOpen.value = false }
         </div>
 
         <!-- PODCAST / AUDIO LEZIONI / VIDEO -->
-        <div v-if="(activeTab==='pod' || activeTab==='aul' || activeTab==='vid') && contenuti[activeTab]" class="struct-panel">
+        <div v-if="(activeTab==='aul' || activeTab==='vid') && contenuti[activeTab]" class="struct-panel">
           <div class="struct-summary">
             <div class="struct-stat">
               <div class="struct-stat-num">{{ contenuti[activeTab].episodes.length }}</div>
