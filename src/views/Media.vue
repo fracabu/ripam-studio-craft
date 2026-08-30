@@ -64,21 +64,29 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
       <RouterLink v-if="single" to="/media" class="lz-back">&larr; Tutti i concorsi</RouterLink>
 
       <header class="lz-hero">
+        <div class="lz-hero-txt">
         <div class="lz-kicker">{{ NOME_PRODOTTO.toUpperCase() }} · {{ SOTTOTITOLO_PRODOTTO }}</div>
         <h1 v-if="single" class="lz-h1"><span class="hl-acid">{{ single.nome }}</span></h1>
         <h1 v-else class="lz-h1">Studi anche quando <span class="hl-acid">non puoi leggere.</span></h1>
         <p v-if="single" class="lz-hero-tag">{{ single.tag }}</p>
         <p class="lz-lead">
-          Una voce che spiega la materia dall'inizio alla fine, con le slide che scorrono a fianco.
-          In auto ascolti e basta — <strong>il parlato si regge da solo</strong>; davanti allo schermo
-          vedi anche schemi e riferimenti normativi. Non è il report letto ad alta voce: è un percorso a sé,
-          e l'ultimo episodio è sempre trabocchetti più simulazione.
-        </p>
+            Una voce spiega la materia, le slide scorrono a fianco.
+            In auto ascolti e basta: <strong>il parlato si regge da solo</strong>.
+          </p>
         <p class="lz-stat">
           <strong>{{ nSerie }} serie{{ single ? ' per questo bando' : ' complete' }}</strong> ·
-          {{ nEpisodi }} episodi · {{ oreTotali }} di lezioni · episodi da 30-45 minuti,
-          la lunghezza di un tragitto
+          {{ nEpisodi }} episodi · {{ oreTotali }} · 30-45 minuti a episodio
         </p>
+        </div>
+
+        <aside class="lz-demo" aria-label="Anteprima di una lezione">
+          <video class="lz-demo-video" src="/preview/contratti-pubblici/vid-ep1-anteprima.mp4"
+                 preload="metadata" playsinline controls></video>
+          <div class="lz-demo-meta">
+            <span class="lz-demo-stamp">EP. 01 · CONTRATTI PUBBLICI</span>
+            <span>Primi 3 minuti</span>
+          </div>
+        </aside>
       </header>
 
       <nav class="lz-chips" aria-label="Lezioni per concorso">
@@ -164,7 +172,25 @@ const ctaUrl = (c) => scrivimiUrl(c, `Mi interessano le lezioni da ascoltare per
   font-size:12px;font-weight:700;letter-spacing:.12em;
   color:var(--muted);margin-bottom:16px;
 }
-.lz-hero{ margin-bottom:40px; }
+.lz-hero{
+  margin-bottom:40px; display:grid; grid-template-columns:1.1fr .9fr;
+  gap:36px; align-items:start;
+}
+.lz-demo{ position:sticky; top:24px; }
+.lz-demo-video{
+  width:100%; display:block; aspect-ratio:16/9; background:var(--ink);
+  border:2px solid var(--ink); box-shadow:5px 5px 0 var(--ink);
+}
+.lz-demo-meta{
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+  margin-top:10px; font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--muted,#6b6458);
+}
+.lz-demo-stamp{ font-weight:700; color:var(--ink); }
+@media (max-width:900px){
+  .lz-hero{ grid-template-columns:1fr; gap:24px; }
+  .lz-demo{ position:static; }
+}
 .lz-h1{
   font-size:clamp(38px,5vw,60px);font-weight:700;letter-spacing:-.035em;
   line-height:1.03;margin:0 0 22px;max-width:16ch;text-wrap:balance;

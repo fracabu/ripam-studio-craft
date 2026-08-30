@@ -82,13 +82,13 @@ function buildM1({ firstName, subscribed }) {
 
 ci sta non avere ancora le idee chiare: è proprio il momento in cui posso esserti più utile.
 
-In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI su fonti ufficiali — podcast, audio lezioni con supporto visivo, report e manuali. Così studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.
+In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI su fonti ufficiali — audio lezioni con supporto visivo, report e manuali. Così studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.
 
 ${bloccoGratisText()}`
   const greetHtml = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong> 👋</p>
   <p style="margin:0 0 14px;font-size:15px">ci sta non avere ancora le idee chiare: è proprio il momento in cui posso esserti <strong>più utile</strong>.</p>
-  <p style="margin:0 0 14px;font-size:15px">In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI <strong>su fonti ufficiali</strong> — podcast, audio lezioni con supporto visivo, report e manuali. Studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.</p>${bloccoGratisHtml()}`
+  <p style="margin:0 0 14px;font-size:15px">In due righe, come lavoro: per ogni materia dei concorsi pubblici preparo materiali di studio fatti con l'AI <strong>su fonti ufficiali</strong> — audio lezioni con supporto visivo, report e manuali. Studi nel formato che ti viene più comodo: in cuffia, davanti allo schermo o su carta.</p>${bloccoGratisHtml()}`
 
   const closeText = `E se mi dici quale concorso prepari (o anche solo la materia che ti preoccupa di più), ti rispondo con un consiglio mirato su da dove partire.`
   const closeHtml = `<p style="margin:0 0 4px;font-size:15px">E se mi dici <strong>quale concorso</strong> prepari (o anche solo la materia che ti preoccupa di più), ti rispondo con un consiglio mirato su <strong>da dove partire</strong>.</p>`
@@ -96,13 +96,13 @@ ${bloccoGratisText()}`
   if (subscribed) {
     const text = `${greetText}
 
-Visto che sei già iscritto alla newsletter, le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.
+Visto che sei già iscritto alla newsletter, le anteprime — audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.
 
 ${closeText}
 
 ${sigText()}`
     const inner = `${greetHtml}
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Visto che sei <strong>già iscritto alla newsletter</strong>, le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Visto che sei <strong>già iscritto alla newsletter</strong>, le anteprime — audio con supporto visivo + manuale — di tutte le materie già pronte ti stanno già arrivando: le apri, le scarichi e le provi. Sono il modo migliore per capire se il mio materiale fa per te.</p>
   ${closeHtml}
   ${sigHtml()}`
     return { inner, text, kicker: '' }
@@ -110,7 +110,7 @@ ${sigText()}`
 
   const text = `${greetText}
 
-Il modo più veloce per capire se fanno per te: iscriviti alla newsletter dal sito (spunta la casella della privacy) e ricevi GRATIS le anteprime — podcast + audio con supporto visivo + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.
+Il modo più veloce per capire se fanno per te: iscriviti alla newsletter dal sito (spunta la casella della privacy) e ricevi GRATIS le anteprime — audio con supporto visivo + manuale — di tutte le materie già pronte. Le scarichi, le provi, zero impegno.
 
 👉 ${site}
 
@@ -359,7 +359,7 @@ ${sigText()}`
 // ['manuale','audio','video']; se vuoto → solo manuale (default). (lead Hot)
 // Ordine di risalita: dal più leggero al più impegnativo (podcast → audio con
 // supporto visivo → report → manuale). L'audio lezione monovoce non c'è più.
-const PROD_ORDER = ['podcast', 'video', 'report', 'manuale']
+const PROD_ORDER = ['video', 'report', 'manuale']  // podcast fuori catalogo dal 30/08/2026: resta consegnabile su richiesta, non si propone
 const PROD_LABEL = { podcast: 'Serie podcast', video: 'Audio lezioni con supporto visivo', report: 'Report di studio', manuale: 'Manuale completo' }
 function buildM5({ firstName, materia, formats }) {
   const sel = PROD_ORDER.filter((f) => (formats || []).includes(f))
@@ -391,11 +391,11 @@ Due cose che voglio tu sappia, perché sono il cuore del mio lavoro:
 
 1) Tutti i miei materiali sono basati su fonti ufficiali — normativa e documentazione reale, non riassunti generici.
 
-2) Lavoro sui dati delle prove ufficiali. Ho un database di banche dati pubbliche (le domande ufficiali storiche dei concorsi): se per ${materia} esiste una banca dati ufficiale, costruisco il materiale guidandolo sull'analisi di quelle domande, così studi mirato su ciò che davvero viene chiesto in sede d'esame. È il metodo con cui realizzo tutti gli altri.
+2) Lavoro sui quesiti già usciti. Ho raccolto le banche dati pubbliche dei concorsi, dai PDF ufficiali RIPAM dove esistono alle raccolte pubbliche dei quesiti degli anni scorsi: se per ${materia} c'è materiale, costruisco il report guidandomi sull'analisi di quelle domande, così studi mirato su ciò che davvero viene chiesto. È il metodo con cui realizzo tutti gli altri.
 
 Per calibrare bene il livello di profondità, mi faresti un grande favore se mi mandassi il bando del concorso specifico in cui chiedono questa materia: così capisco esattamente quanto andare a fondo.
 
-Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (podcast, audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.
+Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.
 
 ${prezziText}
 
@@ -414,10 +414,10 @@ ${sigText()}`
   <p style="margin:0 0 10px;font-size:15px">Due cose che voglio tu sappia, perché sono il cuore del mio lavoro:</p>
   <ol style="margin:0 0 16px;padding-left:20px;font-size:15px">
     <li style="margin:0 0 10px"><strong>Tutti i miei materiali sono basati su fonti ufficiali</strong> — normativa e documentazione reale, non riassunti generici.</li>
-    <li><strong>Lavoro sui dati delle prove ufficiali.</strong> Ho un database di banche dati pubbliche (le domande ufficiali storiche dei concorsi): se per ${materia} esiste una banca dati ufficiale, costruisco il materiale <strong>guidandolo sull'analisi di quelle domande</strong>, così studi mirato su ciò che davvero viene chiesto in sede d'esame.</li>
+    <li><strong>Lavoro sui quesiti già usciti.</strong> Ho raccolto le banche dati pubbliche dei concorsi, dai PDF ufficiali RIPAM dove esistono alle raccolte pubbliche dei quesiti degli anni scorsi: se per ${materia} c'è materiale, costruisco il report <strong>guidandomi sull'analisi di quelle domande</strong>, così studi mirato su ciò che davvero viene chiesto.</li>
   </ol>
   <p style="margin:0 0 14px;font-size:15px">Per calibrare bene il <strong>livello di profondità</strong>, mi faresti un grande favore se mi mandassi il <strong>bando del concorso specifico</strong>: così capisco esattamente quanto andare a fondo.</p>
-  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (podcast, audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.</p>
+  <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per farti capire come sarà: le anteprime che mando agli iscritti alla newsletter (audio lezioni con supporto visivo e manuale) sono lo stesso identico formato che avrai anche tu.</p>
   ${prezziHtml}${bloccoGratisHtml()}
   <p style="margin:0 0 4px;font-size:15px">E per non farti decidere «al buio»: se sei interessata/o, <strong>entro un giorno o due ti preparo ${anteprima}</strong>, così vedi com'è prima di decidere. Nessun impegno, e le condizioni te le mando solo se a quel punto ti serve davvero. Rispondi con il <strong>bando</strong> (o il nome del concorso) e parto subito.</p>
   ${sigHtml()}`
@@ -764,7 +764,7 @@ function buildNL({ firstName }) {
 
 hai richiesto le credenziali di RIPAM Studio Quiz Pro — spero ti stiano tornando utili per allenarti con i quiz!
 
-Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: podcast, audio e video lezioni, report e manuali sulle materie dei concorsi.
+Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: audio lezioni con supporto visivo, report e manuali sulle materie dei concorsi.
 
 Per non perderti le novità, iscriviti alla newsletter dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le anteprime (podcast + audio con supporto visivo + manuale) delle materie disponibili.
 
@@ -779,7 +779,7 @@ Telegram: @fcapurso`
   const inner = `
   <p style="margin:0 0 14px;font-size:15px">Ciao <strong>${firstName}</strong>,</p>
   <p style="margin:0 0 14px;font-size:15px">hai richiesto le credenziali di <strong>RIPAM Studio Quiz Pro</strong> — spero ti stiano tornando utili per allenarti con i quiz!</p>
-  <p style="margin:0 0 14px;font-size:15px">Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: <strong>podcast, audio e video lezioni, report e manuali</strong> sulle materie dei concorsi.</p>
+  <p style="margin:0 0 14px;font-size:15px">Volevo dirti che oltre al simulatore preparo di continuo nuovi materiali di studio: <strong>audio lezioni con supporto visivo, report e manuali</strong> sulle materie dei concorsi.</p>
   <p style="margin:0 0 14px;font-size:14px;color:#2a2a2a">Per non perderti le novità, iscriviti alla <strong>newsletter</strong> dal form sul sito (basta spuntare la casella della privacy): massimo 2 email al mese, niente spam, e ti disiscrivi con un click quando vuoi. Iscrivendoti ricevi gratis anche le <strong>anteprime</strong> (podcast + audio con supporto visivo + manuale) delle materie disponibili.</p>
   <p style="margin:22px 0;text-align:center">${emailButton(site, 'ISCRIVITI ALLA NEWSLETTER')}</p>
   <p style="margin:0 0 4px;font-size:15px">E se c'è una materia di cui vuoi subito un'anteprima, <strong>rispondi a questa email</strong> e te la mando.</p>
