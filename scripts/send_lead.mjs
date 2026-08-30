@@ -236,8 +236,20 @@ async function ultimoMessageIdDa({ user, pass, email }) {
         if (!allMail) return giveUp()
         imap.openBox(allMail, true, (errOpen) => {
           if (errOpen) return giveUp()
-          imap.search([['FROM', email]], (errS, uids) => {
-            if (errS || !uids || !uids.length) return giveUp()
+          // Due tentativi, in ordine di preferenza:
+          //   1. FROM  → un messaggio scritto DAVVERO da lui (ha già la nostra mail).
+          //   2. REPLY-TO → la sua richiesta dal form del sito: quella mail parte da
+          //      api/contact.js con From = ripamstudiocraft@gmail.com e Reply-To =
+          //      l'indirizzo del lead. Cercandola solo per FROM non si trovava, e chi
+          //      ci ha scritto SOLO dal form (la maggioranza) finiva sempre in un
+          //      thread nuovo: la sua richiesta restava in inbox con l'ultima parola
+          //      sua, cioè indistinguibile da una inevasa. Misurato il 30/08/2026:
+          //      solo 4 degli ultimi 15 invii erano agganciabili.
+          const cerca = (crit) => new Promise((res) => imap.search(crit, (e, u) => res(e ? [] : (u || []))))
+          ;(async () => {
+            let uids = await cerca([['FROM', email]])
+            if (!uids.length) uids = await cerca([['HEADER', 'REPLY-TO', email]])
+            if (!uids.length) return giveUp()
             // L'ultimo UID è il messaggio più recente ricevuto da quell'indirizzo.
             const ultimo = uids[uids.length - 1]
             let mid = null
@@ -252,7 +264,7 @@ async function ultimoMessageIdDa({ user, pass, email }) {
             })
             f.once('error', giveUp)
             f.once('end', () => { try { imap.end() } catch {} ; resolve(mid) })
-          })
+          })().catch(giveUp)
         })
       })
     })
