@@ -11,6 +11,31 @@
 
   **Stato attuale**: rimandato — si raccolgono prima un po' di richieste per capire i volumi reali.
 
+## Lead aperti (aggiornato 02/09/2026, 16:27)
+
+**9 richieste senza risposta**, di cui 6 arrivate nelle ultime 10 ore:
+2 anteprime/report custom, 2 piani di studio, 1 audio lezioni, 1 coaching,
+piu' 3 rimaste indietro dal 01/09 (la piu' vecchia aperta da ~30 ore).
+
+Il dettaglio con nomi, indirizzi e comandi pronti sta in
+`messaggi-clienti/lead-aperti-2026-09-02.md` — **git-ignored di proposito**
+(`messaggi-clienti/*`), quindi non arriva da qui: si scarica dalla sessione
+che l'ha prodotto e si mette a mano in quella cartella.
+
+Da sapere prima di rispondere:
+- una persona ha chiesto gli estratti di un bando dando un **profilo diverso**
+  da quello coperto dai report a manifest: va detto in apertura, non in fondo;
+- una ha mandato **tre mail identiche in quattro minuti**: si risponde una volta sola;
+- una ha fatto **due richieste a sette minuti di distanza** (anteprima + piano):
+  una mail sola, come gia' fatto il 31/08 con un altro caso;
+- un'altra e' tornata dal form ripetendo una domanda a cui **aveva gia' risposto**
+  via mail il 31/08: non richiederle la stessa cosa.
+
+⚠️ L'anti-doppione di questa fotografia e' stato fatto sulla **Posta inviata**,
+non sul registro `invii_email`: la sessione girava senza `DATABASE_URL`. Prima di
+mandare, `node scripts/check_lead.mjs <email>`. E per ogni prezzo che esce,
+`preventivo_add.mjs` — altrimenti si misurano solo le vittorie.
+
 ## Lavori clienti
 
 - [ ] **Stefania (CPI Sicilia – SAC): 2 report nuovi su misura (2026-06-11)**
