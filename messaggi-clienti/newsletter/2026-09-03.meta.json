@@ -1,0 +1,31 @@
+{
+  "subject": "Tre minuti di lezione vera, si guardano e basta",
+  "preheader": "Il video dell'episodio 1 si apre in pagina, 12 serie da ascoltare e le date ASMEL.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-09-03",
+  "issue_label": "NEWSLETTER",
+  "kicker": "LEZIONI DA ASCOLTARE",
+  "headline": "Adesso una lezione la puoi guardare prima di chiederla.",
+  "is_welcome": false,
+  "campagna": "lezioni-video-media-2026-09-03",
+  "sections_used": [
+    "intro",
+    "hero_video_media",
+    "sec1_dodici_serie_per_concorso",
+    "sec2_dossier_in_home",
+    "sec3_asmel_date",
+    "closing_episodio_intero"
+  ],
+  "note": "Tema: il video di 3 minuti dell'EP01 di Contratti pubblici che ora si guarda dentro /media, senza form e senza lasciare la mail — è il primo materiale del sito che si consuma senza contatto, e la scelta è deliberata: sono 3 minuti su 30-45, l'episodio intero resta da chiedere. Sec1 annuncia la pagina /media che espone tutte e 12 le serie divise per i quattro concorsi (numeri letti da src/data/lezioni.js, non a memoria). Sec2 sul dossier in copertina in home. Sec3 sulle date ASMEL (15-30 settembre) come servizio: dati da inPA verificati il 25-28/08, con l'avvertenza sui requisiti di profilo, che è l'errore già commesso una volta col profilo geometra. Nessun prezzo nostro in tutta la mail; i 15 euro citati sono la quota di iscrizione ASMEL, non un nostro listino. Nessun link Drive. Zero trattini lunghi, verificato. Deliberatamente NON ripete i temi del 27/08 (43 report, pulsante tutte le anteprime, tre serie audio). Spostata dal 31/08 al 03/09: il 31/08 e uscita la newsletter dedicata al piano di studio.",
+  "dipende_da_deploy": "Nessuna dipendenza: /media, le pagine per concorso, il video e l'hero col dossier sono già in produzione (commit cfd45c6 e precedenti, pushati). Il commit 23a485b del guscio mail unico è stato pushato il 31/08 ma NON riguarda questa newsletter, che ha un template suo.",
+  "media_urls": {
+    "indice": "https://ripam-studio-craft.vercel.app/media",
+    "mic-1800-cod01": "https://ripam-studio-craft.vercel.app/media/mic-1800-cod01",
+    "difesa-1100-amm": "https://ripam-studio-craft.vercel.app/media/difesa-1100-amm",
+    "ripam-3997-amm": "https://ripam-studio-craft.vercel.app/media/ripam-3997-amm",
+    "inps-1695-pecs": "https://ripam-studio-craft.vercel.app/media/inps-1695-pecs"
+  },
+  "word_count": 495
+}

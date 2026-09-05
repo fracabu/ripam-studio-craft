@@ -37,7 +37,16 @@ BG = (0.961, 0.941, 0.910)     # #f5f0e8
 MUTED = (0.420, 0.395, 0.345)  # #6b6458
 
 
-def pagina_di_chiusura(doc, tenute, totali, titolo):
+# Cosa c'e' nelle pagine che il lettore NON ha letto. Il testo di default
+# descrive un report di studio; per un materiale di altra forma va passato
+# `--resto`, altrimenti l'anteprima promette contenuti che il PDF completo non
+# ha (il glossario A-Z non ha ne' trabocchetti ne' simulazione finale).
+RESTO_DEFAULT = ('il resto della materia: gli schemi di sintesi, i numeri e le '
+                 'date da memorizzare, i trabocchetti più frequenti nei quesiti '
+                 'e la simulazione finale con le soluzioni commentate')
+
+
+def pagina_di_chiusura(doc, tenute, totali, titolo, resto_testo=RESTO_DEFAULT):
     """Appende la pagina che dichiara dove finisce l'anteprima."""
     pag = doc.new_page(-1, width=595, height=842)  # A4
     pag.draw_rect(fitz.Rect(0, 0, 595, 842), color=None, fill=BG)
@@ -51,15 +60,12 @@ def pagina_di_chiusura(doc, tenute, totali, titolo):
     corpo = (
         'Hai letto le prime %d pagine di "%s", che nella versione completa '
         'è di %d pagine.\n\n'
-        'Nelle %d pagine che restano trovi il resto della materia: gli schemi '
-        'di sintesi, i numeri e le date da memorizzare, i trabocchetti più '
-        'frequenti nei quesiti e la simulazione finale con le soluzioni '
-        'commentate.\n\n'
+        'Nelle %d pagine che restano trovi %s.\n\n'
         'Questa anteprima serve a farti vedere com\'è fatto il materiale '
         'prima di qualsiasi discorso sui prezzi. Se ti convince, rispondi '
-        'alla mail con cui l\'hai ricevuta: ti dico come avere il report '
+        'alla mail con cui l\'hai ricevuta: ti dico come avere il materiale '
         'completo.'
-    ) % (tenute, titolo, totali, resto)
+    ) % (tenute, titolo, totali, resto, resto_testo)
 
     pag.insert_textbox(
         fitz.Rect(60, 170, 535, 560), corpo,
@@ -77,7 +83,7 @@ def pagina_di_chiusura(doc, tenute, totali, titolo):
     return pag
 
 
-def estrai(sorgente, destinazione, pagine, titolo_scelto=None):
+def estrai(sorgente, destinazione, pagine, titolo_scelto=None, resto_testo=RESTO_DEFAULT):
     src = fitz.open(sorgente)
     totali = src.page_count
     if totali <= pagine:
@@ -99,7 +105,7 @@ def estrai(sorgente, destinazione, pagine, titolo_scelto=None):
 
     out = fitz.open()
     out.insert_pdf(src, from_page=0, to_page=pagine - 1)
-    pagina_di_chiusura(out, pagine, totali, titolo)
+    pagina_di_chiusura(out, pagine, totali, titolo, resto_testo)
 
     out.set_metadata({
         'title': 'ANTEPRIMA — %s' % titolo,
@@ -122,6 +128,8 @@ ap.add_argument('--pagine', type=int, default=5)
 ap.add_argument('--out')
 ap.add_argument('--titolo', help='titolo mostrato al candidato (solo con --file)')
 ap.add_argument('--nome', help='nome del file di output (solo con --file)')
+ap.add_argument('--resto', help='cosa c\'e\' nelle pagine non lette, dopo "trovi ..." '
+                                '(default: il corpo di un report di studio)')
 a = ap.parse_args()
 
 if not a.file and not a.cartella:
@@ -149,7 +157,8 @@ for s in sorgenti:
     nome = a.nome if (a.nome and a.file) else os.path.basename(s).replace('.pdf', '') + '-ANTEPRIMA.pdf'
     if not nome.lower().endswith('.pdf'):
         nome += '.pdf'
-    if estrai(s, os.path.join(destdir, nome), a.pagine, a.titolo if a.file else None):
+    if estrai(s, os.path.join(destdir, nome), a.pagine, a.titolo if a.file else None,
+              a.resto or RESTO_DEFAULT):
         fatti += 1
 
 print('\nFatte %d anteprime su %d file, in %s' % (fatti, len(sorgenti), destdir))

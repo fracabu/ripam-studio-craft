@@ -59,6 +59,15 @@ node scripts/backfill_invii_newsletter.mjs [<YYYY-MM-DD>] --apply   # riversa le
 node scripts/bounce_scan.mjs                         # dry-run, ultimi 90 giorni
 node scripts/bounce_scan.mjs --since 2026-01-01 --apply   # registra e RICALCOLA newsletter_subscribers.bounce_count
 node scripts/bounce_scan.mjs --lista                 # solo il report da DB (view `indirizzi_morti`), niente IMAP
+
+# Memoria di lavoro (tabella `memorie`) — la cartella memory/ resa cercabile
+node scripts/memoria_sync.mjs                        # dry-run: dice cosa travaserebbe
+node scripts/memoria_sync.mjs --apply                # riversa memory/*.md → DB (senso unico)
+node scripts/memoria.mjs --cerca "<testo>"           # ricerca full-text italiana + sottostringa
+node scripts/memoria.mjs --apri <slug>               # una memoria intera
+node scripts/memoria.mjs --link <slug>               # chi la cita e chi cita lei
+node scripts/memoria.mjs --invisibili                # memorie che nessuno puo' piu' trovare
+node scripts/memoria.mjs --stato                     # quadro d'insieme
 ```
 
 Non esistono test automatici né linter configurati. Gli script `scripts/_tmp_*.mjs` sono diagnostiche usa-e-getta (git-ignored).
@@ -135,6 +144,14 @@ Niente framework: ogni file esporta un `handler(req, res)` Vercel. Nessun serviz
 - `scripts/bounce_scan.mjs` legge i DSN via IMAP e **ricalcola** `bounce_count` (non incrementa): rilanciarlo non gonfia i contatori. Idempotente su `UNIQUE(dsn_message_id, LOWER(email))`.
 - ⚠️ **Permanente vs temporaneo**: un «Delivery Status Notification (Delay)» **non** è un indirizzo morto — Gmail sta ritentando. Solo `Status 5.x.x` / `Action: failed` conta. Contare i delay escluderebbe dalla newsletter gente raggiungibile.
 - La maggior parte dei bounce permanenti trovati sono **typo di digitazione** (`libero.itt`, `alicr.it`, `ail.com`, nomi storpiati): non sono indirizzi finti, sono persone vere che non ricevono niente. Vanno corretti a mano, vale più di tre tentativi a vuoto.
+
+### Dati memoria di lavoro (la cartella `memory/` resa cercabile)
+- Schema in `db/schema_memorie.sql` (stesso DB Neon). Tabella `memorie` = **specchio interrogabile** dei 274 file `.md` della memoria dell'harness (~973 KB); `memorie_link` = il grafo degli 812 wikilink `[[...]]`. Viste: `memorie_per_tipo`, **`memorie_invisibili`** (non nell'indice e non citate da nessuno → di fatto perse), `memorie_link_rotti`.
+- **Perché esiste** (04/09/2026): l'unico file caricato a ogni sessione è `MEMORY.md`, che fa da indice a tutti gli altri. Era arrivato a **21,4 KB contro un limite di lettura di 24,4 KB** ed è stato ricompattato **a mano due volte**, perdendo dettaglio ogni volta. Peggio: **non esisteva ricerca**. Al primo giro il DB ha trovato **63 memorie fuori indice** e **29 irraggiungibili** — quasi tutte schede lead con nome e cognome (piani inviati, preventivi aperti) che esistevano su disco e nessuno poteva più ritrovare.
+- ⚠️ **Senso unico.** La fonte di scrittura restano i **file**, che l'harness scrive da sé; il DB è uno specchio in sola lettura, rigenerato da `memoria_sync.mjs` (idempotente su sha256: riscrive solo ciò che è cambiato). Niente scrive nei file partendo dal DB — due verità sono lo stesso errore del proxy di `invii_email`.
+- ⚠️ **La chiave è il NOME DEL FILE**, mai il campo `name:` del frontmatter: **62 file su 274** hanno un `name:` diverso dal basename (`feedback-git-push` per `feedback_git_push.md`, o titoli liberi). I wikilink usano il basename. Convivono due formati di frontmatter: `metadata.type` (263 file) e `type:` al primo livello (11).
+- Il sync cattura anche la **curatela che vive solo in `MEMORY.md`** (sezione, marker ⭐/🔥/⚠️, hook, posizione): senza, una futura rigenerazione dell'indice la perderebbe per sempre. La rigenerazione **non è ancora scritta** — è la fase 2, da fare con un confronto prima/dopo davanti.
+- 🔴 La colonna `corpo` contiene **nomi di candidati e clienti**: stanno su Neon UE, che è il posto giusto. Il file `db/schema_memorie.sql` è tracciato da git e contiene **solo DDL**, nessun dato reale: tenerlo così.
 
 ### Variabili d'ambiente (`.env.local`, mai committato)
 `DATABASE_URL`/`POSTGRES_URL` (Neon), `GMAIL_USER`, `GMAIL_APP_PASSWORD` (App Password Gmail), `ADMIN_SECRET` (auth di `send.js`), `PUBLIC_BASE_URL`. Su Vercel sono iniettate; in locale si fanno `npx vercel env pull .env.local`.

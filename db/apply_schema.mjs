@@ -27,7 +27,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 // Tutti gli schema da applicare, in ordine (newsletter, ordini, candidati, anteprime, invii).
 // NB: schema_candidati DOPO schema_ordini → la view `candidato_completo` usa `clienti`.
 // NB: schema_bounce DOPO schema_newsletter → la view `indirizzi_morti` legge `newsletter_subscribers`.
-const SCHEMAS = ['schema_newsletter.sql', 'schema_ordini.sql', 'schema_candidati.sql', 'schema_anteprime.sql', 'schema_invii.sql', 'schema_telegram.sql', 'schema_bounce.sql']
+// NB: schema_memorie non dipende da nessun altro (specchio della cartella memory/).
+const SCHEMAS = ['schema_newsletter.sql', 'schema_ordini.sql', 'schema_candidati.sql', 'schema_anteprime.sql', 'schema_invii.sql', 'schema_telegram.sql', 'schema_bounce.sql', 'schema_memorie.sql']
 
 // Carica .env.local manualmente (no dotenv, niente dipendenze extra)
 function loadEnv() {

@@ -45,7 +45,15 @@
 // ============================================================================
 import { readFileSync, statSync } from 'node:fs'
 import { basename } from 'node:path'
+import { setDefaultResultOrder } from 'node:dns'
 import { REPORT_CUSTOM_MANIFEST } from '../api/_lib/report-custom-manifest.js'
+
+// Su Windows il DNS restituisce per primo l'indirizzo IPv6 di api.telegram.org e
+// il fetch di Node ci si pianta sopra: ConnectTimeoutError dopo 10s, senza mai
+// ripiegare su IPv4. Successo il 04/09/2026 al primo invio della serata. Qui si
+// forza l'ordine IPv4, altrimenti l'invio fallisce a caso — e in uno script
+// schedulato fallirebbe in silenzio.
+setDefaultResultOrder('ipv4first')
 
 for (const l of readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split('\n')) {
   const m = l.match(/^([A-Z_]+)=(.*)$/)

@@ -1,0 +1,25 @@
+{
+  "subject": "Il piano di studio vale quanto quello che mi dici",
+  "preheader": "Gratis, scritto a mano, con dentro anche l'elenco di quello che non devi studiare.",
+  "from_name": "Francesco — Ripam Studio Craft",
+  "from_email": "ripamstudiocraft@gmail.com",
+  "reply_to": "ripamstudiocraft@gmail.com",
+  "issue_date": "2026-08-31",
+  "issue_label": "NEWSLETTER",
+  "kicker": "PIANO DI STUDIO",
+  "headline": "Una bussola, non un elenco di buoni propositi.",
+  "is_welcome": false,
+  "campagna": "piano-studio-bussola-2026-08-31",
+  "sections_used": [
+    "intro",
+    "hero_piano_gratis",
+    "sec1_quattro_risposte",
+    "sec2_cosa_ce_dentro",
+    "sec3_caso_vero_anonimo",
+    "closing_cose_scomode"
+  ],
+  "note": "Edizione monotematica sul piano di studio, decisa da Francesco: il piano è la cosa più personalizzata che esce da qui e 'una bussola nel caos' quando le informazioni arrivano complete. La tesi della mail è che il valore del piano dipende dalla qualità di quello che la persona racconta, quindi sec1 elenca le quattro informazioni che lo cambiano davvero (ore rese e non potenziali, data della prova, cosa blocca, punto di partenza per materia) e l'hero spiega che il modulo le chiede in cinque click. Sec2 descrive il contenuto reale del piano, dalle 9 sezioni del template in bandi-llm-wiki: calendario giorno per giorno con giorni cuscinetto, priorità con le ore, cosa NON studiare, risorse dentro il piano, diario di avanzamento. Sec3 racconta un caso vero in forma ANONIMA (nessun nome, nessun concorso, materia sostituita con una comune a tutti): il piano rifatto tre volte, il vincolo che era l'attivazione e non il tempo, la laurea da non contare. Nessun prezzo, nessun link Drive, zero trattini lunghi, disclaimer AI presente. Non promette in nessun punto il superamento del concorso. NOTA LUNGHEZZA: 680 parole di corpo contro le 350-550 delle edizioni precedenti. Gia sfoltita una volta; e monotematica e argomentativa, quindi la lunghezza e la sostanza, non riempitivo. Se si vuole scendere, il taglio naturale e la sez. 3 (il caso vero), che pero e la parte che convince di piu.",
+  "dipende_da_deploy": "Nessuna: /piano-studio è in produzione e il modulo con le cinque domande a click è già live (src/views/Scrivimi.vue, ramo piano-studio).",
+  "cadenza": "Prima edizione della nuova cadenza decisa il 31/08: una o due email a settimana invece di 1-2 al mese. Il footer di QUESTA mail lo dice già; il template della skill newsletter-draft è stato aggiornato di conseguenza. La newsletter sul video in /media è stata spostata al 2026-09-03.",
+  "word_count": 680
+}

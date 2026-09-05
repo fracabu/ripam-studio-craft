@@ -30,6 +30,11 @@
 // ============================================================================
 import { readFileSync, statSync, readdirSync, existsSync } from 'node:fs'
 import { basename, join } from 'node:path'
+import { setDefaultResultOrder } from 'node:dns'
+
+// Windows risolve api.telegram.org prima in IPv6 e il fetch di Node ci si pianta
+// sopra (ConnectTimeoutError a 10s) invece di ripiegare su IPv4. Vedi telegram_post.mjs.
+setDefaultResultOrder('ipv4first')
 
 for (const l of readFileSync(new URL('../.env.local', import.meta.url), 'utf8').split('\n')) {
   const m = l.match(/^([A-Z_]+)=(.*)$/)
