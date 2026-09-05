@@ -197,6 +197,31 @@ export const REPORT_CONCORSI = [
       { t: 'Informatica', d: 'Hardware, software, reti e sicurezza informatica di base.', fileId: '1myUtdLSpzrtRsjJkLjLaUU_PZ1FFEIt_', img: 'informatica' },
     ],
   },
+  {
+    key: 'reggio-emilia-10-gpa',
+    // Comune: nessuna sigla in CONCORSI, il bando resta nelle note del form.
+    cod: 'Altro',
+    nome: 'Comune di Reggio Emilia — 10 Gestori Processi Amministrativi',
+    tag: 'Area Istruttori · Funzioni Locali · una sola prova, 21/30',
+    intro: "Una sola prova, un test a risposta multipla che vale tutto: niente preselettiva, niente orale, nessuna valutazione dei titoli. Chi non arriva a 21/30 è fuori, chi ci arriva è già in graduatoria. I due report coprono le materie su cui quella prova si gioca davvero.",
+    reports: [
+      { t: 'Ordinamento degli enti locali', d: 'Il TUEL: organi del Comune e loro competenze, atti, servizi pubblici locali, ordinamento finanziario e contabile, controlli (D.Lgs. 267/2000).', fileId: '1-qX7yVbEm7SAm4Ahu6dGMnMtYOXMUPoG', img: 'tuel-enti-locali' },
+      { t: 'Contratti Pubblici', d: 'Soggetti e RUP, affidamenti sotto soglia, procedure di gara, esecuzione del contratto (D.Lgs. 36/2023).', fileId: '1tQzjCRTSdvhp0zjSjgZo2PVaAnhgwL7E', img: 'contratti-pubblici' },
+    ],
+  },
+  {
+    key: 'uniss-15-collab',
+    // Università: fuori dalle sigle del form, resta nelle note precompilate.
+    cod: 'Altro',
+    nome: 'Università di Sassari — 15 Collaboratori, Settore Amministrativo',
+    tag: 'Area Collaboratori · diploma · scritta e orale, 21/30 in entrambe',
+    intro: "Le materie che questo concorso chiede e che negli eserciziari generici sul pubblico impiego non trovi: la governance dell'Ateneo e la contabilità delle università sono specifiche, e sono quelle che fanno la differenza in graduatoria.",
+    reports: [
+      { t: 'Legislazione universitaria', d: "La governance dell'Università di Sassari: principi della L. 240/2010, organi di governo, Direttore Generale, strutture e regolamenti, con lo Statuto UNISS.", fileId: '1Vhc8LI0g-tnwcyLApoU3V8o84VMUqy0y', img: 'legislazione-universitaria' },
+      { t: 'Contabilità universitaria', d: "Il sistema economico-patrimoniale degli atenei: bilancio unico, budget, scritture, controllo di gestione. È il più esteso dei tre.", fileId: '1dHY47q8Q8DFP7LENC8bLDqS1hD6oEEZC', img: 'contabilita-universitaria' },
+      { t: 'Contratti Pubblici', d: 'Soggetti e RUP, affidamenti sotto soglia, procedure di gara, esecuzione del contratto (D.Lgs. 36/2023).', fileId: '1G_G0Tos9E9yEw0LBWbPQE0xtpdv_72Sr', img: 'contratti-pubblici' },
+    ],
+  },
 ]
 
 // Anteprime "sfogliabili" (effetto giornale): set di pagine PNG in
