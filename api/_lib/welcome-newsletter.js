@@ -17,6 +17,7 @@ import nodemailer from 'nodemailer'
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { logAnteprima } from './anteprime-log.js'
+import { glossarioBlock, glossarioAttachment } from './glossario-omaggio.js'
 
 const ITALIAN_MONTHS = [
   'GENNAIO','FEBBRAIO','MARZO','APRILE','MAGGIO','GIUGNO',
@@ -150,16 +151,22 @@ export async function sendWelcomeNewsletter({ sql, subscriber }) {
   const firstName = deriveFirstName(subscriber.nome, subscriber.email)
   const { full: monthYearFull, short: monthYearShort } = buildDateTokens()
 
+  // Il glossario in omaggio: stesso blocco della mail fusa anteprima+benvenuto
+  // (api/_lib/glossario-omaggio.js), cosi' le due strade non divergono.
+  const glossario = glossarioBlock()
+
   const html = htmlTpl
     .replaceAll('{{UNSUB_URL}}', unsubUrl)
     .replaceAll('{{FIRST_NAME}}', firstName)
     .replaceAll('{{CURRENT_MONTH_YEAR_FULL}}', monthYearFull)
     .replaceAll('{{CURRENT_MONTH_YEAR_SHORT}}', monthYearShort)
+    .replaceAll('{{GLOSSARIO}}', glossario.html)
   const text = txtTpl
     .replaceAll('{{UNSUB_URL}}', unsubUrl)
     .replaceAll('{{FIRST_NAME}}', firstName)
     .replaceAll('{{CURRENT_MONTH_YEAR_FULL}}', monthYearFull)
     .replaceAll('{{CURRENT_MONTH_YEAR_SHORT}}', monthYearShort)
+    .replaceAll('{{GLOSSARIO}}', glossario.text)
 
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -175,6 +182,10 @@ export async function sendWelcomeNewsletter({ sql, subscriber }) {
       subject: meta.subject,
       text,
       html,
+      // Allegato oltre al link: su Libero/Tiscali/Virgilio i link Drive spesso
+      // non si aprono, e gli account non-Google non si possono invitare a una
+      // cartella condivisa. Se il PDF manca dal bundle, parte comunque col link.
+      ...(glossarioAttachment() ? { attachments: [glossarioAttachment()] } : {}),
       headers: {
         'List-Unsubscribe': `<${unsubUrl}>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',

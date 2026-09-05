@@ -1,12 +1,12 @@
 {
-  "subject": "Benvenuto. La tua prima anteprima: Diritto Amministrativo (EP1)",
-  "preheader": "Audio EP1 + Video EP1 + Manuale di Diritto Amministrativo, scaricabili da Drive. E le prossime materie nei prossimi messaggi.",
+  "subject": "Benvenuto. Il glossario e' allegato qui (937 voci)",
+  "preheader": "In regalo il Glossario generale per concorsi, 937 voci da 21 materie. Dentro anche l'anteprima completa di Diritto Amministrativo e tutte le risorse gratuite.",
   "from_name": "Francesco — Ripam Studio Craft",
   "from_email": "ripamstudiocraft@gmail.com",
   "reply_to": "ripamstudiocraft@gmail.com",
   "issue_label": "WELCOME",
   "kicker": "WELCOME",
-  "headline": "Benvenuto. Ecco le tue anteprime complete.",
+  "headline": "Benvenuto. Il tuo glossario e' qui.",
   "is_welcome": true,
   "sections_used": [
     "intro_serie_mensile",
@@ -19,8 +19,8 @@
   ],
   "materia_di_oggi": "diritto-amministrativo",
   "drive_file_ids_oggi": {
-    "audio":   "1WNNvtycRuX5TagnoVeAXUaZ8fKgdXGjj",
-    "video":   "1H08moAzySs8RAWr0uDL65pTsbJcCXRxJ",
+    "audio": "1WNNvtycRuX5TagnoVeAXUaZ8fKgdXGjj",
+    "video": "1H08moAzySs8RAWr0uDL65pTsbJcCXRxJ",
     "manuale": "1uMrup1rmjdfcDsn1fya6S487fJP_qFlx"
   }
 }

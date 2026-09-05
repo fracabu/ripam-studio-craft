@@ -12,6 +12,7 @@ import nodemailer from 'nodemailer'
 import { getAnteprimaDriveUrls } from './anteprime-manifest.js'
 import { emailShell, emailButton, logoAttachment } from './email-shell.js'
 import { logAnteprima } from './anteprime-log.js'
+import { glossarioBlock, glossarioAttachment } from './glossario-omaggio.js'
 
 // Titolo umano per slug — speculare ai t: di src/data/materie.js.
 // Tenuto in sync a mano (basso churn, evita dipendenza cross-bundle).
@@ -96,6 +97,8 @@ function buildWelcomeBlock({ meta, unsubUrl }) {
     ids.manuale ? pill(driveLinks(ids.manuale).download, 'MANUALE PDF') : '',
   ].join('')
 
+  const glossario = glossarioBlock()
+
   const html = `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:26px 0 18px">
     <tr><td style="border:2px solid #0a0a0a;padding:18px 20px;">
@@ -104,6 +107,7 @@ function buildWelcomeBlock({ meta, unsubUrl }) {
       ${bottoni}
     </td></tr>
   </table>
+  ${glossario.html}
   <p style="margin:18px 0;font-size:13px;color:#6b6458">Da qui in avanti ricevi al massimo <strong>2 email al mese</strong>: nuove materie, anteprime e bandi. Niente altro. <a href="${unsubUrl}" style="color:#6b6458;text-decoration:underline">Disiscriviti one-click</a> quando vuoi.</p>`
 
   const righe = [
@@ -114,6 +118,7 @@ function buildWelcomeBlock({ meta, unsubUrl }) {
   if (ids.video) righe.push(`  Video EP1   -> ${driveLinks(ids.video).view}`)
   if (ids.manuale) righe.push(`  Manuale PDF -> ${driveLinks(ids.manuale).download}`)
   righe.push(
+    glossario.text,
     '',
     'Da qui in avanti ricevi al massimo 2 email al mese: nuove materie, anteprime e bandi.',
     `Disiscriviti one-click: ${unsubUrl}`,
@@ -262,7 +267,9 @@ export async function sendAnteprimaMail({ email, nome, slug, canale = 'welcome',
     subject,
     text,
     html,
-    attachments: [logoAttachment()],
+    // Il glossario viaggia allegato solo quando c'e' il blocco benvenuto: e' il
+    // regalo di chi si iscrive, non di chi riceve un'anteprima e basta.
+    attachments: [logoAttachment(), ...(welcomeBlock && glossarioAttachment() ? [glossarioAttachment()] : [])],
     ...(headers ? { headers } : {}),
   })
 
